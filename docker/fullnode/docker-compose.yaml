@@ -19,5 +19,13 @@ services:
       "--config-path",
       "/opt/iota/config/fullnode.yaml",
     ]
+    networks:
+      - iota-network
 volumes:
   iotadb:
+
+# network for grafana
+networks:
+  monitoring:
+    name: monitoring
+    driver: bridge
