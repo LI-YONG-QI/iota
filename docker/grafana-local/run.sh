@@ -9,7 +9,7 @@ if [ "$1" = "--cluster" ]; then
 fi
 
 # Update the docker-compose.yaml file with the correct config file
-sed -i "s|./prometheus.yaml:/etc/.*|./${CONFIG_FILE}:/etc/${CONFIG_FILE}|" docker-compose.yaml
+sed -i "s|./prometheus.yaml:/etc/.*|./prometheus.yaml:/etc/${CONFIG_FILE}|" docker-compose.yaml
 
 cleanup() {
   echo "Stopping services..."
