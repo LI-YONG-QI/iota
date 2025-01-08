@@ -12,6 +12,9 @@ fi
 sed -i "s|./prometheus.yaml:/etc/.*|./prometheus.yaml:/etc/${CONFIG_FILE}|" docker-compose.yaml
 
 cleanup() {
+  # Recover the original configuration file
+  sed -i "s|./prometheus.yaml:/etc/.*|./prometheus.yaml:/etc/prometheus.yaml|" docker-compose.yaml
+  
   echo "Stopping services..."
   docker compose down
 }
