@@ -1,7 +1,19 @@
-# Prometheus and Grafana monitoring for `iota-private-network`
+# Grafana Local Setup
 
-This docker-compose configuration allows launching instances of the Prometheus and Grafana applications for monitoring of locally deployed `iota-private-network`.
+This repository provides a setup for running Grafana, Prometheus and Tempo locally, either as a single node or as a cluster.
 
-In order to run this monitoring setup, you first need to have `iota-private-network` setup running, because it creates the network that Prometheus and Grafana join.
+## Single Node (Default)
 
-To deploy the setup, simply run `docker compose up -d`.
+By default, it runs as a single node:
+
+```bash
+./run.sh
+```
+
+## Cluster
+
+To run the setup for `docker/iota-private-network`:
+
+```bash
+./run.sh --cluster
+```
