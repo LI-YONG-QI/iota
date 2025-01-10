@@ -7,6 +7,7 @@ use std::{
     sync::atomic::{AtomicBool, Ordering},
 };
 
+#[cfg(feature = "risc0-hack")]
 use clap::*;
 use iota_protocol_config_macros::{ProtocolConfigAccessors, ProtocolConfigFeatureFlagsGetters};
 use move_vm_config::verifier::{MeterConfig, VerifierConfig};
@@ -83,7 +84,8 @@ impl std::ops::Add<u64> for ProtocolVersion {
     }
 }
 
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Copy, PartialOrd, Ord, Eq, ValueEnum)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Copy, PartialOrd, Ord, Eq)]
+#[cfg_attr(feature = "risc0-hack", derive(ValueEnum))]
 pub enum Chain {
     Mainnet,
     Testnet,
@@ -952,6 +954,10 @@ pub struct ProtocolConfig {
     /// Transactions in a commit will be deferred once their touch shared
     /// objects hit this limit.    
     max_accumulated_txn_cost_per_object_in_mysticeti_commit: Option<u64>,
+
+    /// Enable iota0 executor.
+    #[cfg(feature = "risc0-hack-iota0")]
+    pub iota0_executor: Option<bool>,
 }
 
 // feature flags
@@ -1603,6 +1609,9 @@ impl ProtocolConfig {
             bridge_should_try_to_finalize_committee: None,
 
             max_accumulated_txn_cost_per_object_in_mysticeti_commit: Some(10),
+
+            #[cfg(feature = "risc0-hack-iota0")]
+            iota0_executor: None,
             // When adding a new constant, set it to None in the earliest version, like this:
             // new_constant: None,
         };

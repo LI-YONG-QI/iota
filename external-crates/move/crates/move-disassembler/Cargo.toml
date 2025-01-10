@@ -9,7 +9,7 @@ description = "Print a human-readable version of Move bytecode (.mv files)"
 
 [dependencies]
 anyhow.workspace = true
-colored.workspace = true
+colored = { workspace = true, optional = true }
 
 move-abstract-interpreter.workspace = true
 move-binary-format.workspace = true
@@ -21,8 +21,17 @@ move-coverage.workspace = true
 move-ir-types.workspace = true
 
 bcs.workspace = true
-clap.workspace = true
+clap = { workspace = true, optional = true }
 hex.workspace = true
 
 [features]
-default = []
+default = ["risc0-hack"]
+risc0-hack = [
+  "move-bytecode-source-map/risc0-hack",
+  "move-command-line-common/risc0-hack",
+  "move-compiler/risc0-hack",
+  "move-coverage/risc0-hack",
+  "move-ir-types/risc0-hack",
+  "dep:clap",
+  "dep:colored",
+]

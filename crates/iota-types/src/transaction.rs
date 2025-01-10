@@ -2644,13 +2644,13 @@ impl InputObjectKind {
 /// The result of reading an object for execution. Because shared objects may be
 /// deleted, one possible result of reading a shared object is that
 /// ObjectReadResultKind::Deleted is returned.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ObjectReadResult {
     pub input_object_kind: InputObjectKind,
     pub object: ObjectReadResultKind,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum ObjectReadResultKind {
     Object(Object),
     // The version of the object that the transaction intended to read, and the digest of the tx
@@ -2801,7 +2801,7 @@ impl ObjectReadResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct InputObjects {
     objects: Vec<ObjectReadResult>,
 }

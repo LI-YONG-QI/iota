@@ -26,8 +26,8 @@ move-vm-types.workspace = true
 [dev-dependencies]
 memory-stats = "1.0.0"
 
-move-compiler.workspace = true
-move-ir-to-bytecode.workspace = true
+move-compiler = { workspace = true, default-features = true }
+move-ir-to-bytecode = { workspace = true, default-features = true }
 move-stdlib.workspace = true
 move-stdlib-natives.workspace = true
 

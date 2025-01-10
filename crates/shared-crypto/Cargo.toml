@@ -9,6 +9,10 @@ publish = false
 [dependencies]
 bcs.workspace = true
 eyre.workspace = true
-fastcrypto = { workspace = true, features = ["copy_key"] }
+fastcrypto = { workspace = true, features = ["copy_key"], default-features = false }
 serde.workspace = true
 serde_repr = "0.1"
+
+[features]
+default = ["risc0-hack"]
+risc0-hack = ["fastcrypto/risc0-hack"]

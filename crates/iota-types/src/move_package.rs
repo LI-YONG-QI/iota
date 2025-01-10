@@ -17,6 +17,7 @@ use move_core_types::{
     identifier::{IdentStr, Identifier},
     language_storage::{ModuleId, StructTag},
 };
+#[cfg(feature = "risc0-hack")]
 use move_disassembler::disassembler::Disassembler;
 use move_ir_types::location::Spanned;
 use schemars::JsonSchema;
@@ -510,6 +511,7 @@ impl MovePackage {
         })
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn disassemble(&self) -> IotaResult<BTreeMap<String, Value>> {
         disassemble_modules(self.module_map.values())
     }
@@ -587,6 +589,7 @@ pub fn is_test_fun(name: &IdentStr, module: &CompiledModule, fn_info_map: &FnInf
     }
 }
 
+#[cfg(feature = "risc0-hack")]
 pub fn disassemble_modules<'a, I>(modules: I) -> IotaResult<BTreeMap<String, Value>>
 where
     I: Iterator<Item = &'a Vec<u8>>,

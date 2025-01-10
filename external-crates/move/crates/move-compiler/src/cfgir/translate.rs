@@ -11,6 +11,7 @@ use std::{
 use cfgir::ast::LoopInfo;
 use move_core_types::{account_address::AccountAddress as MoveAddress, runtime_value::MoveValue};
 use move_ir_types::location::*;
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 use move_symbol_pool::Symbol;
 use petgraph::{

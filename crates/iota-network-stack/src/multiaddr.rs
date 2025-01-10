@@ -2,13 +2,13 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use std::{
-    borrow::Cow,
-    net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr},
-};
+use std::borrow::Cow;
+#[cfg(feature = "risc0-hack")]
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
 
 pub use ::multiaddr::{Error, Protocol};
 use eyre::{Result, eyre};
+#[cfg(feature = "risc0-hack")]
 use tracing::error;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -53,6 +53,7 @@ impl Multiaddr {
 
     /// Attempts to convert a multiaddr of the form
     /// `/[ip4,ip6,dns]/{}/udp/{port}` into an anemo address
+    #[cfg(feature = "risc0-hack")]
     pub fn to_anemo_address(&self) -> Result<anemo::types::Address, &'static str> {
         let mut iter = self.iter();
 
@@ -70,6 +71,7 @@ impl Multiaddr {
         }
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn udp_multiaddr_to_listen_address(&self) -> Option<std::net::SocketAddr> {
         let mut iter = self.iter();
 
@@ -89,6 +91,7 @@ impl Multiaddr {
     // Useful when an external library only accepts SocketAddr, e.g. to start a
     // local server. See `client::endpoint_from_multiaddr()` for converting to
     // Endpoint for clients.
+    #[cfg(feature = "risc0-hack")]
     pub fn to_socket_addr(&self) -> Result<SocketAddr> {
         let mut iter = self.iter();
         let ip = match iter.next().ok_or_else(|| {
@@ -116,6 +119,7 @@ impl Multiaddr {
     /// address `/ip4/155.138.174.208/tcp/1500/http` into
     /// `/ip4/0.0.0.0/tcp/1500/http`. This is useful when starting a server
     /// and you want to listen on all interfaces.
+    #[cfg(feature = "risc0-hack")]
     pub fn with_zero_ip(&self) -> Self {
         let mut new_address = self.0.clone();
         let Some(protocol) = new_address.iter().next() else {
@@ -145,6 +149,7 @@ impl Multiaddr {
     /// Set the ip address to `127.0.0.1`. For instance, it converts the
     /// following address `/ip4/155.138.174.208/tcp/1500/http` into
     /// `/ip4/127.0.0.1/tcp/1500/http`.
+    #[cfg(feature = "risc0-hack")]
     pub fn with_localhost_ip(&self) -> Self {
         let mut new_address = self.0.clone();
         let Some(protocol) = new_address.iter().next() else {
@@ -171,6 +176,7 @@ impl Multiaddr {
         Self(new_address)
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn is_localhost_ip(&self) -> bool {
         let Some(protocol) = self.0.iter().next() else {
             error!("Multiaddr is empty");
@@ -318,6 +324,7 @@ pub(crate) fn parse_dns(address: &Multiaddr) -> Result<(Cow<'_, str>, u16, &'sta
 }
 
 // Parse a full /ip4/-/tcp/-/{http,https} address
+#[cfg(feature = "risc0-hack")]
 pub(crate) fn parse_ip4(address: &Multiaddr) -> Result<(SocketAddr, &'static str)> {
     let mut iter = address.iter();
 
@@ -337,6 +344,7 @@ pub(crate) fn parse_ip4(address: &Multiaddr) -> Result<(SocketAddr, &'static str
 }
 
 // Parse a full /ip6/-/tcp/-/{http,https} address
+#[cfg(feature = "risc0-hack")]
 pub(crate) fn parse_ip6(address: &Multiaddr) -> Result<(SocketAddr, &'static str)> {
     let mut iter = address.iter();
 
@@ -416,6 +424,7 @@ mod test {
     }
 
     #[test]
+    #[cfg(feature = "risc0-hack")]
     fn test_to_anemo_address() {
         let addr_ip4 = Multiaddr(multiaddr!(Ip4([15, 15, 15, 1]), Udp(10500u16)))
             .to_anemo_address()

@@ -6,6 +6,7 @@
 use std::{collections::BTreeMap, path::PathBuf};
 
 use log::LevelFilter;
+#[cfg(feature = "risc0-hack")]
 use move_command_line_common::{
     address::NumericalAddress,
     files::{extension_equals, find_filenames, MOVE_EXTENSION},
@@ -21,6 +22,7 @@ const DOCS_DIR: &str = "docs";
 const REFERENCES_TEMPLATE: &str = "doc_templates/references.md";
 const OVERVIEW_TEMPLATE: &str = "doc_templates/overview.md";
 
+#[cfg(feature = "risc0-hack")]
 pub fn unit_testing_files() -> Vec<String> {
     vec![path_in_crate("sources/UnitTest.move")]
         .into_iter()
@@ -28,6 +30,7 @@ pub fn unit_testing_files() -> Vec<String> {
         .collect()
 }
 
+#[cfg(feature = "risc0-hack")]
 pub fn path_in_crate<S>(relative: S) -> PathBuf
 where
     S: Into<String>,
@@ -37,10 +40,12 @@ where
     path
 }
 
+#[cfg(feature = "risc0-hack")]
 pub fn move_stdlib_modules_full_path() -> String {
     format!("{}/{}", env!("CARGO_MANIFEST_DIR"), MODULES_DIR)
 }
 
+#[cfg(feature = "risc0-hack")]
 pub fn move_stdlib_docs_full_path() -> String {
     format!("{}/{}", env!("CARGO_MANIFEST_DIR"), DOCS_DIR)
 }
@@ -58,6 +63,7 @@ pub fn move_stdlib_named_addresses() -> BTreeMap<String, NumericalAddress> {
         .collect()
 }
 
+#[cfg(feature = "risc0-hack")]
 pub fn build_doc(
     output_path: &str,
     doc_path: &str,
@@ -89,6 +95,7 @@ pub fn build_doc(
     move_prover::run_move_prover_errors_to_stderr(options).unwrap();
 }
 
+#[cfg(feature = "risc0-hack")]
 pub fn build_stdlib_doc(output_path: &str) {
     build_doc(
         output_path,

@@ -44,6 +44,7 @@ use crate::{
 pub type CheckpointSequenceNumber = u64;
 pub type CheckpointTimestamp = u64;
 
+#[cfg(feature = "risc0-hack")]
 use iota_metrics::histogram::Histogram;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -255,6 +256,7 @@ impl CheckpointSummary {
             .map(|e| e.next_epoch_committee.as_slice())
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn report_checkpoint_age_ms(&self, metrics: &Histogram) {
         SystemTime::now()
             .duration_since(self.timestamp())

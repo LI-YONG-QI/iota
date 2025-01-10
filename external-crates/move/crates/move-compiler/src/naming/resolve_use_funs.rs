@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use move_ir_types::location::*;
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 
 use crate::{

@@ -21,3 +21,11 @@ shared-crypto.workspace = true
 
 [dev-dependencies]
 insta.workspace = true
+
+[features]
+default = ["risc0-hack"]
+risc0-hack = [
+  "fastcrypto/risc0-hack",
+  "iota-network-stack/risc0-hack",
+  "shared-crypto/risc0-hack",
+]

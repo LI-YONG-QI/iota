@@ -28,6 +28,7 @@ pub fn read_bool_env_var(v: &str) -> bool {
     val.parse::<bool>() == Ok(true) || val.parse::<usize>() == Ok(1)
 }
 
+#[cfg(feature = "risc0-hack")]
 pub static MOVE_HOME: Lazy<String> = Lazy::new(|| {
     std::env::var("MOVE_HOME").unwrap_or_else(|_| {
         format!(

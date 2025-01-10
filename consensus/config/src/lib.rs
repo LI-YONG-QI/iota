@@ -10,4 +10,5 @@ mod test_committee;
 pub use committee::*;
 pub use crypto::*;
 pub use parameters::*;
+#[cfg(feature = "risc0-hack")]
 pub use test_committee::*;

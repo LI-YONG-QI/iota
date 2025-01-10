@@ -41,7 +41,7 @@ dirs-next = "2.0.0"
 dunce = "1.0.2"
 ed25519-dalek = { version = "0.1.0", package = "ed25519-dalek-fiat", default-features = false, features = ["std", "serde", "u64_backend"] }
 ethnum = "1.0.4"
-fail = "0.4.0"
+fail = "0.5.0"
 file_diff = "1.0.0"
 futures = "0.3.12"
 getrandom = "0.2.9"
@@ -126,23 +126,23 @@ move-abstract-interpreter = { path = "crates/move-abstract-interpreter" }
 move-abstract-stack = { path = "crates/move-abstract-stack" }
 move-binary-format = { path = "crates/move-binary-format" }
 move-borrow-graph = { path = "crates/move-borrow-graph" }
-move-bytecode-source-map = { path = "crates/move-bytecode-source-map" }
+move-bytecode-source-map = { path = "crates/move-bytecode-source-map", default-features = false }
 move-bytecode-utils = { path = "crates/move-bytecode-utils" }
 move-bytecode-verifier = { path = "crates/move-bytecode-verifier" }
 move-bytecode-verifier-meter = { path = "crates/move-bytecode-verifier-meter" }
 move-bytecode-viewer = { path = "crates/move-bytecode-viewer" }
 move-cli = { path = "crates/move-cli" }
-move-command-line-common = { path = "crates/move-command-line-common" }
-move-compiler = { path = "crates/move-compiler" }
+move-command-line-common = { path = "crates/move-command-line-common", default-features = false }
+move-compiler = { path = "crates/move-compiler", default-features = false }
 move-core-types = { path = "crates/move-core-types" }
-move-coverage = { path = "crates/move-coverage" }
-move-disassembler = { path = "crates/move-disassembler" }
+move-coverage = { path = "crates/move-coverage", default-features = false }
+move-disassembler = { path = "crates/move-disassembler", default-features = false }
 move-docgen = { path = "crates/move-docgen" }
 move-ir-compiler = { path = "crates/move-ir-compiler" }
-move-ir-to-bytecode = { path = "crates/move-ir-to-bytecode" }
-move-ir-to-bytecode-syntax = { path = "crates/move-ir-to-bytecode-syntax" }
-move-ir-types = { path = "crates/move-ir-types" }
-move-model = { path = "crates/move-model" }
+move-ir-to-bytecode = { path = "crates/move-ir-to-bytecode", default-features = false }
+move-ir-to-bytecode-syntax = { path = "crates/move-ir-to-bytecode-syntax", default-features = false }
+move-ir-types = { path = "crates/move-ir-types", default-features = false }
+move-model = { path = "crates/move-model", default-features = false }
 move-package = { path = "crates/move-package" }
 move-proc-macros = { path = "crates/move-proc-macros" }
 move-prover = { path = "crates/move-prover" }

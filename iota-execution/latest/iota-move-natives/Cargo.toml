@@ -18,6 +18,8 @@ indexmap.workspace = true
 rand = { workspace = true, features = ["small_rng"] }
 smallvec.workspace = true
 tracing.workspace = true
+# `iota0` lives in https://github.com/iotaledger/zk-move0
+iota0-move-natives = { path = "../../../../../iota0/move-natives", optional = true }
 
 # internal dependencies
 iota-protocol-config.workspace = true
@@ -27,3 +29,24 @@ move-core-types.workspace = true
 move-stdlib-natives = { path = "../../../external-crates/move/crates/move-stdlib-natives" }
 move-vm-runtime = { path = "../../../external-crates/move/crates/move-vm-runtime" }
 move-vm-types.workspace = true
+
+[features]
+default = [
+  "risc0-hack",
+  # TODO: enable "risc0-hack-iota0" by default
+  "risc0-hack-metrics",
+]
+risc0-hack = [
+  "fastcrypto-zkp/risc0-hack",
+  "fastcrypto/risc0-hack",
+  "iota-protocol-config/risc0-hack",
+  "iota-types/risc0-hack",
+]
+risc0-hack-iota0 = [
+  "dep:iota0-move-natives",
+  "iota0-move-natives/iota-executor",
+  "iota0-move-natives/prove",
+  "iota0-move-natives/recursive",
+  "iota0-move-natives/risc0",
+]
+risc0-hack-metrics = []

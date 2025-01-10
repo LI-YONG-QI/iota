@@ -1,3 +1,6 @@
+verify_iota0_receipt
+	public fun
+	0x3::iota0
 UnverifiedValidatorOperationCap
 	public struct
 	0x3::validator_cap
@@ -1066,6 +1069,9 @@ blake2b256
 keccak256
 	public fun
 	0x2::hash
+verify_risc0_receipt
+	public fun
+	0x2::risc0
 hash_to_input
 	public fun
 	0x2::vdf

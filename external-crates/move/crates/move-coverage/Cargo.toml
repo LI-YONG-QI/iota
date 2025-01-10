@@ -9,9 +9,9 @@ description = "Move VM code coverage"
 
 [dependencies]
 anyhow.workspace = true
-clap.workspace = true
+clap = { workspace = true, optional = true }
 codespan = { workspace = true, features = ["serialization"] }
-colored.workspace = true
+colored = { workspace = true, optional = true }
 petgraph.workspace = true
 serde.workspace = true
 
@@ -25,4 +25,11 @@ move-core-types.workspace = true
 move-ir-types.workspace = true
 
 [features]
-default = []
+default = ["risc0-hack"]
+risc0-hack = [
+  "move-bytecode-source-map/risc0-hack",
+  "move-command-line-common/risc0-hack",
+  "move-ir-types/risc0-hack",
+  "dep:clap",
+  "dep:colored",
+]

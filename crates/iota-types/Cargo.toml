@@ -11,7 +11,7 @@ workspace = true
 
 [dependencies]
 # external dependencies
-anemo.workspace = true
+anemo = { workspace = true, optional = true }
 anyhow.workspace = true
 async-trait.workspace = true
 bcs.workspace = true
@@ -28,7 +28,7 @@ fastcrypto-zkp.workspace = true
 hex.workspace = true
 im.workspace = true
 indexmap.workspace = true
-iota-sdk2.workspace = true
+iota-sdk2 = { workspace = true, optional = true }
 itertools.workspace = true
 lru.workspace = true
 nonempty.workspace = true
@@ -56,14 +56,14 @@ strum.workspace = true
 strum_macros.workspace = true
 tap.workspace = true
 thiserror.workspace = true
-tonic.workspace = true
+tonic = { workspace = true, optional = true }
 tracing.workspace = true
 
 # internal dependencies
 consensus-config.workspace = true
 iota-enum-compat-util.workspace = true
 iota-macros.workspace = true
-iota-metrics.workspace = true
+iota-metrics = { workspace = true, optional = true }
 iota-network-stack.workspace = true
 iota-protocol-config.workspace = true
 iota-stardust-sdk = { version = "1.1", default-features = false, features = ["irc_27", "irc_30", "std"], package = "iota-sdk" }
@@ -71,7 +71,7 @@ move-binary-format.workspace = true
 move-bytecode-utils.workspace = true
 move-command-line-common.workspace = true
 move-core-types.workspace = true
-move-disassembler.workspace = true
+move-disassembler = { workspace = true, optional = true }
 move-ir-types.workspace = true
 move-vm-profiler.workspace = true
 move-vm-test-utils.workspace = true
@@ -102,7 +102,26 @@ name = "accumulator_bench"
 harness = false
 
 [features]
-default = []
+default = ["risc0-hack"]
+risc0-hack = [
+  "consensus-config/risc0-hack",
+  "dep:anemo",
+  "dep:iota-metrics",
+  "dep:iota-sdk2",
+  "dep:move-disassembler",
+  "dep:proptest",
+  "dep:proptest-derive",
+  "dep:tonic",
+  "fastcrypto-tbls/risc0-hack",
+  "fastcrypto-zkp/risc0-hack",
+  "fastcrypto/risc0-hack",
+  "iota-network-stack/risc0-hack",
+  "iota-protocol-config/risc0-hack",
+  "move-command-line-common/risc0-hack",
+  "move-ir-types/risc0-hack",
+  "shared-crypto/risc0-hack",
+  # "move-disassembler/risc0-hack",
+]
 test-utils = []
 gas-profiler = [
   "move-vm-profiler/gas-profiler",

@@ -13,7 +13,7 @@ criterion-cpu-time.workspace = true
 once_cell.workspace = true
 
 move-binary-format.workspace = true
-move-compiler.workspace = true
+move-compiler = { workspace = true, default-features = true }
 move-core-types.workspace = true
 move-stdlib.workspace = true
 move-stdlib-natives.workspace = true

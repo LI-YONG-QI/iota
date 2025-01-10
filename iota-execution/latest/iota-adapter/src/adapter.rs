@@ -8,13 +8,17 @@ mod checked {
     use std::{collections::BTreeMap, path::PathBuf, sync::Arc};
 
     use anyhow::Result;
+    #[cfg(not(feature = "risc0-hack-metrics"))]
+    use iota_move_natives::metrics::LimitsMetrics;
     use iota_move_natives::{NativesCostTable, object_runtime, object_runtime::ObjectRuntime};
     use iota_protocol_config::ProtocolConfig;
+    #[cfg(feature = "risc0-hack-metrics")]
+    use iota_types::metrics::LimitsMetrics;
     use iota_types::{
         base_types::*,
         error::{ExecutionError, ExecutionErrorKind, IotaError},
         execution_config_utils::to_binary_config,
-        metrics::{BytecodeVerifierMetrics, LimitsMetrics},
+        metrics::BytecodeVerifierMetrics,
         storage::ChildObjectResolver,
     };
     use iota_verifier::{

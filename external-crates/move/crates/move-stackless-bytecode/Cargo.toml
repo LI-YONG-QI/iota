@@ -9,10 +9,10 @@ description = "Move stackless bytecode"
 
 [dependencies]
 move-binary-format.workspace = true
-move-command-line-common.workspace = true
-move-compiler.workspace = true
+move-command-line-common = { workspace = true, default-features = true }
+move-compiler = { workspace = true, default-features = true }
 move-core-types.workspace = true
-move-model.workspace = true
+move-model = { workspace = true, default-features = true }
 
 codespan.workspace = true
 codespan-reporting = { workspace = true, features = ["serde", "serialization"] }

@@ -11,7 +11,7 @@ workspace = true
 
 [dependencies]
 # external dependencies
-clap.workspace = true
+clap = { workspace = true, optional = true }
 schemars.workspace = true
 serde.workspace = true
 serde_with.workspace = true
@@ -20,6 +20,11 @@ tracing.workspace = true
 # internal dependencies
 iota-protocol-config-macros.workspace = true
 move-vm-config.workspace = true
+
+[features]
+default = ["risc0-hack", "risc0-hack-iota0"]
+risc0-hack = ["dep:clap"]
+risc0-hack-iota0 = []
 
 [target.'cfg(not(msim))'.dev-dependencies]
 insta.workspace = true

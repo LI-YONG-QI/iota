@@ -154,12 +154,14 @@ impl ValidatorMetadataV1 {
         // anemo addresses
         let p2p_address = Multiaddr::try_from(self.p2p_address.clone())
             .map_err(|_| E_METADATA_INVALID_P2P_ADDR)?;
+        #[cfg(feature = "risc0-hack")]
         p2p_address
             .to_anemo_address()
             .map_err(|_| E_METADATA_INVALID_P2P_ADDR)?;
 
         let primary_address = Multiaddr::try_from(self.primary_address.clone())
             .map_err(|_| E_METADATA_INVALID_PRIMARY_ADDR)?;
+        #[cfg(feature = "risc0-hack")]
         primary_address
             .to_anemo_address()
             .map_err(|_| E_METADATA_INVALID_PRIMARY_ADDR)?;
@@ -230,6 +232,7 @@ impl ValidatorMetadataV1 {
             Some(address) => {
                 let address =
                     Multiaddr::try_from(address).map_err(|_| E_METADATA_INVALID_P2P_ADDR)?;
+                #[cfg(feature = "risc0-hack")]
                 address
                     .to_anemo_address()
                     .map_err(|_| E_METADATA_INVALID_P2P_ADDR)?;
@@ -243,6 +246,7 @@ impl ValidatorMetadataV1 {
             Some(address) => {
                 let address =
                     Multiaddr::try_from(address).map_err(|_| E_METADATA_INVALID_PRIMARY_ADDR)?;
+                #[cfg(feature = "risc0-hack")]
                 address
                     .to_anemo_address()
                     .map_err(|_| E_METADATA_INVALID_PRIMARY_ADDR)?;

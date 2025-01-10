@@ -9,12 +9,12 @@ publish = false
 [dependencies]
 # internal dependencies
 move-binary-format.workspace = true
-move-bytecode-source-map.workspace = true
-move-command-line-common.workspace = true
-move-compiler.workspace = true
+move-bytecode-source-map = { workspace = true, default-features = true }
+move-command-line-common = { workspace = true, default-features = true }
+move-compiler = { workspace = true, default-features = true }
 move-core-types.workspace = true
-move-disassembler.workspace = true
-move-ir-types.workspace = true
+move-disassembler = { workspace = true, default-features = true }
+move-ir-types = { workspace = true, default-features = true }
 move-symbol-pool.workspace = true
 
 # external dependencies
@@ -35,3 +35,13 @@ move-prover-test-utils.workspace = true
 [[test]]
 name = "testsuite"
 harness = false
+
+[features]
+default = ["risc0-hack"]
+risc0-hack = [
+  "move-bytecode-source-map/risc0-hack",
+  "move-command-line-common/risc0-hack",
+  "move-compiler/risc0-hack",
+  "move-disassembler/risc0-hack",
+  "move-ir-types/risc0-hack",
+]

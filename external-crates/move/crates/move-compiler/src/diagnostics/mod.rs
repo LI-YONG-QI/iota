@@ -367,6 +367,7 @@ pub fn generate_migration_diff(
 }
 
 // Used in test harness for unit testing
+#[cfg(feature = "risc0-hack")]
 pub fn report_migration_to_buffer(files: &MappedFiles, diags: Diagnostics) -> Vec<u8> {
     let mut writer = Buffer::no_color();
     if let Some((mut diff, errors)) = generate_migration_diff(files, &diags) {
@@ -1103,6 +1104,7 @@ impl Migration {
         output
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn render_output(&mut self) -> String {
         let mut output = vec![];
         let mut names = self
@@ -1130,6 +1132,7 @@ impl Migration {
         output.join("")
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn record_diff(&mut self, path: PathBuf) -> anyhow::Result<String> {
         let output_path = path.join("migration.patch");
         let string_result = output_path.to_str().unwrap_or("invalid path").to_string();

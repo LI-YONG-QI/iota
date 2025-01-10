@@ -12,6 +12,7 @@ use move_binary_format::file_format::{
     TypeParameterIndex, Visibility,
 };
 use move_core_types::language_storage::ModuleId;
+#[cfg(feature = "risc0-hack")]
 use vfs::VfsPath;
 
 use crate::shared::{NumberFormat, NumericalAddress};
@@ -34,6 +35,7 @@ macro_rules! push {
 /// "interface" is the publically visible contents of the CompiledModule,
 /// represented in source language syntax Additionally, it returns the module id
 /// (address+name) of the module that was deserialized
+#[cfg(feature = "risc0-hack")]
 pub fn write_file_to_string(
     named_address_mapping: &BTreeMap<ModuleId, impl AsRef<str>>,
     compiled_module_file_input_path: &VfsPath,

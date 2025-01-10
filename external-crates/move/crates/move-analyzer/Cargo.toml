@@ -18,9 +18,9 @@ im.workspace = true
 itertools.workspace = true
 lsp-server.workspace = true
 lsp-types.workspace = true
-move-command-line-common.workspace = true
-move-compiler.workspace = true
-move-ir-types.workspace = true
+move-command-line-common = { workspace = true, default-features = true }
+move-compiler = { workspace = true, default-features = true }
+move-ir-types = { workspace = true, default-features = true }
 move-package.workspace = true
 move-symbol-pool.workspace = true
 once_cell.workspace = true

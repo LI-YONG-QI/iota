@@ -6,6 +6,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use move_ir_types::location::*;
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 use petgraph::{algo::toposort as petgraph_toposort, graphmap::DiGraphMap};
 

@@ -18,14 +18,14 @@ tempfile.workspace = true
 tokio.workspace = true
 
 move-binary-format.workspace = true
-move-bytecode-source-map.workspace = true
+move-bytecode-source-map = { workspace = true, default-features = true }
 move-cli.workspace = true
-move-command-line-common.workspace = true
-move-compiler.workspace = true
+move-command-line-common = { workspace = true, default-features = true }
+move-compiler = { workspace = true, default-features = true }
 move-core-types.workspace = true
-move-disassembler.workspace = true
+move-disassembler = { workspace = true, default-features = true }
 move-ir-compiler.workspace = true
-move-ir-types.workspace = true
+move-ir-types = { workspace = true, default-features = true }
 move-stdlib.workspace = true
 move-stdlib-natives.workspace = true
 move-symbol-pool.workspace = true

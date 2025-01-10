@@ -8,6 +8,6 @@ publish = false
 
 [dependencies]
 anyhow.workspace = true
-move-command-line-common.workspace = true
+move-command-line-common = { workspace = true, default-features = true }
 prettydiff.workspace = true
 regex.workspace = true

@@ -12,10 +12,14 @@ mod checked {
         sync::Arc,
     };
 
+    #[cfg(not(feature = "risc0-hack-metrics"))]
+    use iota_move_natives::metrics::LimitsMetrics;
     use iota_move_natives::object_runtime::{
         self, LoadedRuntimeObject, ObjectRuntime, RuntimeResults, get_all_uids, max_event_error,
     };
     use iota_protocol_config::ProtocolConfig;
+    #[cfg(feature = "risc0-hack-metrics")]
+    use iota_types::metrics::LimitsMetrics;
     use iota_types::{
         balance::Balance,
         base_types::{IotaAddress, MoveObjectType, ObjectID, TxContext},
@@ -24,7 +28,6 @@ mod checked {
         event::Event,
         execution::{ExecutionResults, ExecutionResultsV1},
         execution_status::CommandArgumentError,
-        metrics::LimitsMetrics,
         move_package::MovePackage,
         object::{Data, MoveObject, Object, ObjectInner, Owner},
         storage::{BackingPackageStore, DenyListResult, PackageObject},

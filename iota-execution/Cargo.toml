@@ -15,6 +15,7 @@ iota-protocol-config.workspace = true
 iota-types.workspace = true
 # iota-move-natives-$CUT = { path = "$CUT/iota-move-natives" }
 iota-verifier-latest = { path = "latest/iota-verifier" }
+iota0-core = { path = "../../../iota0/core", features = ["iota-executor", "risc0", "prove"], optional = true }
 move-binary-format.workspace = true
 # iota-verifier-$CUT = { path = "$CUT/iota-verifier" }
 move-bytecode-verifier-latest = { path = "../external-crates/move/crates/move-bytecode-verifier", package = "move-bytecode-verifier" }
@@ -29,7 +30,21 @@ cargo_metadata = "0.15"
 petgraph = "0.6"
 
 [features]
-default = []
+default = [
+  "risc0-hack",
+  # TODO: enable "risc0-hack-iota0" by default
+]
+risc0-hack = [
+  "iota-adapter-latest/risc0-hack",
+  "iota-move-natives-latest/risc0-hack",
+  "iota-protocol-config/risc0-hack",
+  "iota-types/risc0-hack",
+]
+risc0-hack-iota0 = [
+  "dep:iota0-core",
+  "iota-protocol-config/risc0-hack-iota0",
+]
+
 gas-profiler = [
   "iota-adapter-latest/gas-profiler",
   "move-vm-config/gas-profiler",

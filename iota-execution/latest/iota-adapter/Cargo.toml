@@ -21,11 +21,11 @@ tracing.workspace = true
 
 # internal dependencies
 iota-macros.workspace = true
-iota-metrics.workspace = true
-iota-move-natives = { path = "../iota-move-natives", package = "iota-move-natives-latest" }
+iota-metrics = { workspace = true, optional = true }
+iota-move-natives = { path = "../iota-move-natives", package = "iota-move-natives-latest", default-features = false }
 iota-protocol-config.workspace = true
 iota-types.workspace = true
-iota-verifier = { path = "../iota-verifier", package = "iota-verifier-latest" }
+iota-verifier = { path = "../iota-verifier", package = "iota-verifier-latest", default-features = false }
 move-binary-format.workspace = true
 move-bytecode-utils.workspace = true
 move-bytecode-verifier = { path = "../../../external-crates/move/crates/move-bytecode-verifier" }
@@ -37,6 +37,26 @@ move-vm-runtime = { path = "../../../external-crates/move/crates/move-vm-runtime
 move-vm-types.workspace = true
 
 [features]
+default = ["risc0-hack", "risc0-hack-gas", "risc0-hack-metrics"]
+# Enables the use of standard `GasCharger`.
+# If disabled then "noop" `GasCharger` is used.
+# The feature enables certain arguments in the public API and redefines
+# the `GasCharger` type, thus it breaks compatibility.
+# The feature must be disabled in risc0 guests.
+risc0-hack-gas = []
+# Enables the use of standard `LimitsMetrics`.
+# If disabled then "noop" `LimitsMetrics` from `iota-move-natives` is used.
+# The feature must be disabled in risc0 guests.
+risc0-hack-metrics = ["iota-move-natives/risc0-hack-metrics"]
+# Enables the use of `target_os = "zkvm"` incompatible stuff in dependencies.
+# If disabled the crates can still be used for the adapter purposes.
+# The feature must be disabled in risc0 guests.
+risc0-hack = [
+  "dep:iota-metrics",
+  "iota-move-natives/risc0-hack",
+  "iota-protocol-config/risc0-hack",
+  "iota-types/risc0-hack",
+]
 gas-profiler = [
   "iota-types/gas-profiler",
   "move-vm-config/gas-profiler",

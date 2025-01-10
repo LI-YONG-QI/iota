@@ -17,3 +17,7 @@ serde.workspace = true
 move-command-line-common.workspace = true
 move-core-types.workspace = true
 move-symbol-pool.workspace = true
+
+[features]
+default = ["risc0-hack"]
+risc0-hack = ["move-command-line-common/risc0-hack"]

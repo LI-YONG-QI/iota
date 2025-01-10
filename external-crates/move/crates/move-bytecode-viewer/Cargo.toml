@@ -15,8 +15,8 @@ regex.workspace = true
 tui.workspace = true
 
 move-binary-format.workspace = true
-move-bytecode-source-map.workspace = true
-move-disassembler.workspace = true
+move-bytecode-source-map = { workspace = true, default-features = true }
+move-disassembler = { workspace = true, default-features = true }
 
 [features]
 default = []

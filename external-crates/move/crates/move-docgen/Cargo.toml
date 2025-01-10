@@ -8,8 +8,8 @@ publish = false
 
 [dependencies]
 # internal dependencies
-move-compiler.workspace = true
-move-model.workspace = true
+move-compiler = { workspace = true, default-features = true }
+move-model = { workspace = true, default-features = true }
 
 # external dependencies
 anyhow.workspace = true

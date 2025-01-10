@@ -12,6 +12,8 @@ use iota_types::{error::IotaResult, metrics::BytecodeVerifierMetrics};
 pub use verifier::Verifier;
 
 pub mod executor;
+#[cfg(feature = "risc0-hack-iota0")]
+pub mod iota0;
 pub mod verifier;
 
 mod latest;
@@ -25,6 +27,23 @@ pub fn executor(
     enable_profiler: Option<PathBuf>,
 ) -> IotaResult<Arc<dyn Executor + Send + Sync>> {
     let version = protocol_config.execution_version_as_option().unwrap_or(1);
+
+    #[cfg(feature = "risc0-hack-iota0")]
+    {
+        if let Some(true) = protocol_config.iota0_executor {
+            match version {
+                1 => {
+                    return Ok(Arc::new(iota0::executor(
+                        protocol_config,
+                        silent,
+                        enable_profiler,
+                    )?));
+                }
+                v => panic!("Unsupported execution version {v}"),
+            }
+        }
+    }
+
     Ok(match version {
         1 => Arc::new(latest::Executor::new(
             protocol_config,

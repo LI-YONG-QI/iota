@@ -62,6 +62,7 @@ pub mod governance;
 pub mod id;
 pub mod in_memory_storage;
 pub mod inner_temporary_store;
+#[cfg(feature = "risc0-hack")]
 pub mod iota_sdk2_conversions;
 pub mod iota_serde;
 pub mod iota_system_state;
@@ -69,7 +70,9 @@ pub mod layout_resolver;
 pub mod message_envelope;
 pub mod messages_checkpoint;
 pub mod messages_consensus;
+#[cfg(feature = "risc0-hack")]
 pub mod messages_grpc;
+#[cfg(feature = "risc0-hack")]
 pub mod messages_safe_client;
 pub mod metrics;
 pub mod mock_checkpoint_builder;
@@ -78,6 +81,7 @@ pub mod multisig;
 pub mod object;
 pub mod passkey_authenticator;
 pub mod programmable_transaction_builder;
+#[cfg(feature = "risc0-hack")]
 pub mod quorum_driver_types;
 pub mod randomness_state;
 pub mod signature;
@@ -89,6 +93,7 @@ pub mod system_admin_cap;
 pub mod timelock;
 pub mod traffic_control;
 pub mod transaction;
+#[cfg(feature = "risc0-hack")]
 pub mod transaction_executor;
 pub mod transfer;
 pub mod versioned;

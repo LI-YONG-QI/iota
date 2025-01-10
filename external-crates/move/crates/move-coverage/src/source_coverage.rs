@@ -13,6 +13,7 @@ use std::{
 };
 
 use codespan::{Files, Span};
+#[cfg(feature = "risc0-hack")]
 use colored::*;
 use move_binary_format::{
     file_format::{CodeOffset, FunctionDefinitionIndex},
@@ -229,6 +230,7 @@ impl<'a> SourceCoverageBuilder<'a> {
 }
 
 impl SourceCoverage {
+    #[cfg(feature = "risc0-hack")]
     pub fn output_source_coverage<W: Write>(&self, output_writer: &mut W) -> io::Result<()> {
         for line in self.annotated_lines.iter() {
             for string_segment in line.iter() {

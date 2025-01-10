@@ -27,10 +27,13 @@ use crate::{
     unit_test,
 };
 use move_command_line_common::files::{
-    extension_equals, find_filenames_and_keep_specified, MOVE_COMPILED_EXTENSION, MOVE_EXTENSION,
+    extension_equals, MOVE_COMPILED_EXTENSION, MOVE_EXTENSION,
     SOURCE_MAP_EXTENSION,
 };
+#[cfg(feature = "risc0-hack")]
+use move_command_line_common::files::find_filenames_and_keep_specified;
 use move_core_types::language_storage::ModuleId as CompiledModuleId;
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 use move_symbol_pool::Symbol;
 use std::{
@@ -40,6 +43,7 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
+#[cfg(feature = "risc0-hack")]
 use vfs::{
     impls::{memory::MemoryFS, physical::PhysicalFS},
     path::VfsFileType,
@@ -50,6 +54,7 @@ use vfs::{
 // Definitions
 //**************************************************************************************************
 
+#[cfg(feature = "risc0-hack")]
 pub struct Compiler {
     maps: NamedAddressMaps,
     targets: Vec<IndexedPhysicalPackagePath>,
@@ -119,6 +124,7 @@ pub enum Visitor {
 // Entry points and impls
 //**************************************************************************************************
 
+#[cfg(feature = "risc0-hack")]
 impl Compiler {
     pub fn from_package_paths<Paths: Into<Symbol>, NamedAddress: Into<Symbol>>(
         vfs_root: Option<VfsPath>,
@@ -308,6 +314,7 @@ impl Compiler {
         self
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn run<const TARGET: Pass>(
         self,
     ) -> anyhow::Result<(
@@ -404,6 +411,7 @@ impl Compiler {
         Ok((mapped_files, res))
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn generate_migration_patch(
         mut self,
         root_module: &Symbol,
@@ -433,17 +441,20 @@ impl Compiler {
         }
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn check(self) -> anyhow::Result<(MappedFiles, Result<(), Diagnostics>)> {
         let (files, res) = self.run::<PASS_COMPILATION>()?;
         Ok((files, res.map(|_| ()).map_err(|(_pass, diags)| diags)))
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn check_and_report(self) -> anyhow::Result<MappedFiles> {
         let (files, res) = self.check()?;
         unwrap_or_report_diagnostics(&files, res);
         Ok(files)
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn build(
         self,
     ) -> anyhow::Result<(
@@ -458,6 +469,7 @@ impl Compiler {
         ))
     }
 
+    #[cfg(feature = "risc0-hack")]
     pub fn build_and_report(self) -> anyhow::Result<(MappedFiles, Vec<AnnotatedCompiledUnit>)> {
         let (files, units_res) = self.build()?;
         let (units, warnings) = unwrap_or_report_diagnostics(&files, units_res);
@@ -467,6 +479,7 @@ impl Compiler {
 }
 
 impl<const P: Pass> SteppedCompiler<P> {
+    #[cfg(feature = "risc0-hack")]
     fn run_impl<const TARGET: Pass>(self) -> Result<SteppedCompiler<TARGET>, (Pass, Diagnostics)> {
         assert!(P > EMPTY_COMPILER);
         assert!(self.program.is_some());
@@ -540,6 +553,7 @@ macro_rules! ast_stepped_compilers {
                     }
                 }
 
+                #[cfg(feature = "risc0-hack")]
                 pub fn run<const TARGET: Pass>(
                     self,
                 ) -> Result<SteppedCompiler<TARGET>, (Pass, Diagnostics)> {
@@ -564,11 +578,13 @@ macro_rules! ast_stepped_compilers {
                     (next, ast)
                 }
 
+                #[cfg(feature = "risc0-hack")]
                 pub fn check(self) -> Result<(), (Pass, Diagnostics)> {
                     self.run::<PASS_COMPILATION>()?;
                     Ok(())
                 }
 
+                #[cfg(feature = "risc0-hack")]
                 pub fn build(
                     self,
                 ) -> Result<(Vec<AnnotatedCompiledUnit>, Diagnostics), (Pass, Diagnostics)> {
@@ -576,11 +592,13 @@ macro_rules! ast_stepped_compilers {
                     Ok(units)
                 }
 
+                #[cfg(feature = "risc0-hack")]
                 pub fn check_and_report(self, files: &MappedFiles)  {
                     let errors_result = self.check().map_err(|(_, diags)| diags);
                     unwrap_or_report_diagnostics(&files, errors_result);
                 }
 
+                #[cfg(feature = "risc0-hack")]
                 pub fn build_and_report(
                     self,
                     files: &MappedFiles,
@@ -627,6 +645,7 @@ impl SteppedCompiler<PASS_COMPILATION> {
 /// Given a set of dependencies, precompile them and save the ASTs so that they
 /// can be used again to compile against without having to recompile these
 /// dependencies
+#[cfg(feature = "risc0-hack")]
 pub fn construct_pre_compiled_lib<Paths: Into<Symbol>, NamedAddress: Into<Symbol>>(
     targets: Vec<PackagePaths<Paths, NamedAddress>>,
     interface_files_dir_opt: Option<String>,
@@ -760,6 +779,7 @@ pub fn output_compiled_units(
     Ok(())
 }
 
+#[cfg(feature = "risc0-hack")]
 fn generate_interface_files_for_deps(
     deps: &mut Vec<IndexedVfsPackagePath>,
     interface_files_dir_opt: Option<String>,
@@ -776,6 +796,7 @@ fn generate_interface_files_for_deps(
 // TODO this should really be done by the package system, with the interface
 // files stuffed into the build/ directory for the package. This would give a
 // more consistent location for errors.
+#[cfg(feature = "risc0-hack")]
 pub fn generate_interface_files(
     mv_file_locations: &mut [IndexedVfsPackagePath],
     interface_files_dir_opt: Option<String>,
@@ -861,6 +882,7 @@ pub fn generate_interface_files(
     Ok(result)
 }
 
+#[cfg(feature = "risc0-hack")]
 fn has_compiled_module_magic_number(path: &VfsPath) -> bool {
     use move_binary_format::file_format_common::BinaryConstants;
     let mut file = match path.open_file() {
@@ -875,6 +897,7 @@ fn has_compiled_module_magic_number(path: &VfsPath) -> bool {
     num_bytes_read == BinaryConstants::MOVE_MAGIC_SIZE && magic == BinaryConstants::MOVE_MAGIC
 }
 
+#[cfg(feature = "risc0-hack")]
 pub fn move_check_for_errors(
     comments_and_compiler_res: Result<
         (CommentMap, SteppedCompiler<PASS_PARSER>),
@@ -951,6 +974,7 @@ impl PassResult {
     }
 }
 
+#[cfg(feature = "risc0-hack")]
 fn run(
     compilation_env: &mut CompilationEnv,
     pre_compiled_lib: Option<Arc<FullyCompiledProgram>>,

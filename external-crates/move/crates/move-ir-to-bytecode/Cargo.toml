@@ -21,4 +21,10 @@ move-symbol-pool.workspace = true
 ouroboros.workspace = true
 
 [features]
-default = []
+default = ["risc0-hack"]
+risc0-hack = [
+  "move-bytecode-source-map/risc0-hack",
+  "move-command-line-common/risc0-hack",
+  "move-ir-to-bytecode-syntax/risc0-hack",
+  "move-ir-types/risc0-hack",
+]

@@ -8,20 +8,39 @@ publish = false
 description = "IOTA's network tooling"
 
 [dependencies]
-anemo.workspace = true
-bcs.workspace = true
-bytes.workspace = true
+anemo = { workspace = true, optional = true }
+bcs = { workspace = true, optional = true }
+bytes = { workspace = true, optional = true }
 eyre.workspace = true
-futures.workspace = true
-http.workspace = true
+futures = { workspace = true, optional = true }
+http = { workspace = true, optional = true }
 multiaddr = "0.17.0"
-pin-project-lite = "0.2.13"
+pin-project-lite = { version = "0.2.13", optional = true }
 serde.workspace = true
-snap.workspace = true
-tokio = { workspace = true, features = ["sync", "rt", "macros"] }
-tokio-stream.workspace = true
-tonic.workspace = true
-tonic-health.workspace = true
-tower.workspace = true
-tower-http.workspace = true
-tracing.workspace = true
+snap = { workspace = true, optional = true }
+tokio = { workspace = true, features = ["sync", "rt", "macros"], optional = true }
+tokio-stream = { workspace = true, optional = true }
+tonic = { workspace = true, optional = true }
+tonic-health = { workspace = true, optional = true }
+tower = { workspace = true, optional = true }
+tower-http = { workspace = true, optional = true }
+tracing = { workspace = true, optional = true }
+
+[features]
+default = ["risc0-hack"]
+risc0-hack = [
+  "dep:anemo",
+  "dep:bcs",
+  "dep:bytes",
+  "dep:futures",
+  "dep:http",
+  "dep:pin-project-lite",
+  "dep:snap",
+  "dep:tokio",
+  "dep:tokio-stream",
+  "dep:tonic",
+  "dep:tonic-health",
+  "dep:tower",
+  "dep:tower-http",
+  "dep:tracing",
+]

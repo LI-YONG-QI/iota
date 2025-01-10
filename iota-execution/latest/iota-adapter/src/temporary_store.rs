@@ -4,6 +4,7 @@
 
 use std::collections::{BTreeMap, BTreeSet, HashSet};
 
+#[cfg(feature = "risc0-hack")]
 use iota_metrics::monitored_scope;
 use iota_protocol_config::ProtocolConfig;
 use iota_types::{
@@ -979,6 +980,7 @@ impl ChildObjectResolver for TemporaryStore<'_> {
         if obj_opt.is_some() {
             Ok(obj_opt.cloned())
         } else {
+            #[cfg(feature = "risc0-hack")]
             let _scope = monitored_scope("Execution::read_child_object");
             self.store
                 .read_child_object(parent, child, child_version_upper_bound)

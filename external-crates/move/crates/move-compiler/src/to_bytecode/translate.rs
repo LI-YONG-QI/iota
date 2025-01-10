@@ -13,6 +13,7 @@ use move_binary_format::file_format as F;
 use move_bytecode_source_map::source_map::SourceMap;
 use move_core_types::account_address::AccountAddress as MoveAddress;
 use move_ir_types::{ast as IR, location::*};
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 use move_symbol_pool::Symbol;
 

@@ -6,7 +6,9 @@
 use std::collections::HashMap;
 
 use anyhow::{bail, format_err, Result};
+#[cfg(feature = "risc0-hack")]
 use clap::Parser;
+#[cfg(feature = "risc0-hack")]
 use colored::*;
 use move_abstract_interpreter::control_flow_graph::{ControlFlowGraph, VMControlFlowGraph};
 use move_binary_format::{
@@ -32,22 +34,23 @@ use move_ir_types::location::Loc;
 const PREVIEW_LEN: usize = 4;
 
 /// Holds the various options that we support while disassembling code.
-#[derive(Debug, Default, Parser)]
+#[derive(Debug, Default)]
+#[cfg_attr(feature = "risc0-hack", derive(Parser))]
 pub struct DisassemblerOptions {
     /// Only print non-private functions
-    #[clap(long = "only-public")]
+    #[cfg_attr(feature = "risc0-hack", clap(long = "only-public"))]
     pub only_externally_visible: bool,
 
     /// Print the bytecode for the instructions within the function.
-    #[clap(long = "print-code")]
+    #[cfg_attr(feature = "risc0-hack", clap(long = "print-code"))]
     pub print_code: bool,
 
     /// Print the basic blocks of the bytecode.
-    #[clap(long = "print-basic-blocks")]
+    #[cfg_attr(feature = "risc0-hack", clap(long = "print-basic-blocks"))]
     pub print_basic_blocks: bool,
 
     /// Print the locals inside each function body.
-    #[clap(long = "print-locals")]
+    #[cfg_attr(feature = "risc0-hack", clap(long = "print-locals"))]
     pub print_locals: bool,
 }
 
@@ -243,9 +246,15 @@ impl<'a> Disassembler<'a> {
             return function_body;
         }
         if self.is_function_called(name) {
-            function_body.green()
+            #[cfg(feature = "risc0-hack")]
+            {function_body.green()}
+            #[cfg(not(feature = "risc0-hack"))]
+            {function_body}
         } else {
-            function_body.red()
+            #[cfg(feature = "risc0-hack")]
+            {function_body.red()}
+            #[cfg(not(feature = "risc0-hack"))]
+            {function_body}
         }
         .to_string()
     }
@@ -261,8 +270,18 @@ impl<'a> Disassembler<'a> {
         }
         let coverage = function_coverage_map.and_then(|map| map.get(&(pc as u64)));
         match coverage {
-            Some(coverage) => format!("[{}]\t{}: {}", coverage, pc, instruction).green(),
-            None => format!("\t{}: {}", pc, instruction).red(),
+            Some(coverage) => {
+                #[cfg(feature = "risc0-hack")]
+                {format!("[{}]\t{}: {}", coverage, pc, instruction).green()}
+                #[cfg(not(feature = "risc0-hack"))]
+                {format!("[{}]\t{}: {}", coverage, pc, instruction)}
+            },
+            None => {
+                #[cfg(feature = "risc0-hack")]
+                {format!("\t{}: {}", pc, instruction).red()}
+                #[cfg(not(feature = "risc0-hack"))]
+                {format!("\t{}: {}", pc, instruction)}
+            },
         }
         .to_string()
     }

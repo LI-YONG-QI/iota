@@ -9,6 +9,7 @@
 
 use move_command_line_common::files::FileHash;
 use move_ir_types::location::*;
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 use move_symbol_pool::{symbol, Symbol};
 

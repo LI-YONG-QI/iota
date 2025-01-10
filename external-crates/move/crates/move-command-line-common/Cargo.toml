@@ -11,14 +11,14 @@ description = "Move shared command line and file tools"
 anyhow.workspace = true
 bcs.workspace = true
 difference.workspace = true
-dirs-next.workspace = true
+dirs-next = { workspace = true, optional = true }
 hex.workspace = true
 num-bigint = "0.4"
 once_cell.workspace = true
 serde.workspace = true
 sha2.workspace = true
-vfs.workspace = true
-walkdir.workspace = true
+vfs = { workspace = true, optional = true }
+walkdir = { workspace = true, optional = true }
 
 move-binary-format.workspace = true
 move-core-types.workspace = true
@@ -31,3 +31,11 @@ move-core-types.workspace = true
 # * https://doc.rust-lang.org/cargo/reference/resolver.html#feature-resolver-version-2
 move-core-types = { workspace = true, features = ["fuzzing"] }
 proptest.workspace = true
+
+[features]
+default = ["risc0-hack"]
+risc0-hack = [
+  "dep:dirs-next",
+  "dep:vfs",
+  "dep:walkdir",
+]

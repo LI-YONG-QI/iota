@@ -3,8 +3,28 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+#[cfg(feature = "risc0-hack-gas")]
 pub use checked::*;
+#[cfg(not(feature = "risc0-hack-gas"))]
+pub use noop::*;
 
+// Gas charging (as well as limit metrics) do not make sense when
+// running transaction execution inside of ZKVM to produce a proof.
+// Sure, the proof as well as execution effects will be a part of
+// some other transaction (and the proof might be verified in another
+// smart contract), and that transaction will be subject to gas
+// charging (and limit metrics).
+//
+// `iota-adapter` does not provide a trait for a gas charger, thus
+// there can only be one `GasCharger` struct for the whole build.
+// For now it is selected with feature `"risc0-hack-gas"` disable.
+// If feature `"risc0-hack-gas"` enabled then the original impl
+// is used. The "noop" gas charger should only be run inside of ZKVM:
+// such code is usually guarded with `#[cfg(target_os = "zkvm")]`.
+// But we also want to test it on the host system, thus feature
+// mechanism (and not `target_os`) is used.
+
+#[cfg(feature = "risc0-hack-gas")]
 #[iota_macros::with_checked_arithmetic]
 pub mod checked {
 
@@ -361,6 +381,149 @@ pub mod checked {
                     *execution_result = Err(err);
                 }
             }
+        }
+    }
+}
+
+#[cfg(not(feature = "risc0-hack-gas"))]
+pub mod noop {
+    #![allow(unused_variables)]
+    #![allow(dead_code)]
+
+    use iota_protocol_config::ProtocolConfig;
+    use iota_types::{
+        base_types::{ObjectID, ObjectRef},
+        digests::TransactionDigest,
+        error::ExecutionError,
+        gas::{GasCostSummary, IotaGasStatus},
+        gas_model::tables::GasStatus,
+    };
+    use move_vm_types::gas::UnmeteredGasMeter;
+
+    use crate::temporary_store::TemporaryStore;
+
+    // IotaGasStatus new_unmetered
+    // GasStatus impl GasMeter
+    // GasCostSummary = Default
+    #[allow(dead_code)]
+    pub struct GasCharger {
+        move_gas_status: UnmeteredGasMeter,
+    }
+
+    impl GasCharger {
+        pub fn new() -> Self {
+            Self {
+                move_gas_status: UnmeteredGasMeter,
+            }
+        }
+        // pub fn new(
+        //     tx_digest: TransactionDigest,
+        //     gas_coins: Vec<ObjectRef>,
+        //     gas_status: IotaGasStatus,
+        //     protocol_config: &ProtocolConfig,
+        // ) -> Self {
+        //     Self::new()
+        // }
+
+        pub fn new_unmetered(tx_digest: TransactionDigest) -> Self {
+            Self::new()
+        }
+
+        pub(crate) fn gas_coins(&self) -> &[ObjectRef] {
+            const GAS_COINS: [ObjectRef; 0] = [];
+            &GAS_COINS
+        }
+
+        pub fn gas_coin(&self) -> Option<ObjectID> {
+            None
+        }
+
+        pub fn gas_budget(&self) -> u64 {
+            0
+        }
+
+        pub fn unmetered_storage_rebate(&self) -> u64 {
+            0
+        }
+
+        pub fn no_charges(&self) -> bool {
+            true
+        }
+
+        pub fn is_unmetered(&self) -> bool {
+            true
+        }
+
+        pub fn move_gas_status(&self) -> &UnmeteredGasMeter {
+            &self.move_gas_status
+        }
+
+        pub fn move_gas_status_mut(&mut self) -> &mut UnmeteredGasMeter {
+            &mut self.move_gas_status
+        }
+
+        pub fn into_gas_status(self) -> IotaGasStatus {
+            IotaGasStatus::new_unmetered()
+        }
+
+        pub fn summary(&self) -> GasCostSummary {
+            GasCostSummary::default()
+        }
+
+        pub fn smash_gas(&mut self, temporary_store: &mut TemporaryStore<'_>) {}
+
+        // Gas charging operations
+        //
+
+        pub fn track_storage_mutation(
+            &mut self,
+            object_id: ObjectID,
+            new_size: usize,
+            storage_rebate: u64,
+        ) -> u64 {
+            0
+        }
+
+        pub fn reset_storage_cost_and_rebate(&mut self) {}
+
+        pub fn charge_publish_package(&mut self, size: usize) -> Result<(), ExecutionError> {
+            Ok(())
+        }
+
+        pub fn charge_upgrade_package(&mut self, size: usize) -> Result<(), ExecutionError> {
+            Ok(())
+        }
+
+        pub fn charge_input_objects(
+            &mut self,
+            temporary_store: &TemporaryStore<'_>,
+        ) -> Result<(), ExecutionError> {
+            Ok(())
+        }
+
+        pub fn charge_coin_transfers(
+            &mut self,
+            protocol_config: &ProtocolConfig,
+            num_non_gas_coin_owners: u64,
+        ) -> Result<(), ExecutionError> {
+            Ok(())
+        }
+
+        pub fn reset(&mut self, temporary_store: &mut TemporaryStore<'_>) {}
+
+        pub fn charge_gas<T>(
+            &mut self,
+            temporary_store: &mut TemporaryStore<'_>,
+            execution_result: &mut Result<T, ExecutionError>,
+        ) -> GasCostSummary {
+            GasCostSummary::default()
+        }
+
+        fn handle_storage_and_rebate<T>(
+            &mut self,
+            temporary_store: &mut TemporaryStore<'_>,
+            execution_result: &mut Result<T, ExecutionError>,
+        ) {
         }
     }
 }

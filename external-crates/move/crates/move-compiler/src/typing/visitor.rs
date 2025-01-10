@@ -13,6 +13,7 @@ use crate::{
 };
 
 use move_ir_types::location::Loc;
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 
 pub type TypingVisitorObj = Box<dyn TypingVisitor>;

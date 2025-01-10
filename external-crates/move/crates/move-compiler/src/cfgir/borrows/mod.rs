@@ -7,6 +7,7 @@ mod state;
 
 use std::{cell::RefCell, collections::BTreeMap, rc::Rc};
 
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 use state::{Value, *};
 

@@ -27,8 +27,10 @@ use move_compiler::{
     parser::ast as P,
     shared::{parse_named_address, unique_map::UniqueMap, NumericalAddress, PackagePaths},
     typing::ast as T,
-    Compiler, Flags, PASS_COMPILATION, PASS_EXPANSION, PASS_PARSER, PASS_TYPING,
+    Flags, PASS_COMPILATION, PASS_EXPANSION, PASS_PARSER, PASS_TYPING,
 };
+#[cfg(feature = "risc0-hack")]
+use move_compiler::Compiler;
 use move_core_types::account_address::AccountAddress;
 use move_symbol_pool::Symbol as MoveSymbol;
 use num::{BigUint, Num};
@@ -57,6 +59,7 @@ pub mod well_known;
 /// Build the move model with default compilation flags and default options and
 /// no named addresses. This collects transitive dependencies for move sources
 /// from the provided directory list.
+#[cfg(feature = "risc0-hack")]
 pub fn run_model_builder<
     Paths: Into<MoveSymbol> + Clone,
     NamedAddress: Into<MoveSymbol> + Clone,
@@ -77,6 +80,7 @@ pub fn run_model_builder<
 /// set of provided named addresses.
 /// This collects transitive dependencies for move sources from the provided
 /// directory list.
+#[cfg(feature = "risc0-hack")]
 pub fn run_model_builder_with_options<
     Paths: Into<MoveSymbol> + Clone,
     NamedAddress: Into<MoveSymbol> + Clone,
@@ -98,6 +102,7 @@ pub fn run_model_builder_with_options<
 /// Build the move model with custom compilation flags and custom options
 /// This collects transitive dependencies for move sources from the provided
 /// directory list.
+#[cfg(feature = "risc0-hack")]
 pub fn run_model_builder_with_options_and_compilation_flags<
     Paths: Into<MoveSymbol> + Clone,
     NamedAddress: Into<MoveSymbol> + Clone,

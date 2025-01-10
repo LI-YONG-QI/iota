@@ -8,12 +8,13 @@ use std::{
 };
 
 use iota_protocol_config::{LimitThresholdCrossed, ProtocolConfig, check_limit_by_meter};
+#[cfg(feature = "risc0-hack-metrics")]
+use iota_types::metrics::LimitsMetrics;
 use iota_types::{
     base_types::{MoveObjectType, ObjectID, SequenceNumber},
     committee::EpochId,
     error::VMMemoryLimitExceededSubStatusCode,
     execution::DynamicallyLoadedObjectMetadata,
-    metrics::LimitsMetrics,
     object::{Data, MoveObject, Object, Owner},
     storage::ChildObjectResolver,
 };
@@ -26,6 +27,8 @@ use move_vm_types::{
     values::{GlobalValue, StructRef, Value},
 };
 
+#[cfg(not(feature = "risc0-hack-metrics"))]
+use crate::metrics::LimitsMetrics;
 use crate::object_runtime::get_all_uids;
 
 pub(super) struct ChildObject {
@@ -249,6 +252,7 @@ impl Inner<'_> {
                 had_parent_root_version
             );
 
+            #[cfg(feature = "risc0-hack-metrics")]
             if let LimitThresholdCrossed::Hard(_, lim) = check_limit_by_meter!(
                 self.is_metered,
                 cached_objects_count,
@@ -500,6 +504,7 @@ impl<'a> ChildObjectStore<'a> {
                     ObjectResult::Loaded(res) => res,
                 };
 
+                #[cfg(feature = "risc0-hack-metrics")]
                 if let LimitThresholdCrossed::Hard(_, lim) = check_limit_by_meter!(
                     self.is_metered,
                     store_entries_count,
@@ -548,6 +553,7 @@ impl<'a> ChildObjectStore<'a> {
         child_move_type: MoveObjectType,
         child_value: Value,
     ) -> PartialVMResult<()> {
+        #[cfg(feature = "risc0-hack-metrics")]
         if let LimitThresholdCrossed::Hard(_, lim) = check_limit_by_meter!(
             self.is_metered,
             self.store.len(),

@@ -3,6 +3,7 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 
 use crate::{

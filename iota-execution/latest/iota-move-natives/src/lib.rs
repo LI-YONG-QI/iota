@@ -80,6 +80,8 @@ mod config;
 mod crypto;
 mod dynamic_field;
 mod event;
+#[cfg(not(feature = "risc0-hack-metrics"))]
+pub mod metrics;
 mod object;
 pub mod object_runtime;
 mod random;
@@ -1050,6 +1052,12 @@ pub fn all_natives(silent: bool, protocol_config: &ProtocolConfig) -> NativeFunc
             "secp256k1_keypair_from_seed",
             make_native!(ecdsa_k1::secp256k1_keypair_from_seed),
         ),
+        #[cfg(feature = "risc0-hack-iota0")]
+        (
+            "risc0",
+            "verify_risc0_receipt",
+            make_native!(iota0_move_natives::verify_risc0_receipt),
+        ),
     ];
     let iota_framework_natives_iter =
         iota_framework_natives
@@ -1063,11 +1071,19 @@ pub fn all_natives(silent: bool, protocol_config: &ProtocolConfig) -> NativeFunc
                     func,
                 )
             });
-    let iota_system_natives: &[(&str, &str, NativeFunction)] = &[(
-        "validator",
-        "validate_metadata_bcs",
-        make_native!(validator::validate_metadata_bcs),
-    )];
+    let iota_system_natives: &[(&str, &str, NativeFunction)] = &[
+        (
+            "validator",
+            "validate_metadata_bcs",
+            make_native!(validator::validate_metadata_bcs),
+        ),
+        #[cfg(feature = "risc0-hack-iota0")]
+        (
+            "iota0",
+            "verify_iota0_receipt",
+            make_native!(iota0_move_natives::verify_iota0_receipt),
+        ),
+    ];
     iota_system_natives
         .iter()
         .cloned()

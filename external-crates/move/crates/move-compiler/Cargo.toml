@@ -9,7 +9,7 @@ description = "The definition of the Move source language, and its compiler"
 
 [dependencies]
 anyhow.workspace = true
-clap.workspace = true
+clap = { workspace = true, optional = true }
 codespan-reporting.workspace = true
 dunce.workspace = true
 hex.workspace = true
@@ -19,9 +19,9 @@ petgraph.workspace = true
 regex.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-similar.workspace = true
-stacker.workspace = true
-vfs.workspace = true
+similar = { workspace = true, optional = true }
+stacker = { workspace = true, optional = true }
+vfs = { workspace = true, optional = true }
 
 bcs.workspace = true
 
@@ -39,6 +39,19 @@ move-symbol-pool.workspace = true
 [dev-dependencies]
 datatest-stable.workspace = true
 move-stdlib.workspace = true
+
+[features]
+default = ["risc0-hack"]
+risc0-hack = [
+  "move-bytecode-source-map/risc0-hack",
+  "move-command-line-common/risc0-hack",
+  "move-ir-to-bytecode/risc0-hack",
+  "move-ir-types/risc0-hack",
+  "dep:clap",
+  "dep:similar",
+  "dep:stacker",
+  "dep:vfs",
+]
 
 [[test]]
 name = "move_check_testsuite"

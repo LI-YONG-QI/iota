@@ -5,6 +5,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+#[cfg(feature = "risc0-hack")]
 use move_proc_macros::growing_stack;
 
 use crate::{

@@ -8,10 +8,10 @@ publish = false
 
 [dependencies]
 # move dependencies
-move-command-line-common.workspace = true
-move-compiler.workspace = true
+move-command-line-common = { workspace = true, default-features = true }
+move-compiler = { workspace = true, default-features = true }
 move-docgen.workspace = true
-move-model.workspace = true
+move-model = { workspace = true, default-features = true }
 move-stackless-bytecode.workspace = true
 
 # external dependencies

@@ -14,17 +14,21 @@ pub(crate) mod verification_attribute_filter;
 
 use crate::{
     parser::{self, ast::PackageDefinition, syntax::parse_file_string},
-    shared::{files::MappedFiles, CompilationEnv, IndexedVfsPackagePath, NamedAddressMaps},
+    shared::{files::MappedFiles, CompilationEnv, NamedAddressMaps},
 };
+#[cfg(feature = "risc0-hack")]
+use crate::shared::IndexedVfsPackagePath;
 use anyhow::anyhow;
 use comments::*;
 use move_command_line_common::files::FileHash;
 use move_symbol_pool::Symbol;
 use std::{collections::BTreeSet, sync::Arc};
+#[cfg(feature = "risc0-hack")]
 use vfs::VfsPath;
 
 /// Parses program's targets and dependencies, both of which are read from
 /// different virtual file systems (vfs and deps_out_vfs, respectively).
+#[cfg(feature = "risc0-hack")]
 pub(crate) fn parse_program(
     compilation_env: &mut CompilationEnv,
     named_address_maps: NamedAddressMaps,
@@ -80,6 +84,7 @@ pub(crate) fn parse_program(
     Ok((files, pprog, source_comments))
 }
 
+#[cfg(feature = "risc0-hack")]
 fn ensure_targets_deps_dont_intersect(
     compilation_env: &CompilationEnv,
     targets: &[IndexedVfsPackagePath],
@@ -112,6 +117,7 @@ fn ensure_targets_deps_dont_intersect(
     ))
 }
 
+#[cfg(feature = "risc0-hack")]
 fn parse_file(
     path: &VfsPath,
     compilation_env: &mut CompilationEnv,

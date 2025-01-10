@@ -12,8 +12,12 @@ mod checked {
         sync::Arc,
     };
 
+    #[cfg(not(feature = "risc0-hack-metrics"))]
+    use iota_move_natives::metrics::LimitsMetrics;
     use iota_move_natives::object_runtime::ObjectRuntime;
     use iota_protocol_config::ProtocolConfig;
+    #[cfg(feature = "risc0-hack-metrics")]
+    use iota_types::metrics::LimitsMetrics;
     use iota_types::{
         IOTA_FRAMEWORK_ADDRESS,
         base_types::{
@@ -26,7 +30,6 @@ mod checked {
         execution_config_utils::to_binary_config,
         execution_status::{CommandArgumentError, PackageUpgradeError},
         id::{RESOLVED_IOTA_ID, UID},
-        metrics::LimitsMetrics,
         move_package::{
             MovePackage, UpgradeCap, UpgradePolicy, UpgradeReceipt, UpgradeTicket,
             normalize_deserialized_modules,

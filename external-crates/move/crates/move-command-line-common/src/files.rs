@@ -8,6 +8,7 @@ use std::{collections::BTreeMap, path::Path};
 use anyhow::{anyhow, bail, *};
 use serde::{Deserialize, Serialize};
 use sha2::Digest;
+#[cfg(feature = "risc0-hack")]
 use vfs::{error::VfsErrorKind, VfsPath, VfsResult};
 
 /// Result of sha256 hash of a file's contents.
@@ -66,6 +67,7 @@ pub fn try_exists(path: impl AsRef<Path>) -> std::io::Result<bool> {
 ///   predicate
 /// - Any file explicitly passed in `paths`, it will include that file in the
 ///   result, regardless of the file extension
+#[cfg(feature = "risc0-hack")]
 pub fn find_filenames<Predicate: FnMut(&Path) -> bool>(
     paths: &[impl AsRef<Path>],
     mut is_file_desired: Predicate,
@@ -104,6 +106,7 @@ pub fn find_filenames<Predicate: FnMut(&Path) -> bool>(
 ///   `MOVE_EXTENSION` found recursively in that directory
 /// - If `keep_specified_files` any file explicitly passed in `paths`, will be
 ///   added to the result Otherwise, they will be discarded
+#[cfg(feature = "risc0-hack")]
 pub fn find_move_filenames(
     paths: &[impl AsRef<Path>],
     keep_specified_files: bool,
@@ -126,6 +129,7 @@ pub fn find_move_filenames(
 
 /// Similar to find_filenames but it will keep any file explicitly passed in
 /// `paths`
+#[cfg(feature = "risc0-hack")]
 pub fn find_filenames_and_keep_specified<Predicate: FnMut(&Path) -> bool>(
     paths: &[impl AsRef<Path>],
     is_file_desired: Predicate,
@@ -205,6 +209,7 @@ pub fn verify_and_create_named_address_mapping<T: Copy + std::fmt::Display + Eq>
 /// whether the path did not exist, or if there were other errors in determining
 /// if the path existed. It implements the same functionality as try_exists
 /// above but for the virtual file system
+#[cfg(feature = "risc0-hack")]
 pub fn try_exists_vfs(vfs_path: &VfsPath) -> VfsResult<bool> {
     use VfsResult as R;
     match vfs_path.metadata() {
@@ -221,6 +226,7 @@ pub fn try_exists_vfs(vfs_path: &VfsPath) -> VfsResult<bool> {
 ///
 /// It implements the same functionality as find_filenames above but for the
 /// virtual file system
+#[cfg(feature = "risc0-hack")]
 pub fn find_filenames_vfs<Predicate: FnMut(&VfsPath) -> bool>(
     paths: &[VfsPath],
     mut is_file_desired: Predicate,
@@ -257,6 +263,7 @@ pub fn find_filenames_vfs<Predicate: FnMut(&VfsPath) -> bool>(
 /// Otherwise, they will be discarded
 /// It implements the same functionality as find_move_filenames above but for
 /// the virtual file system
+#[cfg(feature = "risc0-hack")]
 pub fn find_move_filenames_vfs(
     paths: &[VfsPath],
     keep_specified_files: bool,

@@ -10,9 +10,13 @@ mod checked {
     use std::{collections::HashSet, sync::Arc};
 
     use iota_move_natives::all_natives;
+    #[cfg(not(feature = "risc0-hack-metrics"))]
+    use iota_move_natives::metrics::LimitsMetrics;
     use iota_protocol_config::{LimitThresholdCrossed, ProtocolConfig, check_limit_by_meter};
     #[cfg(msim)]
     use iota_types::iota_system_state::advance_epoch_result_injection::maybe_modify_result;
+    #[cfg(feature = "risc0-hack-metrics")]
+    use iota_types::metrics::LimitsMetrics;
     use iota_types::{
         BRIDGE_ADDRESS, IOTA_AUTHENTICATOR_STATE_OBJECT_ID, IOTA_BRIDGE_OBJECT_ID,
         IOTA_FRAMEWORK_ADDRESS, IOTA_FRAMEWORK_PACKAGE_ID, IOTA_RANDOMNESS_STATE_OBJECT_ID,
@@ -49,7 +53,6 @@ mod checked {
             ADVANCE_EPOCH_FUNCTION_NAME, AdvanceEpochParams, IOTA_SYSTEM_MODULE_NAME,
         },
         messages_checkpoint::CheckpointTimestamp,
-        metrics::LimitsMetrics,
         object::{OBJECT_START_VERSION, Object, ObjectInner},
         programmable_transaction_builder::ProgrammableTransactionBuilder,
         randomness_state::{RANDOMNESS_MODULE_NAME, RANDOMNESS_STATE_UPDATE_FUNCTION_NAME},
@@ -74,6 +77,20 @@ mod checked {
         type_layout_resolver::TypeLayoutResolver,
     };
 
+    #[cfg(feature = "risc0-hack-gas")]
+    pub type ExecutionResult<Mode> = (
+        InnerTemporaryStore,
+        IotaGasStatus,
+        TransactionEffects,
+        Result<<Mode as ExecutionMode>::ExecutionResults, ExecutionError>,
+    );
+    #[cfg(not(feature = "risc0-hack-gas"))]
+    pub type ExecutionResult<Mode> = (
+        InnerTemporaryStore,
+        TransactionEffects,
+        Result<<Mode as ExecutionMode>::ExecutionResults, ExecutionError>,
+    );
+
     /// The main entry point to the adapter's transaction execution. It
     /// prepares a transaction for execution, then executes it through an
     /// inner execution method and finally produces an instance of
@@ -89,8 +106,8 @@ mod checked {
     pub fn execute_transaction_to_effects<Mode: ExecutionMode>(
         store: &dyn BackingStore,
         input_objects: CheckedInputObjects,
-        gas_coins: Vec<ObjectRef>,
-        gas_status: IotaGasStatus,
+        #[cfg(feature = "risc0-hack-gas")] gas_coins: Vec<ObjectRef>,
+        #[cfg(feature = "risc0-hack-gas")] gas_status: IotaGasStatus,
         transaction_kind: TransactionKind,
         transaction_signer: IotaAddress,
         transaction_digest: TransactionDigest,
@@ -98,15 +115,10 @@ mod checked {
         epoch_id: &EpochId,
         epoch_timestamp_ms: u64,
         protocol_config: &ProtocolConfig,
-        metrics: Arc<LimitsMetrics>,
+        #[cfg(feature = "risc0-hack-metrics")] metrics: Arc<LimitsMetrics>,
         enable_expensive_checks: bool,
         certificate_deny_set: &HashSet<TransactionDigest>,
-    ) -> (
-        InnerTemporaryStore,
-        IotaGasStatus,
-        TransactionEffects,
-        Result<Mode::ExecutionResults, ExecutionError>,
-    ) {
+    ) -> ExecutionResult<Mode> {
         let input_objects = input_objects.into_inner();
         let mutable_inputs = if enable_expensive_checks {
             input_objects.mutable_inputs().keys().copied().collect()
@@ -128,8 +140,16 @@ mod checked {
             *epoch_id,
         );
 
+        #[cfg(feature = "risc0-hack-gas")]
         let mut gas_charger =
             GasCharger::new(transaction_digest, gas_coins, gas_status, protocol_config);
+        #[cfg(not(feature = "risc0-hack-gas"))]
+        // ZKVM gas charger.
+        let mut gas_charger = GasCharger::new();
+
+        #[cfg(not(feature = "risc0-hack-metrics"))]
+        // Create a ZKVM stub metrics object instead of original.
+        let metrics = Arc::new(LimitsMetrics);
 
         let mut tx_ctx = TxContext::new_from_components(
             &transaction_signer,
@@ -236,6 +256,7 @@ mod checked {
 
         (
             inner,
+            #[cfg(feature = "risc0-hack-gas")]
             gas_charger.into_gas_status(),
             effects,
             execution_result,
@@ -502,6 +523,7 @@ mod checked {
     /// limits based on the protocol configuration. For metered
     /// transactions, it enforces hard limits, while for system transactions, it
     /// allows soft limits with warnings.
+    #[cfg(feature = "risc0-hack-metrics")]
     #[instrument(name = "check_meter_limit", level = "debug", skip_all)]
     fn check_meter_limit(
         temporary_store: &mut TemporaryStore<'_>,
@@ -540,11 +562,21 @@ mod checked {
             )),
         }
     }
+    #[cfg(not(feature = "risc0-hack-metrics"))]
+    fn check_meter_limit(
+        _temporary_store: &mut TemporaryStore<'_>,
+        _gas_charger: &mut GasCharger,
+        _protocol_config: &ProtocolConfig,
+        _metrics: Arc<LimitsMetrics>,
+    ) -> Result<(), ExecutionError> {
+        Ok(())
+    }
 
     /// Checks if the total size of written objects in the transaction exceeds
     /// the limits defined in the protocol configuration. For metered
     /// transactions, it enforces a hard limit, while for system transactions,
     /// it allows a soft limit with warnings.
+    #[cfg(feature = "risc0-hack-metrics")]
     #[instrument(name = "check_written_objects_limit", level = "debug", skip_all)]
     fn check_written_objects_limit<Mode: ExecutionMode>(
         temporary_store: &mut TemporaryStore<'_>,
@@ -585,6 +617,15 @@ mod checked {
             };
         }
 
+        Ok(())
+    }
+    #[cfg(not(feature = "risc0-hack-metrics"))]
+    fn check_written_objects_limit<Mode: ExecutionMode>(
+        _temporary_store: &mut TemporaryStore<'_>,
+        _gas_charger: &mut GasCharger,
+        _protocol_config: &ProtocolConfig,
+        _metrics: Arc<LimitsMetrics>,
+    ) -> Result<(), ExecutionError> {
         Ok(())
     }
 

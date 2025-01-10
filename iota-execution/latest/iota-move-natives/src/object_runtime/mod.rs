@@ -12,6 +12,8 @@ use std::{
 use better_any::{Tid, TidAble};
 use indexmap::{map::IndexMap, set::IndexSet};
 use iota_protocol_config::{LimitThresholdCrossed, ProtocolConfig, check_limit_by_meter};
+#[cfg(feature = "risc0-hack-metrics")]
+use iota_types::metrics::LimitsMetrics;
 use iota_types::{
     IOTA_AUTHENTICATOR_STATE_OBJECT_ID, IOTA_BRIDGE_OBJECT_ID, IOTA_CLOCK_OBJECT_ID,
     IOTA_DENY_LIST_OBJECT_ID, IOTA_RANDOMNESS_STATE_OBJECT_ID, IOTA_SYSTEM_STATE_OBJECT_ID,
@@ -20,7 +22,6 @@ use iota_types::{
     error::{ExecutionError, ExecutionErrorKind, VMMemoryLimitExceededSubStatusCode},
     execution::DynamicallyLoadedObjectMetadata,
     id::UID,
-    metrics::LimitsMetrics,
     object::{MoveObject, Owner},
     storage::ChildObjectResolver,
 };
@@ -43,6 +44,8 @@ use tracing::error;
 
 use self::object_store::{ChildObjectEffect, ObjectResult};
 use super::get_object_id;
+#[cfg(not(feature = "risc0-hack-metrics"))]
+use crate::metrics::LimitsMetrics;
 
 pub enum ObjectEvent {
     /// Transfer to a new address or object. Or make it shared or immutable.
@@ -187,6 +190,7 @@ impl<'a> ObjectRuntime<'a> {
     pub fn new_id(&mut self, id: ObjectID) -> PartialVMResult<()> {
         // If metered, we use the metered limit (non system tx limit) as the hard limit
         // This macro takes care of that
+        #[cfg(feature = "risc0-hack-metrics")]
         if let LimitThresholdCrossed::Hard(_, lim) = check_limit_by_meter!(
             self.is_metered,
             self.state.new_ids.len(),
@@ -217,6 +221,7 @@ impl<'a> ObjectRuntime<'a> {
         // be called based on the `was_new` flag
         // Metered transactions don't have limits for now
 
+        #[cfg(feature = "risc0-hack-metrics")]
         if let LimitThresholdCrossed::Hard(_, lim) = check_limit_by_meter!(
             self.is_metered,
             self.state.deleted_ids.len(),
@@ -282,6 +287,7 @@ impl<'a> ObjectRuntime<'a> {
 
         // Metered transactions don't have limits for now
 
+        #[cfg(feature = "risc0-hack-metrics")]
         if let LimitThresholdCrossed::Hard(_, lim) = check_limit_by_meter!(
             // TODO: is this not redundant? Metered TX implies framework obj cannot be transferred
             self.is_metered && !is_framework_obj, /* We have higher limits for unmetered

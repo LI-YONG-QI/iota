@@ -94,6 +94,7 @@ const STACK_PER_CALL: usize = 1024 * 1024 * 8; // 8MB
 /// The `grow_stack` call takes two arguments, `RED_ZONE` and `STACK_SIZE`. It
 /// then checks to see if we're within `RED_ZONE` bytes of the end of the stack,
 /// and will allocate a new stack of at least `STACK_SIZE` bytes if so.
+#[cfg(not(target_os = "zkvm"))]
 #[proc_macro_attribute]
 pub fn growing_stack(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let input_fn = parse_macro_input!(item as ItemFn);
@@ -111,4 +112,15 @@ pub fn growing_stack(_attr: TokenStream, item: TokenStream) -> TokenStream {
     };
 
     output.into()
+}
+
+/// This is a workaround to disable `stacker` which doesn't support RISC Zero ZKVM.
+/// `#[growing_stack]` is mainly needed for move compiler routines.
+/// In ZKVM we don't run it, only Move VM itself.
+/// Hopefully, stack will be big enough to run move scripts.
+/// Ideally, `stacker` would support `target_os = "zkvm"`.
+#[cfg(target_os = "zkvm")]
+#[proc_macro_attribute]
+pub fn growing_stack(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    item
 }

@@ -9,6 +9,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use strum::{AsRefStr, IntoStaticStr};
 use thiserror::Error;
+#[cfg(feature = "risc0-hack")]
 use tonic::Status;
 use typed_store_error::TypedStoreError;
 
@@ -716,6 +717,7 @@ impl From<ExecutionError> for IotaError {
     }
 }
 
+#[cfg(feature = "risc0-hack")]
 impl From<Status> for IotaError {
     fn from(status: Status) -> Self {
         if status.message() == "Too many requests" {
@@ -745,6 +747,7 @@ impl From<crate::storage::error::Error> for IotaError {
     }
 }
 
+#[cfg(feature = "risc0-hack")]
 impl From<IotaError> for Status {
     fn from(error: IotaError) -> Self {
         let bytes = bcs::to_bytes(&error).unwrap();

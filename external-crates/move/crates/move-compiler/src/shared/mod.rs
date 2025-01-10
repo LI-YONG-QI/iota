@@ -31,6 +31,7 @@ use crate::{
         visitor::{TypingVisitor, TypingVisitorObj},
     },
 };
+#[cfg(feature = "risc0-hack")]
 use clap::*;
 use move_command_line_common::files::FileHash;
 use move_ir_types::location::*;
@@ -47,6 +48,7 @@ use std::{
         Arc,
     },
 };
+#[cfg(feature = "risc0-hack")]
 use vfs::{VfsError, VfsPath};
 
 pub mod ast_debug;
@@ -738,19 +740,20 @@ pub fn format_comma<T: fmt::Display, I: IntoIterator<Item = T>>(items: I) -> Str
 // Flags
 //**************************************************************************************************
 
-#[derive(Clone, Debug, Eq, PartialEq, Parser)]
+#[derive(Clone, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "risc0-hack", derive(Parser))]
 pub struct Flags {
     /// Compile in test mode
-    #[clap(
+    #[cfg_attr(feature = "risc0-hack", clap(
         short = cli::TEST_SHORT,
         long = cli::TEST,
-    )]
+    ))]
     test: bool,
 
     /// If set, warnings become errors.
-    #[clap(
+    #[cfg_attr(feature = "risc0-hack", clap(
         long = cli::WARNINGS_ARE_ERRORS,
-    )]
+    ))]
     warnings_are_errors: bool,
 
     /// If set, report errors as json.
@@ -760,31 +763,31 @@ pub struct Flags {
     json_errors: bool,
 
     /// If set, all warnings are silenced
-    #[clap(
+    #[cfg_attr(feature = "risc0-hack", clap(
         long = cli::SILENCE_WARNINGS,
         short = cli::SILENCE_WARNINGS_SHORT,
-    )]
+    ))]
     silence_warnings: bool,
 
     /// If set, source files will not shadow dependency files. If the same file
     /// is passed to both, an error will be raised
-    #[clap(
+    #[cfg_attr(feature = "risc0-hack", clap(
         name = "SOURCES_SHADOW_DEPS",
         short = cli::SHADOW_SHORT,
         long = cli::SHADOW,
-    )]
+    ))]
     shadow: bool,
 
     /// Bytecode version.
-    #[clap(
+    #[cfg_attr(feature = "risc0-hack", clap(
         long = cli::BYTECODE_VERSION,
-    )]
+    ))]
     bytecode_version: Option<u32>,
 
     /// Internal flag used by the model builder to maintain functions which
     /// would be otherwise included only in tests, without creating the unit
     /// test code regular tests do.
-    #[clap(skip)]
+    #[cfg_attr(feature = "risc0-hack", clap(skip))]
     keep_testing_functions: bool,
 
     /// If set, we are in IDE testing mode. This will report IDE annotations as
@@ -1249,8 +1252,10 @@ pub struct IndexedPackagePath<P> {
 
 pub type IndexedPhysicalPackagePath = IndexedPackagePath<Symbol>;
 
+#[cfg(feature = "risc0-hack")]
 pub type IndexedVfsPackagePath = IndexedPackagePath<VfsPath>;
 
+#[cfg(feature = "risc0-hack")]
 pub fn vfs_path_from_str(path: String, vfs_path: &VfsPath) -> Result<VfsPath, VfsError> {
     // we need to canonicalized paths for virtual file systems as some of them
     // (e.g., implementation of the physical one) cannot handle relative paths
@@ -1265,6 +1270,7 @@ pub fn vfs_path_from_str(path: String, vfs_path: &VfsPath) -> Result<VfsPath, Vf
     vfs_path.join(canonicalize(path))
 }
 
+#[cfg(feature = "risc0-hack")]
 impl IndexedPhysicalPackagePath {
     pub fn to_vfs_path(self, vfs_root: &VfsPath) -> Result<IndexedVfsPackagePath, VfsError> {
         let IndexedPhysicalPackagePath {

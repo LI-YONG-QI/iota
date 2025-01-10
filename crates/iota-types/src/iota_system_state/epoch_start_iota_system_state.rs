@@ -4,6 +4,7 @@
 
 use std::collections::HashMap;
 
+#[cfg(feature = "risc0-hack")]
 use anemo::{
     PeerId,
     types::{PeerAffinity, PeerInfo},
@@ -33,7 +34,9 @@ pub trait EpochStartSystemStateTrait {
     fn get_iota_committee(&self) -> Committee;
     fn get_iota_committee_with_network_metadata(&self) -> CommitteeWithNetworkMetadata;
     fn get_consensus_committee(&self) -> ConsensusCommittee;
+    #[cfg(feature = "risc0-hack")]
     fn get_validator_as_p2p_peers(&self, excluding_self: AuthorityName) -> Vec<PeerInfo>;
+    #[cfg(feature = "risc0-hack")]
     fn get_authority_names_to_peer_ids(&self) -> HashMap<AuthorityName, PeerId>;
     fn get_authority_names_to_hostnames(&self) -> HashMap<AuthorityName, String>;
 }
@@ -221,6 +224,7 @@ impl EpochStartSystemStateTrait for EpochStartSystemStateV1 {
         ConsensusCommittee::new(self.epoch as consensus_config::Epoch, authorities)
     }
 
+    #[cfg(feature = "risc0-hack")]
     fn get_validator_as_p2p_peers(&self, excluding_self: AuthorityName) -> Vec<PeerInfo> {
         self.active_validators
             .iter()
@@ -247,6 +251,7 @@ impl EpochStartSystemStateTrait for EpochStartSystemStateV1 {
             .collect()
     }
 
+    #[cfg(feature = "risc0-hack")]
     fn get_authority_names_to_peer_ids(&self) -> HashMap<AuthorityName, PeerId> {
         self.active_validators
             .iter()
