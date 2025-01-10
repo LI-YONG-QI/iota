@@ -12,8 +12,14 @@ By default, it runs as a single node:
 
 ## Cluster
 
-To run the setup for `docker/iota-private-network`:
+To run the setup for `docker/iota-private-network`, make an `.env` file with the following content:
 
 ```bash
-./run.sh --cluster
+PROMETHEUS_CONFIG_FILE=prometheus-cluster.yml
+```
+
+Then run the setup:
+
+```bash
+./run.sh
 ```

@@ -24,7 +24,7 @@ services:
     networks:
       iota-network:
     volumes:
-      - ./prometheus.yaml:/etc/prometheus.yaml
+      - ./${PROMETHEUS_CONFIG_FILE:-prometheus.yaml}:/etc/prometheus.yaml
     ports:
       - "9090:9090"
     extra_hosts:

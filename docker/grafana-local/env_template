@@ -1,0 +1,18 @@
+# This is an example configuration file.
+# Keep this file as an example and make a working file with the following command:
+#
+#   cp env_template .env
+#
+# You can edit the .env file with a command like: 
+#
+#   nano .env 
+#
+# The .env file is your personal configuration and is used by Docker.
+# Uncomment and edit the lines to fit your needs
+
+######################
+# Prometheus setup section #
+######################
+
+# The default file for the prometheus is promethueus.yaml. If you want to change that, uncomment the following line.
+#PROMETHEUS_CONFIG_FILE=prometheus.yaml
