@@ -1,0 +1,26 @@
+# This is an example configuration file.
+# Keep this file as an example and make a working file with the following command:
+#
+#   cp env_template .env
+#
+# You can edit the .env file with a command like:
+#
+#   nano .env
+#
+# The .env file is your personal configuration and is used by Docker.
+# Uncomment and edit the lines to fit your needs
+
+
+####################
+# monitoring section #
+####################
+
+# Provide path to the grafana setup directory containing the docker compose file for grafana network
+GRAFANA_DIR="../grafana-local"
+
+####################
+# node section #
+####################
+
+# Uncomment to enable opentelemestry in node, used for tempo tracing.  Value 'off' means tracing is not active from the start, use admin commands to control it.
+TRACE_FILTER=off

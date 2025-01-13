@@ -1,0 +1,8 @@
+services:
+  fullnode:
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    external: true

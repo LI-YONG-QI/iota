@@ -1,5 +1,4 @@
 ---
-version: "3.9"
 services:
   fullnode:
     # Note: Update the tag to the latest version of iotaledger/iota-node for mainnet or testnet.
@@ -19,13 +18,6 @@ services:
       "--config-path",
       "/opt/iota/config/fullnode.yaml",
     ]
-    networks:
-      - iota-network
+
 volumes:
   iotadb:
-
-# network for grafana
-networks:
-  monitoring:
-    name: monitoring
-    driver: bridge
