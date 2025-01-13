@@ -4,7 +4,7 @@ This repository provides a setup for running Grafana, Prometheus and Tempo local
 
 ## Single Node (Default)
 
-By default, it runs as a single node:
+To run the grafana docker setup for the node, run the following command:
 
 ```bash
 ./run.sh
@@ -12,14 +12,7 @@ By default, it runs as a single node:
 
 ## Cluster
 
-To run the setup for `docker/iota-private-network`, make an `.env` file with the following content:
-
+To run the setup for `docker/iota-private-network`, provide the PROMETHEUS_CONFIG_FILE environment variable:
 ```bash
-PROMETHEUS_CONFIG_FILE=prometheus-cluster.yml
-```
-
-Then run the setup:
-
-```bash
-./run.sh
+PROMETHEUS_CONFIG_FILE=prometheus-cluster.yml ./run.sh
 ```
