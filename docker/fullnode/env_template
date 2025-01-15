@@ -22,5 +22,14 @@ GRAFANA_DIR="../grafana-local"
 # node section #
 ####################
 
+# HTTP setup is exposed on localhost only by default.
+# If you want to expose it in your local network, specify the local IP address of the node in your network.
+#NODE_HOST=node.your-domain.com
+
+# You need to specify your email address to automatically get a valid SSL certificate via "letsencrypt.org"
+#ACME_EMAIL=your-email@example.com
+
 # Uncomment to enable opentelemestry in node, used for tempo tracing.  Value 'off' means tracing is not active from the start, use admin commands to control it.
 TRACE_FILTER=off
+
+

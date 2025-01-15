@@ -19,5 +19,47 @@ services:
       "/opt/iota/config/fullnode.yaml",
     ]
 
+    depends_on:
+      traefik:
+        condition: service_started
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fullnode.service=fullnode"
+      - "traefik.http.routers.fullnode.rule=Host(`${NODE_HOST:-localhost}`)"
+      - "traefik.http.routers.fullnode.entrypoints=web"
+      - "traefik.http.services.fullnode.loadbalancer.server.port=1337"
+#      - "traefik.http.routers.fullnode.entrypoints=websecure"
+#      - "traefik.http.routers.fullnode.tls=true"
+#      - "traefik.http.routers.fullnode.tls.certresolver=myresolver"
+#      -
+
+  ##################################################################
+  #  Reverse Proxy and SSL                                         #
+  ##################################################################
+
+  traefik:
+    container_name: traefik
+    image: traefik:v2.10
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--metrics.prometheus=true"
+#      - "--api.insecure=true"
+#      - "--log.level=DEBUG"
+#      - "--entrypoints.websecure.address=:443"
+#      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+#      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+#      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+#      - "--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL}"
+#      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80/tcp"
+#      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./data/letsencrypt:/letsencrypt"
+
 volumes:
   iotadb:
