@@ -1,0 +1,21 @@
+services:
+  tempo:
+    networks:
+        - iota-network
+
+  prometheus:
+    networks:
+      - iota-network
+
+  grafana:
+    networks:
+      - iota-network
+
+  node-exporter:
+    networks:
+      - iota-network
+
+networks:
+  iota-network:
+    external:
+        name: iota-network-node

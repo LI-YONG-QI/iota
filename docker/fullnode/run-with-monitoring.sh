@@ -17,7 +17,7 @@ else
   echo "TRACE_FILTER set to ${TRACE_FILTER}, opentelemetry enabled"
 fi
 
-MONITORING_NETWORK=monitoring
+MONITORING_NETWORK=iota-network-node
 # Network
 if ! docker network ls | grep -q $MONITORING_NETWORK; then
   echo "Creating ${MONITORING_NETWORK} network..."
@@ -33,5 +33,6 @@ cd "${GRAFANA_DIR}" || exit
 
 cd - || exit
 
+
 echo "Starting the node with monitoring network in a detached mode..."
-docker compose -f docker-compose.yaml -f "${GRAFANA_DIR}/docker-compose-override.yaml" up -d
+docker compose -f docker-compose.yaml -f "${GRAFANA_DIR}/docker-compose-node-override.yaml" up -d

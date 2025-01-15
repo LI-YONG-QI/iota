@@ -1,0 +1,9 @@
+services:
+  fullnode:
+    networks:
+      - iota-network
+
+networks:
+  iota-network:
+    external:
+      name: iota-network-node
