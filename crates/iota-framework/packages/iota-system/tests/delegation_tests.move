@@ -533,6 +533,100 @@ module iota_system::stake_tests {
         scenario_val.end();
     }
 
+    #[test]
+    fun test_staking_pool_last_epoch_rewards() {
+        use iota::coin::Coin;
+        use iota::iota::IOTA;
+        use std::debug::print;
+
+        // 0x1 validator has 100 IOTA in the pool
+        // 0x2 validator has 100 IOTA in the pool
+        set_up_iota_system_state();
+
+        let mut scenario_val = test_scenario::begin(@0x0);
+        let scenario = &mut scenario_val;
+
+        // Staked 100 IOTA with 0x2
+        // the stake activates at the end of epoch 1 and starts earning rewards from epoch 2
+        stake_with(@0x42, @0x2, 100, scenario);
+        scenario.next_tx(@0x42);
+        let staked_iota = scenario.take_from_address<StakedIota>(@0x42);
+        let pool_id = staked_iota.pool_id();
+        test_scenario::return_to_address(@0x42, staked_iota);
+
+        // epoch 0 -> 1
+        // advances epoch to effectuate the stake, so 0x42 starts earning rewards for epoch 2
+        advance_epoch(scenario);
+
+        // epoch 1 -> 2
+        // Each staking pool gets 10 IOTA of rewards.
+        advance_epoch_with_reward_amounts(0, 20, scenario);
+        // pool of 0x2 has: 210 IOTA, 200 pool tokens
+
+        // Unstake the stake
+        scenario.next_tx(@0x42);
+        let mut system_state = scenario.take_shared<IotaSystemState>();
+        let staked_iota = scenario.take_from_address<StakedIota>(@0x42);
+        // Withdrawing the stakes looks at the principal amount and calculates the pool tokens to withdraw based on the exchange
+        // rate at the time of the stake activation.
+        // The exchange rate at the beginning of epoch 2 was 200 IOTA for 200 pool tokens, so 1:1.
+        // Now the pool has 210 iota tokens and 200 pool tokens, so the staker gets 105 IOTA for 100 pool tokens.
+        system_state.request_withdraw_stake(staked_iota, scenario.ctx());
+        test_scenario::return_shared(system_state);
+        scenario.next_tx(@0x42);
+
+        // pool of 0x2 has: 105 IOTA, 100 pool tokens
+
+        // Ensure that the rewards for 0x42 is 5 IOTA
+        let total_funds = scenario.take_from_address<Coin<IOTA>>(@0x42);
+        print(&total_funds.value());
+        assert_eq(total_funds.value(), 105 * NANOS_PER_IOTA);
+        test_scenario::return_to_address(@0x42, total_funds);
+
+        // epoch 2 -> 3
+        // Each staking pool gets 10 IOTA of rewards.
+        advance_epoch_with_reward_amounts(0, 20, scenario);
+        // pool of 0x2 has: 115 IOTA, 100 pool tokens
+
+        // unstake everything from 0x2
+        scenario.next_tx(@0x2);
+        let mut system_state = scenario.take_shared<IotaSystemState>();
+        let validator_staked_iota = scenario.take_from_address<StakedIota>(@0x2);
+        system_state.request_withdraw_stake(validator_staked_iota, scenario.ctx());
+        scenario.next_tx(@0x2);
+
+        // check the payout, it should be 115 IOTAs for the initially invested 100 IOTAs.
+        // during the staking period, the pool received 2x10 IOTAs as rewards, which would be equally distributed among 0x2 and 0x42,
+        // but since 0x42 already withdrew in the middle of the epoch 2, 0x2 gets the full its share of the rewards. (15 in total)
+        let total_funds = scenario.take_from_address<Coin<IOTA>>(@0x2);
+        print(&total_funds.value());
+        assert_eq(total_funds.value(), 115 * NANOS_PER_IOTA);
+        test_scenario::return_to_address(@0x2, total_funds);
+        test_scenario::return_shared(system_state);
+
+        // epoch 3 -> 4
+        advance_epoch_with_reward_amounts(0, 20, scenario);
+
+        let mut system_state = scenario.take_shared<IotaSystemState>();
+        let rates = system_state.pool_exchange_rates(&pool_id);
+        assert_eq(rates.length(), 5);
+        assert_exchange_rate_eq(rates, 0, 0, 0);     // no tokens at epoch 0
+        assert_exchange_rate_eq(rates, 1, 200, 200); // 200 IOTA of self + delegate stake at epoch 1
+        assert_exchange_rate_eq(rates, 2, 210, 200); // 10 IOTA of rewards at epoch 2
+        assert_exchange_rate_eq(rates, 3, 115, 100); // +10 IOTA of rewards at epoch 3, - 5 IOTA of rewards returned to 0x42
+        assert_exchange_rate_eq(rates, 4, 10, 10); // +10 IOTA of rewards at epoch 4, -115 returned to 0x2
+
+        // at this point there are only rewards left in the pool, and there is no staker any more, so no-one can withdraw them
+        // This is becuase the validator commission in the tests is set to 0.
+        // If it wasn't 0, then the validator would be receiving `StakedIota` from depositing the rewards commission into the pool BEFORE the actual rewards are deposited,
+        // hence that `StakedIota` would be able to withdraw the rewards.
+        // In this example the validator gets the full rewards of withdrawn stakes for the last epoch.
+        // In pracice however, there are many other stakers who "own" pool tokens, hence the rewards are distributed among them.
+        test_scenario::return_shared(system_state);
+
+        scenario_val.end();
+    }
+
     fun assert_exchange_rate_eq(
         rates: &Table<u64, PoolTokenExchangeRate>, epoch: u64, iota_amount: u64, pool_token_amount: u64
     ) {
