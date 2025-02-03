@@ -25,6 +25,7 @@ use crate::stardust::{
         package_builder,
         package_data::{NativeTokenModuleData, NativeTokenPackageData},
     },
+    types::address_swap_map::AddressSwapMap,
 };
 
 #[test]
@@ -58,7 +59,10 @@ fn create_bag_with_pt() {
     .unwrap();
     let object_count = executor.store().objects().len();
     executor
-        .create_foundries([(&header, &foundry, foundry_package)])
+        .create_foundries(
+            [(&header, &foundry, foundry_package)],
+            &mut AddressSwapMap::default(),
+        )
         .unwrap();
     // Foundry package publication creates five objects
     //

@@ -204,8 +204,10 @@ impl Migration {
                 Ok((header, output, pkg))
             })
             .collect::<Result<Vec<_>>>()?;
-        self.output_objects_map
-            .extend(self.executor.create_foundries(compiled.into_iter())?);
+        self.output_objects_map.extend(
+            self.executor
+                .create_foundries(compiled.into_iter(), &mut self.address_swap_map)?,
+        );
         Ok(())
     }
 

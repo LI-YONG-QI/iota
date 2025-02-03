@@ -227,10 +227,12 @@ impl Executor {
     pub(super) fn create_foundries<'a>(
         &mut self,
         foundries: impl IntoIterator<Item = (&'a OutputHeader, &'a FoundryOutput, CompiledPackage)>,
+        address_swap_map: &mut AddressSwapMap,
     ) -> Result<Vec<(OutputId, CreatedObjects)>> {
         let mut res = Vec::new();
         for (header, foundry, pkg) in foundries {
             let mut created_objects = CreatedObjects::default();
+            let owner = address_swap_map.swap_stardust_to_iota_address(*foundry.alias_address())?;
             let modules = package_module_bytes(&pkg)?;
             let deps = self.checked_system_packages();
             let pt = {
@@ -243,11 +245,11 @@ impl Executor {
                 builder.transfer_arg(Default::default(), upgrade_cap);
                 builder.finish()
             };
-            let InnerTemporaryStore { written, .. } = self.execute_pt_unmetered(deps, pt)?;
+            let InnerTemporaryStore { mut written, .. } = self.execute_pt_unmetered(deps, pt)?;
             // Get on-chain info
             let mut native_token_coin_id = None::<ObjectID>;
             let mut foundry_package = None::<&MovePackage>;
-            for object in written.values() {
+            for object in written.values_mut() {
                 if object.is_package() {
                     foundry_package = Some(
                         object
@@ -264,6 +266,7 @@ impl Executor {
                         created_objects.set_coin_manager(object.id())?;
                     } else if CoinManagerTreasuryCap::is_coin_manager_treasury_cap(&tag) {
                         created_objects.set_coin_manager_treasury_cap(object.id())?;
+                        object.transfer(owner.clone());
                     }
                 }
             }
@@ -284,6 +287,7 @@ impl Executor {
             let amount_coin = create_foundry_amount_coin(
                 &header.output_id(),
                 foundry,
+                owner,
                 &self.tx_context,
                 foundry_package.version(),
                 &self.protocol_config,
