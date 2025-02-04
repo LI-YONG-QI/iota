@@ -3,11 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IotaClient } from '@iota/iota-sdk/client';
-import type { UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
+import type { QueryClient, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 
 import type { PartialBy } from '../types/utilityTypes.js';
 import { useIotaClientContext } from './useIotaClient.js';
+import { IotaClientProviderContext } from '../components/IotaClientProvider.js';
 
 export type IotaRpcMethodName = {
     [K in keyof IotaClient]: IotaClient[K] extends
@@ -71,4 +72,39 @@ export function useIotaClientQuery<
             )) as IotaRpcMethods[T]['result'];
         },
     });
+}
+
+export async function fetchIotaClientQuery<T extends keyof IotaRpcMethods,
+    TData = IotaRpcMethods[T]['result'],
+>(
+    queryClient: QueryClient,
+    iotaContext: IotaClientProviderContext,
+    ...args: undefined extends IotaRpcMethods[T]['params']
+        ? [
+              method: T,
+              params?: IotaRpcMethods[T]['params'],
+              options?: UseIotaClientQueryOptions<T, TData>,
+          ]
+        : [
+              method: T,
+              params: IotaRpcMethods[T]['params'],
+              options?: UseIotaClientQueryOptions<T, TData>,
+          ]
+){
+
+    const [method, params, { queryKey = [], ...options } = {}] = args as [
+        method: T,
+        params?: IotaRpcMethods[T]['params'],
+        options?: UseIotaClientQueryOptions<T, TData>,
+    ];
+
+    return queryClient.ensureQueryData({
+        ...options,
+        queryKey: [iotaContext.network, method, params, ...queryKey],
+        queryFn: async () => {
+            return (await iotaContext.client[method](
+                params as never,
+            )) as IotaRpcMethods[T]['result'];
+        },
+    })
 }
