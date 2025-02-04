@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Controller, Header, HttpStatus, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 
 @Controller('/api/restricted')
 export class RestrictedController {

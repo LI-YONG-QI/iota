@@ -4,9 +4,8 @@
 import { AppFactory } from './AppFactory.js';
 
 async function bootstrap() {
-  const { appPromise } = AppFactory.create();
+  const { appPromise } = AppFactory.create(false);
   const app = await appPromise;
-
   await app.listen(process.env.PORT ?? 3003);
 }
 bootstrap();

@@ -4,4 +4,4 @@
 
 import { AppFactory } from "../src/AppFactory";
 
-export default AppFactory.create().expressApp;
+export default AppFactory.create(true).expressApp;

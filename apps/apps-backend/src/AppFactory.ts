@@ -8,7 +8,7 @@ import { AppModule } from "./app.module";
 import { INestApplication } from "@nestjs/common";
 
 export class AppFactory {
-  static create(): {
+  static create(isServerless: boolean): {
     appPromise: Promise<INestApplication<any>>;
     expressApp: Express;
   } {
@@ -24,7 +24,9 @@ export class AppFactory {
           credentials: true,
         });
 
-        app.init();
+        if(isServerless) {
+            app.init();
+        }
       })
       .catch((err) => {
         throw err;
