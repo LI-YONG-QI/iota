@@ -371,7 +371,7 @@
             "refId": "A"
           }
         ],
-        "title": "Transaction per seconds",
+      "title": "Transaction per second",
         "type": "stat"
       },
       {
