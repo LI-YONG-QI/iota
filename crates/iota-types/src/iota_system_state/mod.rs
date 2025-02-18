@@ -12,6 +12,7 @@ use serde::{Deserialize, Serialize, de::DeserializeOwned};
 
 use self::{
     iota_system_state_inner_v1::{IotaSystemStateV1, ValidatorV1},
+    iota_system_state_inner_v2::ValidatorV2,
     iota_system_state_summary::{IotaSystemStateSummary, IotaValidatorSummary},
 };
 use crate::{
@@ -29,6 +30,7 @@ use crate::{
 
 pub mod epoch_start_iota_system_state;
 pub mod iota_system_state_inner_v1;
+pub mod iota_system_state_inner_v2;
 pub mod iota_system_state_summary;
 
 #[cfg(msim)]
@@ -329,6 +331,17 @@ where
     match version {
         1 => {
             let validator: ValidatorV1 =
+                get_dynamic_field_from_store(object_store, versioned.id.id.bytes, &version)
+                    .map_err(|err| {
+                        IotaError::IotaSystemStateRead(format!(
+                            "Failed to load inner validator from the wrapper: {:?}",
+                            err
+                        ))
+                    })?;
+            Ok(validator.into_iota_validator_summary())
+        }
+        2 => {
+            let validator: ValidatorV2 =
                 get_dynamic_field_from_store(object_store, versioned.id.id.bytes, &version)
                     .map_err(|err| {
                         IotaError::IotaSystemStateRead(format!(
