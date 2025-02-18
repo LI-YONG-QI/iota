@@ -47,7 +47,7 @@ module iota_system::iota_system {
     use iota::iota::{IOTA, IotaTreasuryCap};
     use iota::table::Table;
     use iota::system_admin_cap::IotaSystemAdminCap;
-    use iota_system::validator::ValidatorV1;
+    use iota_system::validator_v1::ValidatorV1;
     use iota_system::validator_cap::UnverifiedValidatorOperationCap;
     use iota_system::iota_system_state_inner::{Self, SystemParametersV1, IotaSystemStateV1, IotaSystemStateV2};
     use iota_system::staking_pool::PoolTokenExchangeRate;
@@ -55,7 +55,7 @@ module iota_system::iota_system {
     use iota::vec_map::VecMap;
 
     #[test_only] use iota::balance;
-    #[test_only] use iota_system::validator_set::ValidatorSetV1;
+    #[test_only] use iota_system::validator_set::ValidatorSetV2;
     #[test_only] use iota::vec_set::VecSet;
 
     public struct IotaSystemState has key {
@@ -635,26 +635,26 @@ module iota_system::iota_system {
 
     #[test_only]
     /// Return the current validator set
-    public fun validators(wrapper: &mut IotaSystemState): &ValidatorSetV1 {
+    public fun validators(wrapper: &mut IotaSystemState): &ValidatorSetV2 {
         let self = load_system_state(wrapper);
-        self.validators()
+        self.validators()   // todo --- this requires IotaSystemStateV2 which will have ValidatorSetV2
     }
 
     #[test_only]
     /// Return the currently active validator by address
-    public fun active_validator_by_address(self: &mut IotaSystemState, validator_address: address): &ValidatorV1 {
+    public fun active_validator_by_address(self: &mut IotaSystemState, validator_address: address): &ValidatorV2 {
         validators(self).get_active_validator_ref(validator_address)
     }
 
     #[test_only]
     /// Return the currently pending validator by address
-    public fun pending_validator_by_address(self: &mut IotaSystemState, validator_address: address): &ValidatorV1 {
+    public fun pending_validator_by_address(self: &mut IotaSystemState, validator_address: address): &ValidatorV2 {
         validators(self).get_pending_validator_ref(validator_address)
     }
 
     #[test_only]
     /// Return the currently candidate validator by address
-    public fun candidate_validator_by_address(self: &mut IotaSystemState, validator_address: address): &ValidatorV1 {
+    public fun candidate_validator_by_address(self: &mut IotaSystemState, validator_address: address): &ValidatorV2 {
         validators(self).get_candidate_validator_ref(validator_address)
     }
 

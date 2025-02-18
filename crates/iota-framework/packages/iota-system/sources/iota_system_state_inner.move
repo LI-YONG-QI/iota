@@ -7,8 +7,8 @@ module iota_system::iota_system_state_inner {
     use iota::coin::Coin;
     use iota::iota::{IOTA, IotaTreasuryCap};
     use iota::system_admin_cap::IotaSystemAdminCap;
-    use iota_system::validator::{Self, ValidatorV1};
-    use iota_system::validator_set::{Self, ValidatorSetV1};
+    use iota_system::validator_v1::{Self, ValidatorV1};
+    use iota_system::validator_set_v1::{Self, ValidatorSetV1};
     use iota_system::validator_cap::{UnverifiedValidatorOperationCap, ValidatorOperationCap};
     use iota_system::storage_fund::{Self, StorageFundV1};
     use iota_system::staking_pool::{PoolTokenExchangeRate, StakedIota};
@@ -226,7 +226,7 @@ module iota_system::iota_system_state_inner {
         iota_system_admin_cap: IotaSystemAdminCap,
         ctx: &mut TxContext,
     ): IotaSystemStateV1 {
-        let validators = validator_set::new(validators, ctx);
+        let validators = validator_set_v1::new(validators, ctx);
         let reference_gas_price = validators.derive_reference_gas_price();
         // This type is fixed as it's created at genesis. It should not be updated during type upgrade.
         let system_state = IotaSystemStateV1 {
@@ -343,7 +343,7 @@ module iota_system::iota_system_state_inner {
         commission_rate: u64,
         ctx: &mut TxContext,
     ) {
-        let validator = validator::new(
+        let validator = validator_v1::new(
             ctx.sender(),
             authority_pubkey_bytes,
             network_pubkey_bytes,
@@ -949,7 +949,7 @@ module iota_system::iota_system_state_inner {
         let mut voting_powers = vec_map::empty();
         while (!vector::is_empty(&active_validators)) {
             let validator = vector::pop_back(&mut active_validators);
-            let voting_power = validator_set::validator_voting_power(&self.validators, validator);
+            let voting_power = validator_set_v1::validator_voting_power(&self.validators, validator);
             vec_map::insert(&mut voting_powers, validator, voting_power);
         };
         voting_powers
@@ -1091,7 +1091,7 @@ module iota_system::iota_system_state_inner {
         commission_rate: u64,
         ctx: &mut TxContext,
     ) {
-        let validator = validator::new_for_testing(
+        let validator = validator_v1::new_for_testing(
             ctx.sender(),
             pubkey_bytes,
             network_pubkey_bytes,

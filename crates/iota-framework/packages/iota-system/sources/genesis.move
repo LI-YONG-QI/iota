@@ -10,8 +10,8 @@ module iota_system::genesis {
     use iota::iota::{Self, IotaTreasuryCap};
     use iota::system_admin_cap::IotaSystemAdminCap;
     use iota_system::iota_system;
-    use iota_system::validator::{Self, ValidatorV1};
-    use iota_system::validator_set;
+    use iota_system::validator_v1::{Self, ValidatorV1};
+    use iota_system::validator_set_v1;
     use iota_system::iota_system_state_inner;
     use iota_system::timelocked_staking;
 
@@ -122,7 +122,7 @@ module iota_system::genesis {
                 primary_address,
             } = genesis_validators[i];
 
-            let validator = validator::new(
+            let validator = validator_v1::new(
                 iota_address,
                 authority_public_key,
                 network_public_key,
@@ -142,7 +142,7 @@ module iota_system::genesis {
 
             // Ensure that each validator is unique
             assert!(
-                !validator_set::is_duplicate_validator(&validators, &validator),
+                !validator_set_v1::is_duplicate_validator(&validators, &validator),
                 EDuplicateValidator,
             );
 
@@ -209,12 +209,12 @@ module iota_system::genesis {
 
             if (staked_with_validator.is_some()) {
                 let validator_address = staked_with_validator.destroy_some();
-                let validator = validator_set::get_validator_mut(
+                let validator = validator_set_v1::get_validator_mut(
                     validators, validator_address
                 );
                 if (staked_with_timelock_expiration.is_some()) {
                     let timelock_expiration = staked_with_timelock_expiration.destroy_some();
-                    timelocked_staking::request_add_stake_at_genesis(
+                    timelocked_staking::request_add_stake_at_genesis_v1(
                         validator,
                         allocation_balance,
                         recipient_address,
