@@ -150,7 +150,7 @@ module iota_system::validator_v1 {
             extra_fields
         } = self;
         ValidatorV2 {
-            metadata: metadata.v1_to_v2_(),
+            metadata: metadata.metadata_v1_to_v2(),
             voting_power,
             operation_cap_id,
             gas_price,
@@ -163,9 +163,17 @@ module iota_system::validator_v1 {
         }
     }
 
-    // todo --- rename
-    public(package) fun v1_to_v2_(self: ValidatorMetadataV1): ValidatorMetadataV2 {
-        validate_metadata(&self);
+    /// Converts a UDP multiaddr of the form `/[ip4,ip6,dns]/{}/udp/{port}`
+    /// into a TCP address                   `/[ip4,ip6,dns]/{}/tcp/{port}`
+    fun udp_to_tcp_multiaddr(udp_addr: String): String {
+        let index_of_udp = udp_addr.index_of(&b"udp".to_string());
+        let mut udp_addr_vec = udp_addr.into_bytes();
+        *udp_addr_vec.borrow_mut(index_of_udp) = 116;
+        *udp_addr_vec.borrow_mut(index_of_udp + 1) = 99;
+        udp_addr_vec.to_string()
+    }
+
+    public(package) fun metadata_v1_to_v2(self: ValidatorMetadataV1): ValidatorMetadataV2 {
         let ValidatorMetadataV1 {
             iota_address,
             authority_pubkey_bytes,
@@ -188,6 +196,11 @@ module iota_system::validator_v1 {
             next_epoch_primary_address,
             extra_fields,
         } = self;
+
+        let next_epoch_primary_address = next_epoch_primary_address.and!(|e| 
+            option::some(udp_to_tcp_multiaddr(e))
+        );
+
         ValidatorMetadataV2 {
             iota_address,
             authority_pubkey_bytes,
@@ -200,7 +213,7 @@ module iota_system::validator_v1 {
             project_url,
             net_address,
             p2p_address,
-            primary_address,
+            primary_address: udp_to_tcp_multiaddr(primary_address),
             next_epoch_authority_pubkey_bytes,
             next_epoch_network_pubkey_bytes,
             next_epoch_protocol_pubkey_bytes,
@@ -210,7 +223,7 @@ module iota_system::validator_v1 {
             next_epoch_primary_address,
             extra_fields,
         }
-    }    
+    }
 
     public struct ValidatorMetadataV2 has store {
         /// The IOTA Address of the validator. This is the sender that created the ValidatorV1 object,
