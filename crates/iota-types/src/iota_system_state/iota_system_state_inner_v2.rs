@@ -29,7 +29,7 @@ const E_METADATA_INVALID_NET_ADDR: u64 = 4;
 const E_METADATA_INVALID_P2P_ADDR: u64 = 5;
 const E_METADATA_INVALID_PRIMARY_ADDR: u64 = 6;
 
-/// In this version V2, primary_address and next_epoch_primary_address are
+/// In this version V2, `primary_address` and `next_epoch_primary_address` are
 /// enforced to be TCP in verify() function.
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct ValidatorMetadataV2 {
