@@ -52,7 +52,7 @@ const developer = [
                     'developer/cli/cheatsheet',
                 ],
             },
-            'references/rust-sdk',
+            'developer/rust-sdk',
             {
                 type: 'link',
                 label: 'Typescript SDK',
