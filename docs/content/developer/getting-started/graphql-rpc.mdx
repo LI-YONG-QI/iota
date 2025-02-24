@@ -330,7 +330,7 @@ This example uses GraphQL [variables](../graphql-rpc.mdx#variables) and [paginat
 
 ## Executing a transaction
 
-Transaction execution takes in two arguments, `txBytes` and `signatures`. `txBytes` is the serialized unsigned transaction data, which can be generated when using the IOTA CLI's `client call` [command](../../references/cli/client.mdx), to call a Move function by passing the `--serialize-unsigned-transaction` flag. The `signatures` can be generated using IOTA CLI's [keytool](../../references/cli/keytool.mdx) command `iota keytool sign`. More information on IOTA CLI can be found [here](../../references/cli).
+Transaction execution takes in two arguments, `txBytes` and `signatures`. `txBytes` is the serialized unsigned transaction data, which can be generated when using the IOTA CLI's `client call` [command](../../developer/cli/client.mdx), to call a Move function by passing the `--serialize-unsigned-transaction` flag. The `signatures` can be generated using IOTA CLI's [keytool](../../developer/cli/keytool.mdx) command `iota keytool sign`. More information on IOTA CLI can be found [here](../../developer/cli).
 
 ```graphql
 mutation ($tx: String!, $sigs: [String!]!) {
