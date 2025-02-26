@@ -856,7 +856,7 @@ mod tests {
             registry,
             boot_counter,
         )
-            .await;
+        .await;
 
         (authority, receiver)
     }
