@@ -40,7 +40,7 @@ use consensus_config::AuthorityIndex;
 use futures::{StreamExt as _, stream::FuturesOrdered};
 use iota_metrics::spawn_logged_monitored_task;
 use itertools::Itertools as _;
-use parking_lot::{Mutex, RwLock};
+use parking_lot::RwLock;
 use rand::prelude::{SliceRandom as _, ThreadRng};
 use tokio::{
     runtime::Handle,
@@ -503,10 +503,6 @@ impl<C: NetworkClient> CommitSyncer<C> {
         commit_range: CommitRange,
         timeout: Duration,
     ) -> ConsensusResult<(Vec<TrustedCommit>, Vec<VerifiedBlock>)> {
-        const FETCH_RETRY_BASE_INTERVAL: Duration = Duration::from_secs(1);
-        const FETCH_RETRY_INTERVAL_LIMIT: u32 = 30;
-        const MAX_RETRY_INTERVAL: Duration = Duration::from_secs(1);
-
         let _timer = inner
             .context
             .metrics
@@ -549,7 +545,6 @@ impl<C: NetworkClient> CommitSyncer<C> {
             .chunks(inner.context.parameters.max_blocks_per_fetch)
             .enumerate()
             .map(|(i, request_block_refs)| {
-                let i = i as u32;
                 let inner = inner.clone();
                 async move {
                     // Pipeline the requests to avoid overloading the target.
