@@ -2,9 +2,9 @@
 name = "iota-indexer-alt-jsonrpc"
 version.workspace = true
 authors = ["IOTA Foundation <info@iota.org>"]
+edition = "2021"
 license = "Apache-2.0"
 publish = false
-edition = "2021"
 
 [[bin]]
 name = "iota-indexer-alt-jsonrpc"
@@ -27,4 +27,3 @@ url.workspace = true
 iota-indexer-alt-schema.workspace = true
 iota-pg-db.workspace = true
 iota-types.workspace = true
-
