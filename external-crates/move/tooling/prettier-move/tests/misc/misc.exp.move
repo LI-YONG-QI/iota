@@ -13,16 +13,17 @@
 module suitears::timelock;
 
 use std::{string::String, type_name::{Self, TypeName}};
-use sui::{
+use iota::{
     clock::Clock,
     coin::Coin,
     dynamic_field as df,
-    sui::SUI,
+    iota::IOTA,
     table::{Self, Table}
 };
 
 fun calculate_pending_rewards<StakeCoin, RewardCoin>(
     acc: &Account<StakeCoin, RewardCoin>,
+    an_acc: &mut Account<StakeCoin, RewardCoin>,
     stake_factor: u64,
     accrued_rewards_per_share: u256,
 ): u64 {
@@ -33,7 +34,7 @@ fun calculate_pending_rewards<StakeCoin, RewardCoin>(
     )
 }
 
-// sui-system/validator_set.move
+// iota-system/validator_set.move
 fun compute_reward_adjustments(
     mut slashed_validator_indices: vector<u64>,
     reward_slashing_rate: u64,
@@ -45,8 +46,9 @@ fun compute_reward_adjustments(
     u64, // sum of storage fund reward adjustments
     VecMap<u64, u64>, // mapping of individual validator's storage fund reward adjustment from index -> amount
 ) {
-    let unadjusted_storage_fund_reward_amount =
-        unadjusted_storage_fund_reward_amounts[i];
+    let unadjusted_storage_fund_reward_amount = unadjusted_storage_fund_reward_amounts[
+        i,
+    ];
     let adjusted_storage_fund_reward_amount = // If the validator is one of the slashed ones, then subtract the adjustment.
     if (individual_storage_fund_reward_adjustments.contains(&i)) {
         let adjustment = individual_storage_fund_reward_adjustments[&i];
@@ -137,7 +139,7 @@ public fun unlock_time<T: store>(self: &Timelock<T>): u64 {
      * @notice Locks the `data` for `unlock_time` milliseconds.
      *
      * @param data An object with the store ability.
-     * @param c The shared `sui::clock::Clock` object.
+     * @param c The shared `iota::clock::Clock` object.
      * @patam unlock_time The lock period in milliseconds.
      * @return {Timelock<T>}.
      *
@@ -160,7 +162,7 @@ public fun lock<T: store>(
      * @notice Unlocks a {Timelock<T>} and returns the locked resource `T`.
      *
      * @param self A {Timelock<T>}
-     * @param c The shared `sui::clock::Clock` object.
+     * @param c The shared `iota::clock::Clock` object.
      * @return `T`. An object with the store ability.
      *
      * aborts-if

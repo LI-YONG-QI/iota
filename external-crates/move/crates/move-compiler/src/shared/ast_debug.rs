@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 /// Simple trait used for pretty printing the various AST
@@ -118,6 +119,10 @@ impl AstWriter {
 
     fn cur(&mut self) -> &mut String {
         self.lines.last_mut().unwrap()
+    }
+
+    pub fn is_verbose(&self) -> bool {
+        self.verbose
     }
 
     pub fn new_line(&mut self) {

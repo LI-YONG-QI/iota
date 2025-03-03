@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 /// The `ASCII` module defines basic string and char newtypes in Move that verify
@@ -112,7 +113,7 @@ module std::ascii {
         b <= 0x7F
     }
 
-    /// Returns `true` if `byte` is an printable ASCII character.
+    /// Returns `true` if `byte` is a printable ASCII character.
     /// Returns `false` otherwise.
     public fun is_printable_char(byte: u8): bool {
         byte >= 0x20 && // Disallow metacharacters

@@ -1,9 +1,10 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 'use strict';
 
-const plugin = require('@mysten/prettier-plugin-move');
+const plugin = require('@iota/prettier-plugin-move');
 const { format } = require('prettier');
 const { parentPort } = require('node:worker_threads');
 
@@ -15,7 +16,7 @@ parentPort.on('message', async (message) => {
 	const { text, options } = JSON.parse(message);
 
 	return format(text, {
-		parser: 'move-parse',
+		parser: 'move',
 		plugins: [plugin],
 		tabWidth: options.tabWidth,
 		printWidth: options.printWidth,

@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::{cmp::Ordering, sync::Arc};
@@ -78,9 +79,10 @@ impl ThresholdClock {
 
 #[cfg(test)]
 mod tests {
+    use consensus_config::AuthorityIndex;
+
     use super::*;
     use crate::block::BlockDigest;
-    use consensus_config::AuthorityIndex;
 
     #[tokio::test]
     async fn test_threshold_clock_add_block() {

@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use move_symbol_pool::Symbol;
@@ -107,12 +108,14 @@ pub fn filter_program<T: FilterContext>(context: &mut T, prog: P::Program) -> P:
                  package,
                  named_address_map,
                  def,
+                 target_kind: pkg_def_kind,
              }| {
                 context.set_current_package(package);
                 Some(P::PackageDefinition {
                     package,
                     named_address_map,
                     def: filter_definition(context, def)?,
+                    target_kind: pkg_def_kind,
                 })
             },
         )
@@ -126,12 +129,14 @@ pub fn filter_program<T: FilterContext>(context: &mut T, prog: P::Program) -> P:
                  package,
                  named_address_map,
                  def,
+                 target_kind: pkg_def_kind,
              }| {
                 context.set_current_package(package);
                 Some(P::PackageDefinition {
                     package,
                     named_address_map,
                     def: filter_definition(context, def)?,
+                    target_kind: pkg_def_kind,
                 })
             },
         )
@@ -187,6 +192,7 @@ fn filter_module<T: FilterContext>(
     let module_def = context.filter_map_module(module_def)?;
 
     let P::ModuleDefinition {
+        doc,
         attributes,
         loc,
         address,
@@ -202,6 +208,7 @@ fn filter_module<T: FilterContext>(
         .collect();
 
     Some(P::ModuleDefinition {
+        doc,
         attributes,
         loc,
         address,

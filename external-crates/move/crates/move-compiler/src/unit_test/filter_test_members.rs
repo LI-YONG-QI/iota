@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use move_ir_types::location::{sp, Loc};
@@ -10,7 +11,7 @@ use crate::{
     diag,
     diagnostics::DiagnosticReporter,
     parser::{
-        ast::{self as P, NamePath, PathEntry},
+        ast::{self as P, DocComment, NamePath, PathEntry},
         filter::{filter_program, FilterContext},
     },
     shared::{known_attributes, CompilationEnv},
@@ -213,6 +214,7 @@ fn create_test_poison(mloc: Loc) -> P::ModuleMember {
 
     // fun unit_test_poison() { 0x1::UnitTest::create_signers_for_testing(0); () }
     P::ModuleMember::Function(P::Function {
+        doc: DocComment::empty(),
         attributes: vec![],
         loc: mloc,
         visibility: P::Visibility::Internal,

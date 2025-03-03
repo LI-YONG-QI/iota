@@ -1,4 +1,5 @@
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 import { Node } from '../..';
@@ -30,7 +31,7 @@ export function printIndexExpression(
 	return group(
 		[
 			path.call(print, 'nonFormattingChildren', 0), // lhs
-            list({path, options, open: '[', close: ']', print, skipChildren: 1 }),
+			list({ path, options, open: '[', close: ']', print, skipChildren: 1 }),
 		],
 		{ shouldBreak: false },
 	);

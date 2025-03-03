@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use anyhow::bail;
@@ -11,7 +12,7 @@ use walkdir::{DirEntry, WalkDir};
 fn check_that_docs_are_updated() {
     let temp_dir = tempdir().unwrap();
 
-    crate::build_stdlib_doc(&temp_dir.path().to_string_lossy());
+    crate::build_stdlib_doc(temp_dir.path().to_string_lossy().to_string()).unwrap();
 
     let res = check_dirs_not_diff(&temp_dir, crate::move_stdlib_docs_full_path());
     assert!(

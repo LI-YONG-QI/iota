@@ -1,17 +1,18 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
     diagnostics::warning_filters::{WarningFilters, WarningFiltersTable},
     expansion::ast::{
         ability_constraints_ast_debug, ability_modifiers_ast_debug, AbilitySet, Attributes,
-        DottedUsage, Fields, Friend, ImplicitUseFunCandidate, ModuleIdent, Mutability, TargetKind,
-        Value, Value_, Visibility,
+        DottedUsage, Fields, Friend, ImplicitUseFunCandidate, ModuleIdent, Mutability, Value,
+        Value_, Visibility,
     },
     parser::ast::{
-        self as P, Ability_, BinOp, ConstantName, DatatypeName, Field, FunctionName, UnaryOp,
-        VariantName, ENTRY_MODIFIER, MACRO_MODIFIER, NATIVE_MODIFIER,
+        self as P, Ability_, BinOp, ConstantName, DatatypeName, DocComment, Field, FunctionName,
+        TargetKind, UnaryOp, VariantName, ENTRY_MODIFIER, MACRO_MODIFIER, NATIVE_MODIFIER,
     },
     shared::{
         ast_debug::*, known_attributes::SyntaxAttribute, program_info::NamingProgramInfo,
@@ -66,6 +67,7 @@ pub enum UseFunKind {
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct UseFun {
+    pub doc: DocComment,
     pub loc: Loc,
     pub attributes: Attributes,
     pub is_public: Option<Loc>,
@@ -139,6 +141,7 @@ pub type SyntaxMethods = BTreeMap<TypeName, SyntaxMethodEntry>;
 
 #[derive(Debug, Clone)]
 pub struct ModuleDefinition {
+    pub doc: DocComment,
     pub loc: Loc,
     pub warning_filter: WarningFilters,
     // package name metadata from compiler arguments, not used for any language rules
@@ -166,6 +169,7 @@ pub struct DatatypeTypeParameter {
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct StructDefinition {
+    pub doc: DocComment,
     pub warning_filter: WarningFilters,
     // index in the original order as defined in the source file
     pub index: usize,
@@ -178,12 +182,13 @@ pub struct StructDefinition {
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum StructFields {
-    Defined(/* positional */ bool, Fields<Type>),
+    Defined(/* positional */ bool, Fields<(DocComment, Type)>),
     Native(Loc),
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct EnumDefinition {
+    pub doc: DocComment,
     pub warning_filter: WarningFilters,
     // index in the original order as defined in the source file
     pub index: usize,
@@ -196,6 +201,7 @@ pub struct EnumDefinition {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct VariantDefinition {
+    pub doc: DocComment,
     // index in the original order as defined in the source file
     pub index: usize,
     pub loc: Loc,
@@ -204,7 +210,7 @@ pub struct VariantDefinition {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum VariantFields {
-    Defined(/* positional */ bool, Fields<Type>),
+    Defined(/* positional */ bool, Fields<(DocComment, Type)>),
     Empty,
 }
 
@@ -228,11 +234,12 @@ pub type FunctionBody = Spanned<FunctionBody_>;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Function {
+    pub doc: DocComment,
+    pub loc: Loc,
     pub warning_filter: WarningFilters,
     // index in the original order as defined in the source file
     pub index: usize,
     pub attributes: Attributes,
-    pub loc: Loc,
     pub visibility: Visibility,
     pub entry: Option<Loc>,
     pub macro_: Option<Loc>,
@@ -246,6 +253,7 @@ pub struct Function {
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Constant {
+    pub doc: DocComment,
     pub warning_filter: WarningFilters,
     // index in the original order as defined in the source file
     pub index: usize,
@@ -1082,6 +1090,7 @@ impl AstDebug for Neighbor_ {
 impl AstDebug for UseFun {
     fn ast_debug(&self, w: &mut AstWriter) {
         let UseFun {
+            doc,
             loc: _,
             attributes,
             is_public,
@@ -1090,6 +1099,7 @@ impl AstDebug for UseFun {
             kind,
             used,
         } = self;
+        doc.ast_debug(w);
         attributes.ast_debug(w);
         w.new_line();
         if is_public.is_some() {
@@ -1189,6 +1199,7 @@ impl AstDebug for SyntaxMethods {
 impl AstDebug for ModuleDefinition {
     fn ast_debug(&self, w: &mut AstWriter) {
         let ModuleDefinition {
+            doc,
             loc: _,
             warning_filter,
             package_name,
@@ -1202,20 +1213,13 @@ impl AstDebug for ModuleDefinition {
             constants,
             functions,
         } = self;
+        doc.ast_debug(w);
         warning_filter.ast_debug(w);
         if let Some(n) = package_name {
             w.writeln(format!("{}", n))
         }
         attributes.ast_debug(w);
-        w.writeln(match target_kind {
-            TargetKind::Source {
-                is_root_package: true,
-            } => "root module",
-            TargetKind::Source {
-                is_root_package: false,
-            } => "dependency module",
-            TargetKind::External => "external module",
-        });
+        target_kind.ast_debug(w);
         use_funs.ast_debug(w);
         syntax_methods.ast_debug(w);
         for (mident, _loc) in friends.key_cloned_iter() {
@@ -1246,6 +1250,7 @@ impl AstDebug for (DatatypeName, &StructDefinition) {
         let (
             name,
             StructDefinition {
+                doc,
                 warning_filter,
                 index,
                 loc: _,
@@ -1255,6 +1260,7 @@ impl AstDebug for (DatatypeName, &StructDefinition) {
                 fields,
             },
         ) = self;
+        doc.ast_debug(w);
         warning_filter.ast_debug(w);
         attributes.ast_debug(w);
         if let StructFields::Native(_) = fields {
@@ -1269,7 +1275,8 @@ impl AstDebug for (DatatypeName, &StructDefinition) {
             }
             w.block(|w| {
                 w.list(fields, ",", |w, (_, f, idx_st)| {
-                    let (idx, st) = idx_st;
+                    let (idx, (doc, st)) = idx_st;
+                    doc.ast_debug(w);
                     w.write(format!("{}#{}: ", idx, f));
                     st.ast_debug(w);
                     true
@@ -1284,6 +1291,7 @@ impl AstDebug for (DatatypeName, &EnumDefinition) {
         let (
             name,
             EnumDefinition {
+                doc,
                 index,
                 loc: _,
                 attributes,
@@ -1293,6 +1301,7 @@ impl AstDebug for (DatatypeName, &EnumDefinition) {
                 warning_filter,
             },
         ) = self;
+        doc.ast_debug(w);
         warning_filter.ast_debug(w);
         attributes.ast_debug(w);
 
@@ -1312,12 +1321,14 @@ impl AstDebug for (VariantName, &VariantDefinition) {
         let (
             name,
             VariantDefinition {
+                doc,
                 index,
                 fields,
                 loc: _,
             },
         ) = self;
 
+        doc.ast_debug(w);
         w.write(format!("variant#{index} {name}"));
         match fields {
             VariantFields::Defined(is_positional, fields) => {
@@ -1326,7 +1337,8 @@ impl AstDebug for (VariantName, &VariantDefinition) {
                 }
                 w.block(|w| {
                     w.list(fields, ",", |w, (_, f, idx_st)| {
-                        let (idx, st) = idx_st;
+                        let (idx, (doc, st)) = idx_st;
+                        doc.ast_debug(w);
                         w.write(format!("{}#{}: ", idx, f));
                         st.ast_debug(w);
                         true
@@ -1343,10 +1355,11 @@ impl AstDebug for (FunctionName, &Function) {
         let (
             name,
             Function {
+                doc,
+                loc: _,
                 warning_filter,
                 index,
                 attributes,
-                loc: _,
                 visibility,
                 macro_,
                 entry,
@@ -1354,6 +1367,7 @@ impl AstDebug for (FunctionName, &Function) {
                 body,
             },
         ) = self;
+        doc.ast_debug(w);
         warning_filter.ast_debug(w);
         attributes.ast_debug(w);
         visibility.ast_debug(w);
@@ -1451,6 +1465,7 @@ impl AstDebug for (ConstantName, &Constant) {
         let (
             name,
             Constant {
+                doc,
                 warning_filter,
                 index,
                 attributes,
@@ -1459,6 +1474,7 @@ impl AstDebug for (ConstantName, &Constant) {
                 value,
             },
         ) = self;
+        doc.ast_debug(w);
         warning_filter.ast_debug(w);
         attributes.ast_debug(w);
         w.write(format!("const#{index} {name}:"));

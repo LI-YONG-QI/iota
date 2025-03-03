@@ -1,0 +1,96 @@
+// Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
+// SPDX-License-Identifier: Apache-2.0
+
+use axum::{
+    Json,
+    extract::{Path, Query, State},
+};
+use iota_sdk_types::{Address, ObjectId, StructTag, Version};
+use iota_types::iota_sdk_types_conversions::struct_tag_core_to_sdk;
+use tap::Pipe;
+
+use super::{ApiEndpoint, RouteHandler};
+use crate::{Result, RpcService, RpcServiceError, reader::StateReader, rest::PageCursor};
+
+pub struct ListAccountObjects;
+
+impl ApiEndpoint<RpcService> for ListAccountObjects {
+    fn method(&self) -> axum::http::Method {
+        axum::http::Method::GET
+    }
+
+    fn path(&self) -> &'static str {
+        "/accounts/{account}/objects"
+    }
+
+    fn handler(&self) -> RouteHandler<RpcService> {
+        RouteHandler::new(self.method(), list_account_objects)
+    }
+}
+
+async fn list_account_objects(
+    Path(address): Path<Address>,
+    Query(parameters): Query<ListAccountOwnedObjectsQueryParameters>,
+    State(state): State<StateReader>,
+) -> Result<(PageCursor<ObjectId>, Json<Vec<AccountOwnedObjectInfo>>)> {
+    let indexes = state
+        .inner()
+        .indexes()
+        .ok_or_else(RpcServiceError::not_found)?;
+    let limit = parameters.limit();
+    let start = parameters.start();
+
+    let mut object_info = indexes
+        .account_owned_objects_info_iter(address.into(), start)?
+        .take(limit + 1)
+        .map(|info| {
+            AccountOwnedObjectInfo {
+                owner: info.owner.into(),
+                object_id: info.object_id.into(),
+                version: info.version.into(),
+                type_: struct_tag_core_to_sdk(info.type_.into())?,
+            }
+            .pipe(Ok)
+        })
+        .collect::<Result<Vec<_>>>()?;
+
+    let cursor = if object_info.len() > limit {
+        // SAFETY: We've already verified that object_info is greater than limit, which is
+        // guaranteed to be >= 1.
+        object_info.pop().unwrap().object_id.pipe(Some)
+    } else {
+        None
+    };
+
+    Ok((PageCursor(cursor), Json(object_info)))
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+pub struct ListAccountOwnedObjectsQueryParameters {
+    pub limit: Option<u32>,
+    pub start: Option<ObjectId>,
+}
+
+impl ListAccountOwnedObjectsQueryParameters {
+    pub fn limit(&self) -> usize {
+        self.limit
+            .map(|l| (l as usize).clamp(1, crate::rest::MAX_PAGE_SIZE))
+            .unwrap_or(crate::rest::DEFAULT_PAGE_SIZE)
+    }
+
+    pub fn start(&self) -> Option<iota_types::base_types::ObjectID> {
+        self.start.map(Into::into)
+    }
+}
+
+#[serde_with::serde_as]
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+pub struct AccountOwnedObjectInfo {
+    pub owner: Address,
+    pub object_id: ObjectId,
+    #[serde_as(as = "iota_types::iota_serde::BigInt<u64>")]
+    pub version: Version,
+    #[serde(rename = "type")]
+    pub type_: StructTag,
+}

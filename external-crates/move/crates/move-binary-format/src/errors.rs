@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
@@ -91,6 +92,7 @@ impl VMError {
         self.0.major_status.status_type()
     }
 
+    #[allow(clippy::type_complexity)]
     pub fn all_data(
         self,
     ) -> (
@@ -188,6 +190,7 @@ struct PartialVMError_ {
 }
 
 impl PartialVMError {
+    #[allow(clippy::type_complexity)]
     pub fn all_data(
         self,
     ) -> (

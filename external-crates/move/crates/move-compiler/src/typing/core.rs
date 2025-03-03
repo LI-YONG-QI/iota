@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
@@ -18,7 +19,8 @@ use crate::{
         TypeName, TypeName_, Type_, UseFun, UseFunKind, Var,
     },
     parser::ast::{
-        Ability_, ConstantName, DatatypeName, Field, FunctionName, VariantName, ENTRY_MODIFIER,
+        Ability_, ConstantName, DatatypeName, DocComment, Field, FunctionName, VariantName,
+        ENTRY_MODIFIER,
     },
     shared::{
         ide::{AutocompleteMethod, IDEAnnotation, IDEInfo},
@@ -338,6 +340,7 @@ impl<'env> Context<'env> {
             let unused = methods.iter().filter(|(_, _, uf)| !uf.used);
             for (_, method, use_fun) in unused {
                 let N::UseFun {
+                    doc: _,
                     loc,
                     kind,
                     attributes: _,
@@ -869,12 +872,14 @@ impl<'env> Context<'env> {
                             fields
                                 .iter()
                                 .enumerate()
-                                .map(|(idx, (_, _, (_, t)))| (format!("{}", idx).into(), t.clone()))
+                                .map(|(idx, (_, _, (_, (_, t))))| {
+                                    (format!("{}", idx).into(), t.clone())
+                                })
                                 .collect::<Vec<_>>()
                         } else {
                             fields
                                 .key_cloned_iter()
-                                .map(|(k, (_, t))| (k.value(), t.clone()))
+                                .map(|(k, (_, (_, t)))| (k.value(), t.clone()))
                                 .collect::<Vec<_>>()
                         }
                     }
@@ -1276,7 +1281,11 @@ pub fn make_struct_field_types(
         N::StructFields::Native(loc) => N::StructFields::Native(*loc),
         N::StructFields::Defined(positional, m) => N::StructFields::Defined(
             *positional,
-            m.ref_map(|_, (idx, field_ty)| (*idx, subst_tparams(tparam_subst, field_ty.clone()))),
+            m.ref_map(|_, (idx, (_, field_ty))| {
+                let doc = DocComment::empty();
+                let ty = subst_tparams(tparam_subst, field_ty.clone());
+                (*idx, (doc, ty))
+            }),
         ),
     }
 }
@@ -1312,7 +1321,7 @@ pub fn make_struct_field_type(
             ));
             context.error_type(loc)
         }
-        Some((_, field_ty)) => {
+        Some((_, (_, field_ty))) => {
             let tparam_subst = &make_tparam_subst(
                 context
                     .struct_definition(m, n)
@@ -1392,7 +1401,11 @@ pub fn make_variant_field_types(
         N::VariantFields::Empty => N::VariantFields::Empty,
         N::VariantFields::Defined(is_positional, m) => N::VariantFields::Defined(
             *is_positional,
-            m.ref_map(|_, (idx, field_ty)| (*idx, subst_tparams(tparam_subst, field_ty.clone()))),
+            m.ref_map(|_, (idx, (_, field_ty))| {
+                let doc = DocComment::empty();
+                let ty = subst_tparams(tparam_subst, field_ty.clone());
+                (*idx, (doc, ty))
+            }),
         ),
     }
 }
@@ -1411,9 +1424,11 @@ pub fn make_constant_type(
     context.emit_warning_if_deprecated(m, c.0, None);
     let (defined_loc, signature) = {
         let ConstantInfo {
+            doc: _,
             attributes: _,
             defined_loc,
             signature,
+            value: _,
         } = context.constant_info(m, c);
         (*defined_loc, signature.clone())
     };
@@ -1727,9 +1742,9 @@ fn check_function_visibility(
 pub enum PublicForTesting {
     /// The function is entry, so it can be called in unit tests
     Entry(Loc),
-    // TODO we should allow calling init in unit tests, but this would need Sui bytecode verifier
+    // TODO we should allow calling init in unit tests, but this would need IOTA bytecode verifier
     // support. Or we would need to name dodge init in unit tests
-    // SuiInit(Loc),
+    // IotaInit(Loc),
 }
 
 pub fn public_testing_visibility(
@@ -1738,14 +1753,14 @@ pub fn public_testing_visibility(
     _callee_name: &FunctionName,
     callee_entry: Option<Loc>,
 ) -> Option<PublicForTesting> {
-    // is_testing && (is_entry || is_sui_init)
+    // is_testing && (is_entry || is_iota_init)
     if !env.flags().is_testing() {
         return None;
     }
 
-    // TODO support sui init functions
+    // TODO support iota init functions
     // let flavor = env.package_config(package).flavor;
-    // flavor == Flavor::Sui && callee_name.value() == INIT_FUNCTION_NAME
+    // flavor == Flavor::Iota && callee_name.value() == INIT_FUNCTION_NAME
     callee_entry.map(PublicForTesting::Entry)
 }
 

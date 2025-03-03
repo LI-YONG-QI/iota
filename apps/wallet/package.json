@@ -1,7 +1,7 @@
 {
-	"name": "sui-wallet",
+	"name": "iota-wallet",
 	"private": true,
-	"description": "A wallet for Sui",
+	"description": "A wallet for IOTA",
 	"main": "./dist/ui.js",
 	"scripts": {
 		"build": "pnpm build:prod",
@@ -29,16 +29,16 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "github.com:MystenLabs/sui.git"
+		"url": "github.com:iotaledger/iota.git"
 	},
 	"keywords": [
-		"sui",
+		"iota",
 		"wallet",
 		"coins",
 		"tokens",
 		"balance"
 	],
-	"author": "Mysten Labs <build@mystenlabs.com>",
+	"author": "IOTA Foundation <info@iota.org>",
 	"license": "Apache-2.0",
 	"devDependencies": {
 		"@amplitude/ampli": "^1.31.5",
@@ -116,15 +116,14 @@
 		"@ledgerhq/hw-transport-webhid": "^6.27.15",
 		"@ledgerhq/hw-transport-webusb": "^6.27.13",
 		"@metamask/browser-passworder": "^4.1.0",
-		"@mysten/core": "workspace:*",
-		"@mysten/dapp-kit": "workspace:*",
-		"@mysten/deepbook": "workspace:*",
-		"@mysten/icons": "workspace:*",
-		"@mysten/kiosk": "workspace:*",
-		"@mysten/ledgerjs-hw-app-sui": "workspace:*",
-		"@mysten/sui": "workspace:*",
-		"@mysten/wallet-standard": "workspace:*",
-		"@mysten/zklogin": "workspace:*",
+		"@iota/core": "workspace:*",
+		"@iota/dapp-kit": "^0.14.44",
+		"@iota/deepbook": "^0.8.34",
+		"@iota/icons": "workspace:*",
+		"@iota/kiosk": "^0.9.34",
+		"@iota/ledgerjs-hw-app-iota": "^0.4.1",
+		"@iota/iota-sdk": "^1.18.0",
+		"@iota/wallet-standard": "^0.13.20",
 		"@noble/hashes": "^1.4.0",
 		"@radix-ui/react-checkbox": "^1.0.4",
 		"@radix-ui/react-collapsible": "^1.0.3",

@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
@@ -349,6 +350,7 @@ impl<'a> FnDefnMaterializeState<'a> {
         }
     }
 
+    #[allow(clippy::type_complexity)]
     pub fn return_tables(
         self,
     ) -> (

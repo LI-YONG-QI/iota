@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 pub mod cargo_runner;
@@ -184,7 +185,7 @@ impl UnitTestingConfig {
                 .set_flags(flags)
                 .run::<PASS_CFGIR>()
                 .unwrap();
-        let (_, compiler) =
+        let compiler =
             diagnostics::unwrap_or_report_pass_diagnostics(&files, comments_and_compiler_res);
 
         let (compiler, cfgir) = compiler.into_ast();

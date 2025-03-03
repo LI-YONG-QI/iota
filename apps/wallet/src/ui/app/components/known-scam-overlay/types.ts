@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 import { API_ENV } from '_src/shared/api-env';
@@ -15,6 +16,10 @@ export type DappPreflightResponse = {
 		title: string;
 		subtitle: string;
 	};
+	warnings?: {
+		title: string;
+		subtitle: string;
+	}[];
 };
 
 export type Network = 'mainnet' | 'testnet' | 'devnet' | 'local';

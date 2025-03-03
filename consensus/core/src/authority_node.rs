@@ -1,15 +1,18 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::{sync::Arc, time::Instant};
 
 use consensus_config::{AuthorityIndex, Committee, NetworkKeyPair, Parameters, ProtocolKeyPair};
+use iota_protocol_config::{ConsensusNetwork, ProtocolConfig};
+use itertools::Itertools;
 use parking_lot::RwLock;
 use prometheus::Registry;
-use sui_protocol_config::{ConsensusNetwork, ProtocolConfig};
 use tracing::{info, warn};
 
 use crate::{
+    CommitConsumer, CommitConsumerMonitor,
     authority_service::AuthorityService,
     block_manager::BlockManager,
     block_verifier::SignedBlockVerifier,
@@ -25,18 +28,17 @@ use crate::{
     leader_timeout::{LeaderTimeoutTask, LeaderTimeoutTaskHandle},
     metrics::initialise_metrics,
     network::{
-        anemo_network::AnemoManager, tonic_network::TonicManager, NetworkClient as _,
-        NetworkManager,
+        NetworkClient as _, NetworkManager, anemo_network::AnemoManager,
+        tonic_network::TonicManager,
     },
     round_prober::{RoundProber, RoundProberHandle},
     storage::rocksdb_store::RocksDBStore,
     subscriber::Subscriber,
     synchronizer::{Synchronizer, SynchronizerHandle},
     transaction::{TransactionClient, TransactionConsumer, TransactionVerifier},
-    CommitConsumer, CommitConsumerMonitor,
 };
 
-/// ConsensusAuthority is used by Sui to manage the lifetime of AuthorityNode.
+/// ConsensusAuthority is used by IOTA to manage the lifetime of AuthorityNode.
 /// It hides the details of the implementation from the caller, MysticetiManager.
 #[allow(private_interfaces)]
 pub enum ConsensusAuthority {
@@ -176,11 +178,25 @@ where
         registry: Registry,
         boot_counter: u64,
     ) -> Self {
-        info!(
-            "Starting consensus authority {}\n{:#?}\n{:#?}\n{:?}\nBoot counter: {}",
-            own_index, committee, parameters, protocol_config.version, boot_counter
+        assert!(
+            committee.is_valid_index(own_index),
+            "Invalid own index {}",
+            own_index
         );
-        assert!(committee.is_valid_index(own_index));
+        let own_hostname = &committee.authority(own_index).hostname;
+        info!(
+            "Starting consensus authority {} {}, {:?}, boot counter {}",
+            own_index, own_hostname, protocol_config.version, boot_counter
+        );
+        info!(
+            "Consensus authorities: {}",
+            committee
+                .authorities()
+                .map(|(i, a)| format!("{}: {}", i, a.hostname))
+                .join(", ")
+        );
+        info!("Consensus parameters: {:?}", parameters);
+        info!("Consensus committee: {:?}", committee);
         let context = Arc::new(Context::new(
             own_index,
             committee,
@@ -413,21 +429,27 @@ where
 mod tests {
     #![allow(non_snake_case)]
 
-    use std::collections::BTreeMap;
-    use std::{collections::BTreeSet, sync::Arc, time::Duration};
+    use std::{
+        collections::{BTreeMap, BTreeSet},
+        sync::Arc,
+        time::Duration,
+    };
 
-    use consensus_config::{local_committee_and_keys, Parameters};
-    use mysten_metrics::monitored_mpsc::UnboundedReceiver;
+    use consensus_config::{Parameters, local_committee_and_keys};
+    use iota_metrics::monitored_mpsc::UnboundedReceiver;
+    use iota_protocol_config::ProtocolConfig;
     use prometheus::Registry;
     use rstest::rstest;
-    use sui_protocol_config::ProtocolConfig;
     use tempfile::TempDir;
     use tokio::time::{sleep, timeout};
     use typed_store::DBMetrics;
 
     use super::*;
-    use crate::block::GENESIS_ROUND;
-    use crate::{block::BlockAPI as _, transaction::NoopTransactionVerifier, CommittedSubDag};
+    use crate::{
+        CommittedSubDag,
+        block::{BlockAPI as _, GENESIS_ROUND},
+        transaction::NoopTransactionVerifier,
+    };
 
     #[rstest]
     #[tokio::test]
@@ -486,6 +508,10 @@ mod tests {
         let (committee, keypairs) = local_committee_and_keys(0, [1; NUM_OF_AUTHORITIES].to_vec());
         let mut protocol_config = ProtocolConfig::get_for_max_version_UNSAFE();
         protocol_config.set_consensus_gc_depth_for_testing(gc_depth);
+
+        if gc_depth == 0 {
+            protocol_config.set_consensus_linearize_subdag_v2_for_testing(false);
+        }
 
         let temp_dirs = (0..NUM_OF_AUTHORITIES)
             .map(|_| TempDir::new().unwrap())
@@ -693,6 +719,10 @@ mod tests {
         let mut protocol_config = ProtocolConfig::get_for_max_version_UNSAFE();
         protocol_config.set_consensus_gc_depth_for_testing(gc_depth);
 
+        if gc_depth == 0 {
+            protocol_config.set_consensus_linearize_subdag_v2_for_testing(false);
+        }
+
         for (index, _authority_info) in committee.authorities() {
             let dir = TempDir::new().unwrap();
             let (authority, receiver) = make_authority(
@@ -705,7 +735,10 @@ mod tests {
                 protocol_config.clone(),
             )
             .await;
-            assert!(authority.sync_last_known_own_block_enabled(), "Expected syncing of last known own block to be enabled as all authorities are of empty db and boot for first time.");
+            assert!(
+                authority.sync_last_known_own_block_enabled(),
+                "Expected syncing of last known own block to be enabled as all authorities are of empty db and boot for first time."
+            );
             boot_counters[index] += 1;
             output_receivers.push(receiver);
             authorities.insert(index, authority);

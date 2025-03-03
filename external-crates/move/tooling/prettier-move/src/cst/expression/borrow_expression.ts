@@ -1,4 +1,5 @@
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 import { Node } from '../..';
@@ -21,9 +22,8 @@ export default function (path: AstPath<Node>): treeFn | null {
  * Print `borrow_expression` node.
  */
 function printBorrowExpression(path: AstPath<Node>, options: MoveOptions, print: printFn): Doc {
-	const ref = path.node.child(0)!.text == '&mut' ? ['&mut', ' '] : ['&'];
 	return [
-		...ref,
 		path.call(print, 'nonFormattingChildren', 0), // borrow type
+		path.call(print, 'nonFormattingChildren', 1), // expression
 	];
 }

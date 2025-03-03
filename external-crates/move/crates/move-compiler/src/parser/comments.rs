@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{diag, diagnostics::Diagnostics};
@@ -8,12 +9,6 @@ use move_command_line_common::{
     files::FileHash,
 };
 use move_ir_types::location::*;
-use std::collections::BTreeMap;
-
-/// Types to represent comments.
-pub type CommentMap = BTreeMap<FileHash, MatchedFileCommentMap>;
-pub type MatchedFileCommentMap = BTreeMap<u32, String>;
-pub type FileCommentMap = BTreeMap<(u32, u32), String>;
 
 // We restrict strings to only ascii visual characters (0x20 <= c <= 0x7E) or a permitted newline
 // character--\r--,--\n--or a tab--\t.

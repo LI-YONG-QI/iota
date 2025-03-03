@@ -1,16 +1,21 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
+use std::{
+    cell::RefCell,
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
+    time::Duration,
+};
+
 use once_cell::sync::OnceCell;
 use prometheus::{
-    register_histogram_vec_with_registry, register_int_counter_vec_with_registry,
-    register_int_gauge_vec_with_registry, HistogramVec, IntCounterVec, IntGaugeVec, Registry,
+    HistogramVec, IntCounterVec, IntGaugeVec, Registry, register_histogram_vec_with_registry,
+    register_int_counter_vec_with_registry, register_int_gauge_vec_with_registry,
 };
-use rocksdb::perf::set_perf_stats;
-use rocksdb::{PerfContext, PerfMetric, PerfStatsLevel};
-use std::cell::RefCell;
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::Arc;
-use std::time::Duration;
+use rocksdb::{PerfContext, PerfMetric, PerfStatsLevel, perf::set_perf_stats};
 use tap::TapFallible;
 use tracing::warn;
 
@@ -19,7 +24,10 @@ thread_local! {
 }
 
 const LATENCY_SEC_BUCKETS: &[f64] = &[
-    0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1., 2.5, 5., 10., 20., 30., 60., 90.,
+    0.00001, 0.00005, // 10 mcs, 50 mcs
+    0.0001, 0.0002, 0.0003, 0.0004, 0.0005, // 100..500 mcs
+    0.001, 0.002, 0.003, 0.004, 0.005, // 1..5ms
+    0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1., 2.5, 5., 10.,
 ];
 
 #[derive(Debug, Clone)]

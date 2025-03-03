@@ -1,33 +1,32 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
+
+use std::{
+    env,
+    io::{Write, stderr},
+    path::PathBuf,
+    str::FromStr,
+    sync::{Arc, Mutex, atomic::Ordering},
+    time::Duration,
+};
 
 use atomic_float::AtomicF64;
 use crossterm::tty::IsTty;
 use once_cell::sync::Lazy;
 use opentelemetry::{
-    trace::{Link, SamplingResult, SpanKind, TraceId, TracerProvider as _},
     Context, KeyValue,
+    trace::{Link, SamplingResult, SpanKind, TraceId, TracerProvider as _},
 };
 use opentelemetry_otlp::WithExportConfig;
-use opentelemetry_sdk::trace::Sampler;
 use opentelemetry_sdk::{
-    self, runtime,
-    trace::{BatchSpanProcessor, ShouldSample, TracerProvider},
-    Resource,
+    self, Resource, runtime,
+    trace::{BatchSpanProcessor, Sampler, ShouldSample, TracerProvider},
 };
 use span_latency_prom::PrometheusSpanLatencyLayer;
-use std::path::PathBuf;
-use std::time::Duration;
-use std::{
-    env,
-    io::{stderr, Write},
-    str::FromStr,
-    sync::{atomic::Ordering, Arc, Mutex},
-};
-use tracing::metadata::LevelFilter;
-use tracing::{error, info, Level};
+use tracing::{Level, error, info, metadata::LevelFilter};
 use tracing_appender::non_blocking::{NonBlocking, WorkerGuard};
-use tracing_subscriber::{filter, fmt, layer::SubscriberExt, reload, EnvFilter, Layer, Registry};
+use tracing_subscriber::{EnvFilter, Layer, Registry, filter, fmt, layer::SubscriberExt, reload};
 
 use crate::file_exporter::{CachedOpenFile, FileExporter};
 
@@ -363,7 +362,6 @@ impl TelemetryConfig {
         // tokio-console layer
         // Please see https://docs.rs/console-subscriber/latest/console_subscriber/struct.Builder.html#configuration
         // for environment vars/config options
-        #[cfg(feature = "tokio-console")]
         if config.tokio_console {
             layers.push(console_subscriber::spawn().boxed());
         }
@@ -378,7 +376,7 @@ impl TelemetryConfig {
         let mut file_output = CachedOpenFile::new::<&str>(None).unwrap();
         let mut provider = None;
         let sampler = SamplingFilter::new(config.sample_rate);
-        let service_name = env::var("OTEL_SERVICE_NAME").unwrap_or("sui-node".to_owned());
+        let service_name = env::var("OTEL_SERVICE_NAME").unwrap_or("iota-node".to_owned());
 
         if config.enable_otlp_tracing {
             let trace_file = env::var("TRACE_FILE").ok();
@@ -549,10 +547,12 @@ pub fn init_for_testing() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use prometheus::proto::MetricType;
     use std::time::Duration;
+
+    use prometheus::proto::MetricType;
     use tracing::{debug, debug_span, info, trace_span, warn};
+
+    use super::*;
 
     #[test]
     #[should_panic]

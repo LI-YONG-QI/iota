@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 import { NavLink } from 'react-router-dom';
@@ -9,6 +10,7 @@ const links = [
 	{ to: '/multisig-address', label: 'MultiSig Address' },
 	{ to: '/combine-signatures', label: 'Combine MultiSig Signatures' },
 	{ to: '/execute-transaction', label: 'Execute Transaction' },
+	{ to: '/help', label: 'Help' },
 ];
 
 export function Menu({ callback }: { callback?: () => void }) {

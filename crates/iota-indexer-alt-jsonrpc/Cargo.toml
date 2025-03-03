@@ -1,0 +1,29 @@
+[package]
+name = "iota-indexer-alt-jsonrpc"
+version.workspace = true
+authors = ["IOTA Foundation <info@iota.org>"]
+edition = "2021"
+license = "Apache-2.0"
+publish = false
+
+[[bin]]
+name = "iota-indexer-alt-jsonrpc"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+async-trait.workspace = true
+axum.workspace = true
+clap.workspace = true
+diesel = { workspace = true, features = ["chrono"] }
+diesel-async = { workspace = true, features = ["bb8", "postgres", "async-connection-wrapper"] }
+jsonrpsee = { workspace = true, features = ["macros", "server"] }
+telemetry-subscribers.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+url.workspace = true
+
+iota-indexer-alt-schema.workspace = true
+iota-pg-db.workspace = true
+iota-types.workspace = true

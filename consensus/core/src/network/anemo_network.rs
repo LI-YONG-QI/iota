@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::{
@@ -9,9 +10,9 @@ use std::{
 };
 
 use anemo::{
-    rpc::Status,
-    types::{response::StatusCode, PeerInfo},
     PeerId, Response,
+    rpc::Status,
+    types::{PeerInfo, response::StatusCode},
 };
 use anemo_tower::{
     auth::{AllowedPeers, RequireAuthorizationLayer},
@@ -28,6 +29,7 @@ use tokio::sync::broadcast::error::RecvError;
 use tracing::{debug, error, warn};
 
 use super::{
+    BlockStream, ExtendedSerializedBlock, NetworkClient, NetworkManager, NetworkService,
     anemo_gen::{
         consensus_rpc_client::ConsensusRpcClient,
         consensus_rpc_server::{ConsensusRpc, ConsensusRpcServer},
@@ -35,14 +37,13 @@ use super::{
     connection_monitor::{AnemoConnectionMonitor, ConnectionMonitorHandle},
     epoch_filter::{AllowedEpoch, EPOCH_HEADER_KEY},
     metrics_layer::{MetricsCallbackMaker, MetricsResponseCallback, SizedRequest, SizedResponse},
-    BlockStream, NetworkClient, NetworkManager, NetworkService,
 };
 use crate::{
+    CommitIndex, Round,
     block::{BlockRef, VerifiedBlock},
     commit::CommitRange,
     context::Context,
     error::{ConsensusError, ConsensusResult},
-    CommitIndex, Round,
 };
 
 /// Implements Anemo RPC client for Consensus.
@@ -297,6 +298,10 @@ impl<S: NetworkService> ConsensusRpc for AnemoServiceProxy<S> {
             )
         })?;
         let block = request.into_body().block;
+        let block = ExtendedSerializedBlock {
+            block,
+            excluded_ancestors: vec![],
+        };
         self.service
             .handle_send_block(index, block)
             .await
@@ -725,12 +730,12 @@ impl MakeCallbackHandler for MetricsCallbackMaker {
 }
 
 impl ResponseHandler for MetricsResponseCallback {
-    fn on_response(self, response: &anemo::Response<bytes::Bytes>) {
-        self.on_response(response)
+    fn on_response(mut self, response: &anemo::Response<bytes::Bytes>) {
+        MetricsResponseCallback::on_response(&mut self, response)
     }
 
-    fn on_error<E>(self, err: &E) {
-        self.on_error(err)
+    fn on_error<E>(mut self, err: &E) {
+        MetricsResponseCallback::on_error(&mut self, err)
     }
 }
 

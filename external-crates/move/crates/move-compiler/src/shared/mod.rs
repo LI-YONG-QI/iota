@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
@@ -25,7 +26,7 @@ use crate::{
         files::{FileName, MappedFiles},
         ide::IDEInfo,
     },
-    sui_mode,
+    iota_mode,
     typing::{
         ast as T,
         visitor::{TypingVisitor, TypingVisitorObj},
@@ -40,6 +41,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fmt,
     hash::Hash,
+    path::PathBuf,
     sync::{
         atomic::{AtomicUsize, Ordering as AtomicOrdering},
         Arc, Mutex, OnceLock, RwLock,
@@ -230,6 +232,8 @@ pub struct CompilationEnv {
     mapped_files: MappedFiles,
     save_hooks: Vec<SaveHook>,
     ide_information: RwLock<IDEInfo>,
+    // Files to fully compile (as opposed to omitting function bodies)
+    files_to_compile: Option<BTreeSet<PathBuf>>,
 }
 
 impl CompilationEnv {
@@ -240,10 +244,11 @@ impl CompilationEnv {
         warning_filters: Option<WarningFiltersBuilder>,
         package_configs: BTreeMap<Symbol, PackageConfig>,
         default_config: Option<PackageConfig>,
+        files_to_compile: Option<BTreeSet<PathBuf>>,
     ) -> Self {
         visitors.extend([
-            sui_mode::id_leak::IDLeakVerifier.visitor(),
-            sui_mode::typing::SuiTypeChecks.visitor(),
+            iota_mode::id_leak::IDLeakVerifier.visitor(),
+            iota_mode::typing::IotaTypeChecks.visitor(),
         ]);
         let mut known_filters_: BTreeMap<FilterName, BTreeSet<WarningFilter>> =
             WarningFilter::compiler_known_filters();
@@ -303,6 +308,7 @@ impl CompilationEnv {
             mapped_files: MappedFiles::empty(),
             save_hooks,
             ide_information: RwLock::new(IDEInfo::new()),
+            files_to_compile,
         }
     }
 
@@ -439,6 +445,10 @@ impl CompilationEnv {
 
     pub fn visitors(&self) -> &Visitors {
         &self.visitors
+    }
+
+    pub fn files_to_compile(&self) -> Option<&BTreeSet<PathBuf>> {
+        self.files_to_compile.as_ref()
     }
 
     // Logs an error if the feature isn't supported. Returns `false` if the feature is not

@@ -1,4 +1,10 @@
-# @mysten/prettier-plugin-move
+# @iota/prettier-plugin-move
+
+## 0.2.2
+
+### Patch Changes
+
+-   3e5cf29: abort + address improvements
 
 ## 0.2.1
 

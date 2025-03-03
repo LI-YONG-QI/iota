@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 //! CommitSyncer implements efficient synchronization of committed data.
@@ -12,7 +13,7 @@
 //! CommitSyncer achieves efficient synchronization by relying on the following: when blocks
 //! are included in commits with >= 2f+1 certifiers by stake, these blocks must have passed
 //! verifications on some honest validators, so re-verifying them is unnecessary. In fact, the
-//! quorum certified commits themselves can be trusted to be sent to Sui directly, but for
+//! quorum certified commits themselves can be trusted to be sent to IOTA directly, but for
 //! simplicity this is not done. Blocks from trusted commits still go through Core and committer.
 //!
 //! Another way CommitSyncer improves the efficiency of synchronization is parallel fetching:
@@ -32,19 +33,21 @@ use std::{
 
 use bytes::Bytes;
 use consensus_config::AuthorityIndex;
-use futures::{stream::FuturesOrdered, StreamExt as _};
+use futures::{StreamExt as _, stream::FuturesOrdered};
+use iota_metrics::spawn_logged_monitored_task;
 use itertools::Itertools as _;
-use mysten_metrics::spawn_logged_monitored_task;
 use parking_lot::RwLock;
 use rand::{prelude::SliceRandom as _, rngs::ThreadRng};
 use tokio::{
+    runtime::Handle,
     sync::oneshot,
     task::{JoinHandle, JoinSet},
-    time::{sleep, MissedTickBehavior},
+    time::{MissedTickBehavior, sleep},
 };
 use tracing::{debug, info, warn};
 
 use crate::{
+    CommitConsumerMonitor, CommitIndex,
     block::{BlockAPI, BlockRef, SignedBlock, VerifiedBlock},
     block_verifier::BlockVerifier,
     commit::{Commit, CommitAPI as _, CommitDigest, CommitRange, CommitRef, TrustedCommit},
@@ -55,7 +58,6 @@ use crate::{
     error::{ConsensusError, ConsensusResult},
     network::NetworkClient,
     stake_aggregator::{QuorumThreshold, StakeAggregator},
-    CommitConsumerMonitor, CommitIndex,
 };
 
 // Handle to stop the CommitSyncer loop.
@@ -195,7 +197,11 @@ impl<C: NetworkClient> CommitSyncer<C> {
         let unhandled_commits_threshold = self.unhandled_commits_threshold();
         info!(
             "Checking to schedule fetches: synced_commit_index={}, highest_handled_index={}, highest_scheduled_index={}, quorum_commit_index={}, unhandled_commits_threshold={}",
-            self.synced_commit_index, highest_handled_index, highest_scheduled_index, quorum_commit_index, unhandled_commits_threshold,
+            self.synced_commit_index,
+            highest_handled_index,
+            highest_scheduled_index,
+            quorum_commit_index,
+            unhandled_commits_threshold,
         );
 
         // TODO: cleanup inflight fetches that are no longer needed.
@@ -217,7 +223,10 @@ impl<C: NetworkClient> CommitSyncer<C> {
             }
             // Pause scheduling new fetches when handling of commits is lagging.
             if highest_handled_index + unhandled_commits_threshold < range_end {
-                warn!("Skip scheduling new commit fetches: consensus handler is lagging. highest_handled_index={}, highest_scheduled_index={}", highest_handled_index, highest_scheduled_index);
+                warn!(
+                    "Skip scheduling new commit fetches: consensus handler is lagging. highest_handled_index={}, highest_scheduled_index={}",
+                    highest_handled_index, highest_scheduled_index
+                );
                 break;
             }
             self.pending_fetches
@@ -499,12 +508,20 @@ impl<C: NetworkClient> CommitSyncer<C> {
         // 2. Verify the response contains blocks that can certify the last returned commit,
         // and the returned commits are chained by digest, so earlier commits are certified
         // as well.
-        let commits = inner.verify_commits(
-            target_authority,
-            commit_range,
-            serialized_commits,
-            serialized_blocks,
-        )?;
+        let commits = Handle::current()
+            .spawn_blocking({
+                let inner = inner.clone();
+                move || {
+                    inner.verify_commits(
+                        target_authority,
+                        commit_range,
+                        serialized_commits,
+                        serialized_blocks,
+                    )
+                }
+            })
+            .await
+            .expect("Spawn blocking should not fail")?;
 
         // 3. Fetch blocks referenced by the commits, from the same authority.
         let block_refs: Vec<_> = commits.iter().flat_map(|c| c.blocks()).cloned().collect();
@@ -738,6 +755,7 @@ mod tests {
     use parking_lot::RwLock;
 
     use crate::{
+        CommitConsumerMonitor, CommitDigest, CommitRef, Round,
         block::{BlockRef, TestBlock, VerifiedBlock},
         block_verifier::NoopBlockVerifier,
         commit::CommitRange,
@@ -749,7 +767,6 @@ mod tests {
         error::ConsensusResult,
         network::{BlockStream, NetworkClient},
         storage::mem_store::MemStore,
-        CommitConsumerMonitor, CommitDigest, CommitRef, Round,
     };
 
     #[derive(Default)]

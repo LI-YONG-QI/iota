@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::sync::Arc;
@@ -85,7 +86,7 @@ pub(crate) struct MetricsResponseCallback {
 
 impl MetricsResponseCallback {
     // Update response metrics.
-    pub(crate) fn on_response(self, response: &dyn SizedResponse) {
+    pub(crate) fn on_response(&mut self, response: &dyn SizedResponse) {
         let response_size = response.size();
         if response_size > 0 {
             self.metrics
@@ -108,7 +109,7 @@ impl MetricsResponseCallback {
         }
     }
 
-    pub(crate) fn on_error<E>(self, _error: &E) {
+    pub(crate) fn on_error<E>(&mut self, _error: &E) {
         self.metrics
             .errors
             .with_label_values(&[&self.route, "unknown"])

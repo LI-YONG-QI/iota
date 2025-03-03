@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 import { type TransactionStatus } from '_src/shared/qredo-api';
@@ -26,7 +27,7 @@ export function useGetQredoTransactions({
 		queryKey: [
 			'get',
 			'qredo',
-			'transacions',
+			'transactions',
 			qredoAPI,
 			qredoID,
 			networkName,

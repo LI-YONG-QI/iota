@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use super::{canonicalize_handles, context::*, optimize};
@@ -8,9 +9,7 @@ use crate::{
     compiled_unit::*,
     diag,
     diagnostics::DiagnosticReporter,
-    expansion::ast::{
-        AbilitySet, Address, Attributes, ModuleIdent, ModuleIdent_, Mutability, TargetKind,
-    },
+    expansion::ast::{AbilitySet, Address, Attributes, ModuleIdent, ModuleIdent_, Mutability},
     hlir::ast::{self as H, Value_, Var, Visibility},
     naming::{
         ast::{BuiltinTypeName_, DatatypeTypeParameter, TParam},
@@ -18,7 +17,7 @@ use crate::{
     },
     parser::ast::{
         Ability, Ability_, BinOp, BinOp_, ConstantName, DatatypeName, Field, FunctionName,
-        ModuleName, UnaryOp, UnaryOp_, VariantName,
+        ModuleName, TargetKind, UnaryOp, UnaryOp_, VariantName,
     },
     shared::{unique_map::UniqueMap, *},
     FullyCompiledProgram,
@@ -502,7 +501,7 @@ fn constants(
     constants
         .into_iter()
         .map(|(n, c)| constant(context, m, n, c))
-        .collect::<Vec<_>>()
+        .collect()
 }
 
 fn constant(
@@ -511,12 +510,18 @@ fn constant(
     n: ConstantName,
     c: G::Constant,
 ) -> IR::Constant {
-    let is_error_constant = c
-        .attributes
-        .contains_key_(&known_attributes::ErrorAttribute.into());
+    let G::Constant {
+        loc: _,
+        warning_filter: _,
+        index: _,
+        attributes,
+        signature,
+        value,
+    } = c;
+    let is_error_constant = attributes.contains_key_(&known_attributes::ErrorAttribute.into());
     let name = context.constant_definition_name(m, n);
-    let signature = base_type(context, c.signature);
-    let value = c.value.unwrap();
+    let signature = base_type(context, signature);
+    let value = value.unwrap();
     IR::Constant {
         name,
         signature,

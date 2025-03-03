@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 import {
@@ -34,6 +35,7 @@ export async function decrypt<T extends Serializable>(
 }
 
 export function getRandomPassword() {
+	// eslint-disable-next-line no-restricted-globals
 	return Buffer.from(randomBytes(64)).toString('hex');
 }
 
