@@ -27,7 +27,7 @@ export function useGetQredoTransactions({
 		queryKey: [
 			'get',
 			'qredo',
-			'transacions',
+			'transactions',
 			qredoAPI,
 			qredoID,
 			networkName,

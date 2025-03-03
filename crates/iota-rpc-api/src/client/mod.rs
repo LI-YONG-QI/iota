@@ -98,7 +98,7 @@ impl Client {
                 signature,
                 ..
             },
-            _extentions,
+            _extensions,
         ) = self
             .raw_client()
             .get_checkpoint(request)
@@ -135,7 +135,7 @@ impl Client {
             }),
         };
 
-        let (metadata, response, _extentions) = self
+        let (metadata, response, _extensions) = self
             .raw_client()
             .max_decoding_message_size(64 * 1024 * 1024)
             .get_full_checkpoint(request)
@@ -173,7 +173,7 @@ impl Client {
             }),
         };
 
-        let (metadata, GetObjectResponse { object_bcs, .. }, _extentions) =
+        let (metadata, GetObjectResponse { object_bcs, .. }, _extensions) =
             self.raw_client().get_object(request).await?.into_parts();
 
         object_try_from_proto(object_bcs).map_err(|e| status_from_error_with_metadata(e, metadata))
@@ -209,7 +209,7 @@ impl Client {
             }),
         };
 
-        let (metadata, response, _extentions) = self
+        let (metadata, response, _extensions) = self
             .raw_client()
             .execute_transaction(request)
             .await?

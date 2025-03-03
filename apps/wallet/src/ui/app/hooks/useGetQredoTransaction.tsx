@@ -17,7 +17,7 @@ export function useGetQredoTransaction({
 }) {
 	const [qredoAPI] = useQredoAPI(qredoID);
 	return useQuery({
-		queryKey: ['get', 'qredo', 'transacion', qredoAPI, qredoID, qredoTransactionID],
+		queryKey: ['get', 'qredo', 'transaction', qredoAPI, qredoID, qredoTransactionID],
 		queryFn: () => qredoAPI!.getTransaction(qredoTransactionID!),
 		enabled: !!(qredoAPI && qredoID && qredoTransactionID && !forceDisabled),
 		staleTime: 5000,

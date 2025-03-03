@@ -31,7 +31,7 @@ export function useTransferKioskItem({
 	const activeAccount = useActiveAccount();
 	const signer = useSigner(activeAccount);
 	const address = activeAccount?.address;
-	const obPackageId = useFeatureValue('kiosk-originbyte-packageid', ORIGINBYTE_PACKAGE_ID);
+	const obPackageId = useFeatureValue('kiosk-originbyte-packaged', ORIGINBYTE_PACKAGE_ID);
 	const { data: kioskData } = useGetKioskContents(address); // show personal kiosks too
 	const objectData = useGetObject(objectId);
 	const kioskClient = useKioskClient();

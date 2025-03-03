@@ -12,7 +12,7 @@ type FileExtensionType = {
 // Soft file type detection.
 // Returns the file type of the given file name.
 // Temporary solution until we have a better way to detect file types.
-// extentionType: FileExtensionType
+// extensionType: FileExtensionType
 //    type?: 'image' | 'audio' | 'video';
 const FILE_EXTENSION_TYPE_MAP: FileExtensionType = {
 	jpeg: {
