@@ -1,16 +1,17 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use diesel::{ExpressionMethods, QueryDsl};
 
 use jsonrpsee::{core::RpcResult, proc_macros::rpc};
-use sui_indexer_alt_schema::schema::kv_epoch_starts;
-use sui_pg_db::Db;
-use sui_types::sui_serde::BigInt;
+use iota_indexer_alt_schema::schema::kv_epoch_starts;
+use iota_pg_db::Db;
+use iota_types::iota_serde::BigInt;
 
 use super::Connection;
 
-#[rpc(server, namespace = "suix")]
+#[rpc(server, namespace = "iotax")]
 trait Governance {
     /// Return the reference gas price for the network as of the latest epoch.
     #[method(name = "getReferenceGasPrice")]

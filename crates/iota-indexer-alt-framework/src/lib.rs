@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::{collections::BTreeSet, net::SocketAddr, sync::Arc};
@@ -16,7 +17,7 @@ use pipeline::{
     sequential::{self, SequentialConfig},
     Processor,
 };
-use sui_pg_db::{temp::TempDb, Db, DbArgs};
+use iota_pg_db::{temp::TempDb, Db, DbArgs};
 use task::graceful_shutdown;
 use tempfile::tempdir;
 use tokio::task::JoinHandle;
@@ -453,9 +454,9 @@ impl Default for IndexerArgs {
 #[cfg(test)]
 mod tests {
     use async_trait::async_trait;
-    use sui_field_count::FieldCount;
-    use sui_pg_db as db;
-    use sui_types::full_checkpoint_content::CheckpointData;
+    use iota_field_count::FieldCount;
+    use iota_pg_db as db;
+    use iota_types::full_checkpoint_content::CheckpointData;
 
     use super::*;
 

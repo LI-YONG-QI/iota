@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use diesel::dsl::Limit;
@@ -9,7 +10,7 @@ use diesel::result::Error as DieselError;
 use diesel_async::methods::LoadQuery;
 use diesel_async::RunQueryDsl;
 use jsonrpsee::types::{error::INTERNAL_ERROR_CODE, ErrorObject};
-use sui_pg_db as db;
+use iota_pg_db as db;
 use tracing::debug;
 
 pub(crate) mod governance;

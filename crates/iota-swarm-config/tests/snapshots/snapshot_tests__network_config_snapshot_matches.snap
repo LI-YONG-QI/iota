@@ -1,5 +1,5 @@
 ---
-source: crates/sui-swarm-config/tests/snapshot_tests.rs
+source: crates/iota-swarm-config/tests/snapshot_tests.rs
 expression: network_config
 ---
 validator_configs:
@@ -50,9 +50,9 @@ validator_configs:
       perform-db-checkpoints-at-epoch-end: false
     indirect-objects-threshold: 18446744073709551615
     expensive-safety-check-config:
-      enable-epoch-sui-conservation-check: false
-      enable-deep-per-tx-sui-conservation-check: false
-      force-disable-epoch-sui-conservation-check: false
+      enable-epoch-iota-conservation-check: false
+      enable-deep-per-tx-iota-conservation-check: false
+      force-disable-epoch-iota-conservation-check: false
       enable-state-consistency-check: false
       force-disable-state-consistency-check: false
       enable-secondary-index-checks: false
@@ -74,7 +74,7 @@ validator_configs:
       concurrency: 0
     indexer-max-subscriptions: ~
     transaction-kv-store-read-config:
-      base-url: "https://transactions.sui.io/"
+      base-url: "https://transactions.iota.io/"
       cache-size: 100000
     jwk-fetch-interval-seconds: 3600
     zklogin-oauth-providers:
@@ -213,9 +213,9 @@ validator_configs:
       perform-db-checkpoints-at-epoch-end: false
     indirect-objects-threshold: 18446744073709551615
     expensive-safety-check-config:
-      enable-epoch-sui-conservation-check: false
-      enable-deep-per-tx-sui-conservation-check: false
-      force-disable-epoch-sui-conservation-check: false
+      enable-epoch-iota-conservation-check: false
+      enable-deep-per-tx-iota-conservation-check: false
+      force-disable-epoch-iota-conservation-check: false
       enable-state-consistency-check: false
       force-disable-state-consistency-check: false
       enable-secondary-index-checks: false
@@ -237,7 +237,7 @@ validator_configs:
       concurrency: 0
     indexer-max-subscriptions: ~
     transaction-kv-store-read-config:
-      base-url: "https://transactions.sui.io/"
+      base-url: "https://transactions.iota.io/"
       cache-size: 100000
     jwk-fetch-interval-seconds: 3600
     zklogin-oauth-providers:
@@ -376,9 +376,9 @@ validator_configs:
       perform-db-checkpoints-at-epoch-end: false
     indirect-objects-threshold: 18446744073709551615
     expensive-safety-check-config:
-      enable-epoch-sui-conservation-check: false
-      enable-deep-per-tx-sui-conservation-check: false
-      force-disable-epoch-sui-conservation-check: false
+      enable-epoch-iota-conservation-check: false
+      enable-deep-per-tx-iota-conservation-check: false
+      force-disable-epoch-iota-conservation-check: false
       enable-state-consistency-check: false
       force-disable-state-consistency-check: false
       enable-secondary-index-checks: false
@@ -400,7 +400,7 @@ validator_configs:
       concurrency: 0
     indexer-max-subscriptions: ~
     transaction-kv-store-read-config:
-      base-url: "https://transactions.sui.io/"
+      base-url: "https://transactions.iota.io/"
       cache-size: 100000
     jwk-fetch-interval-seconds: 3600
     zklogin-oauth-providers:
@@ -539,9 +539,9 @@ validator_configs:
       perform-db-checkpoints-at-epoch-end: false
     indirect-objects-threshold: 18446744073709551615
     expensive-safety-check-config:
-      enable-epoch-sui-conservation-check: false
-      enable-deep-per-tx-sui-conservation-check: false
-      force-disable-epoch-sui-conservation-check: false
+      enable-epoch-iota-conservation-check: false
+      enable-deep-per-tx-iota-conservation-check: false
+      force-disable-epoch-iota-conservation-check: false
       enable-state-consistency-check: false
       force-disable-state-consistency-check: false
       enable-secondary-index-checks: false
@@ -563,7 +563,7 @@ validator_configs:
       concurrency: 0
     indexer-max-subscriptions: ~
     transaction-kv-store-read-config:
-      base-url: "https://transactions.sui.io/"
+      base-url: "https://transactions.iota.io/"
       cache-size: 100000
     jwk-fetch-interval-seconds: 3600
     zklogin-oauth-providers:
@@ -702,9 +702,9 @@ validator_configs:
       perform-db-checkpoints-at-epoch-end: false
     indirect-objects-threshold: 18446744073709551615
     expensive-safety-check-config:
-      enable-epoch-sui-conservation-check: false
-      enable-deep-per-tx-sui-conservation-check: false
-      force-disable-epoch-sui-conservation-check: false
+      enable-epoch-iota-conservation-check: false
+      enable-deep-per-tx-iota-conservation-check: false
+      force-disable-epoch-iota-conservation-check: false
       enable-state-consistency-check: false
       force-disable-state-consistency-check: false
       enable-secondary-index-checks: false
@@ -726,7 +726,7 @@ validator_configs:
       concurrency: 0
     indexer-max-subscriptions: ~
     transaction-kv-store-read-config:
-      base-url: "https://transactions.sui.io/"
+      base-url: "https://transactions.iota.io/"
       cache-size: 100000
     jwk-fetch-interval-seconds: 3600
     zklogin-oauth-providers:
@@ -865,9 +865,9 @@ validator_configs:
       perform-db-checkpoints-at-epoch-end: false
     indirect-objects-threshold: 18446744073709551615
     expensive-safety-check-config:
-      enable-epoch-sui-conservation-check: false
-      enable-deep-per-tx-sui-conservation-check: false
-      force-disable-epoch-sui-conservation-check: false
+      enable-epoch-iota-conservation-check: false
+      enable-deep-per-tx-iota-conservation-check: false
+      force-disable-epoch-iota-conservation-check: false
       enable-state-consistency-check: false
       force-disable-state-consistency-check: false
       enable-secondary-index-checks: false
@@ -889,7 +889,7 @@ validator_configs:
       concurrency: 0
     indexer-max-subscriptions: ~
     transaction-kv-store-read-config:
-      base-url: "https://transactions.sui.io/"
+      base-url: "https://transactions.iota.io/"
       cache-size: 100000
     jwk-fetch-interval-seconds: 3600
     zklogin-oauth-providers:
@@ -1028,9 +1028,9 @@ validator_configs:
       perform-db-checkpoints-at-epoch-end: false
     indirect-objects-threshold: 18446744073709551615
     expensive-safety-check-config:
-      enable-epoch-sui-conservation-check: false
-      enable-deep-per-tx-sui-conservation-check: false
-      force-disable-epoch-sui-conservation-check: false
+      enable-epoch-iota-conservation-check: false
+      enable-deep-per-tx-iota-conservation-check: false
+      force-disable-epoch-iota-conservation-check: false
       enable-state-consistency-check: false
       force-disable-state-consistency-check: false
       enable-secondary-index-checks: false
@@ -1052,7 +1052,7 @@ validator_configs:
       concurrency: 0
     indexer-max-subscriptions: ~
     transaction-kv-store-read-config:
-      base-url: "https://transactions.sui.io/"
+      base-url: "https://transactions.iota.io/"
       cache-size: 100000
     jwk-fetch-interval-seconds: 3600
     zklogin-oauth-providers:

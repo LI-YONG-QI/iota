@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use super::{ApiEndpoint, RouteHandler};
@@ -8,8 +9,8 @@ use crate::{rest::PageCursor, RpcService, RpcServiceError};
 use axum::extract::Query;
 use axum::extract::{Path, State};
 use axum::Json;
-use sui_sdk_types::{Address, ObjectId, StructTag, Version};
-use sui_types::sui_sdk_types_conversions::struct_tag_core_to_sdk;
+use iota_sdk_types::{Address, ObjectId, StructTag, Version};
+use iota_types::iota_sdk_types_conversions::struct_tag_core_to_sdk;
 use tap::Pipe;
 
 pub struct ListAccountObjects;
@@ -78,7 +79,7 @@ impl ListAccountOwnedObjectsQueryParameters {
             .unwrap_or(crate::rest::DEFAULT_PAGE_SIZE)
     }
 
-    pub fn start(&self) -> Option<sui_types::base_types::ObjectID> {
+    pub fn start(&self) -> Option<iota_types::base_types::ObjectID> {
         self.start.map(Into::into)
     }
 }
@@ -88,7 +89,7 @@ impl ListAccountOwnedObjectsQueryParameters {
 pub struct AccountOwnedObjectInfo {
     pub owner: Address,
     pub object_id: ObjectId,
-    #[serde_as(as = "sui_types::sui_serde::BigInt<u64>")]
+    #[serde_as(as = "iota_types::iota_serde::BigInt<u64>")]
     pub version: Version,
     #[serde(rename = "type")]
     pub type_: StructTag,

@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 mod execution;
@@ -15,8 +16,8 @@ pub use resolve::ResolveTransactionResponse;
 
 use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
-use sui_sdk_types::CheckpointSequenceNumber;
-use sui_sdk_types::TransactionDigest;
+use iota_sdk_types::CheckpointSequenceNumber;
+use iota_sdk_types::TransactionDigest;
 use tap::Pipe;
 
 use super::{ApiEndpoint, RouteHandler};

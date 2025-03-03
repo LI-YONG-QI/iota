@@ -1,13 +1,14 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use sui_macros::sim_test;
-use sui_rpc_api::client::sdk::Client;
-use sui_rpc_api::proto::node::node_service_client::NodeServiceClient;
-use sui_rpc_api::proto::node::{
+use iota_macros::sim_test;
+use iota_rpc_api::client::sdk::Client;
+use iota_rpc_api::proto::node::node_service_client::NodeServiceClient;
+use iota_rpc_api::proto::node::{
     GetTransactionOptions, GetTransactionRequest, GetTransactionResponse,
 };
-use sui_rpc_api::rest::transactions::ListTransactionsCursorParameters;
+use iota_rpc_api::rest::transactions::ListTransactionsCursorParameters;
 use test_cluster::TestClusterBuilder;
 
 use crate::{stake_with_validator, transfer_coin};
@@ -128,7 +129,7 @@ async fn get_transaction() {
     assert!(timestamp.is_some());
 
     // ensure we can convert proto GetTransactionResponse type to rust TransactionResponse
-    sui_rpc_api::types::TransactionResponse::try_from(&response).unwrap();
+    iota_rpc_api::types::TransactionResponse::try_from(&response).unwrap();
 }
 
 #[sim_test]

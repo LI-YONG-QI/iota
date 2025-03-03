@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::cli::lib::{get_api_server, get_oauth_token};
@@ -89,7 +90,7 @@ impl Display for RefType {
 pub enum ImageAction {
     #[command(name = "build")]
     Build {
-        /// The name of the git repository within the mystenlabs org
+        /// The name of the git repository within the IOTA Foundation
         #[arg(short, long)]
         repo_name: String,
         /// The path to the dockerfile within the source code repository given by `--repo_name`
@@ -131,7 +132,7 @@ pub enum ImageAction {
         /// Optional flag to target the image, used for multi-stage builds
         #[arg(short = 't', long)]
         image_target: Option<String>,
-        /// Optional arg to speciy the org to build the image for, default to "mystenlabs"
+        /// Optional arg to speciy the org to build the image for, default to "iota"
         #[arg(short = 'o', long)]
         org: Option<String>,
     },
@@ -579,7 +580,7 @@ fn generate_image_request(token: &str, action: &ImageAction) -> reqwest::Request
                 build_args: build_args.clone(),
                 force: *force,
                 image_target: image_target.clone(),
-                org: org.clone().unwrap_or("mystenlabs".to_string()),
+                org: org.clone().unwrap_or("iota".to_string()),
             };
             debug!("req body: {:?}", body);
             req.json(&body).headers(generate_headers_with_auth(token))

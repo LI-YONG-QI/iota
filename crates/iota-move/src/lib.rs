@@ -1,11 +1,12 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use clap::Parser;
 use move_cli::base::test::UnitTestResult;
 use move_package::BuildConfig;
 use std::path::Path;
-use sui_move_build::set_sui_flavor;
+use iota_move_build::set_iota_flavor;
 
 pub mod build;
 pub mod coverage;
@@ -38,7 +39,7 @@ pub fn execute_move_command(
     mut build_config: BuildConfig,
     command: Command,
 ) -> anyhow::Result<()> {
-    if let Some(err_msg) = set_sui_flavor(&mut build_config) {
+    if let Some(err_msg) = set_iota_flavor(&mut build_config) {
         anyhow::bail!(err_msg);
     }
     match command {

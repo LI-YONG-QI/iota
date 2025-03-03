@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use super::{ApiEndpoint, RouteHandler};
@@ -9,7 +10,7 @@ use crate::{Result, RpcService};
 use axum::extract::{Query, State};
 use axum::Json;
 use std::net::SocketAddr;
-use sui_sdk_types::{
+use iota_sdk_types::{
     BalanceChange, Object, SignedTransaction, Transaction, TransactionEffects, TransactionEvents,
 };
 

@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::path::Path;
@@ -7,14 +8,14 @@ use anyhow::bail;
 use anyhow::Context;
 use anyhow::Result;
 use clap::Parser;
-use sui_indexer_alt::args::Args;
-use sui_indexer_alt::args::Command;
-use sui_indexer_alt::config::IndexerConfig;
-use sui_indexer_alt::config::Merge;
-use sui_indexer_alt::start_indexer;
-use sui_indexer_alt_framework::Indexer;
-use sui_indexer_alt_schema::MIGRATIONS;
-use sui_pg_db::reset_database;
+use iota_indexer_alt::args::Args;
+use iota_indexer_alt::args::Command;
+use iota_indexer_alt::config::IndexerConfig;
+use iota_indexer_alt::config::Merge;
+use iota_indexer_alt::start_indexer;
+use iota_indexer_alt_framework::Indexer;
+use iota_indexer_alt_schema::MIGRATIONS;
+use iota_pg_db::reset_database;
 use tokio::fs;
 use tracing::info;
 
@@ -95,7 +96,7 @@ async fn main() -> Result<()> {
             let indexer_config: IndexerConfig = toml::from_str(&config_contents)
                 .context("Failed to parse configuration TOML file.")?;
 
-            sui_indexer_alt::benchmark::run_benchmark(args.db_args, benchmark_args, indexer_config)
+            iota_indexer_alt::benchmark::run_benchmark(args.db_args, benchmark_args, indexer_config)
                 .await?;
         }
     }

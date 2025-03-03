@@ -1,24 +1,24 @@
 ---
-title: Module `sui::config`
+title: Module `iota::config`
 ---
 
 
 
--  [Struct `Config`](#sui_config_Config)
--  [Struct `Setting`](#sui_config_Setting)
--  [Struct `SettingData`](#sui_config_SettingData)
+-  [Struct `Config`](#iota_config_Config)
+-  [Struct `Setting`](#iota_config_Setting)
+-  [Struct `SettingData`](#iota_config_SettingData)
 -  [Constants](#@Constants_0)
--  [Function `new`](#sui_config_new)
--  [Function `share`](#sui_config_share)
--  [Function `transfer`](#sui_config_transfer)
--  [Function `add_for_next_epoch`](#sui_config_add_for_next_epoch)
--  [Function `remove_for_next_epoch`](#sui_config_remove_for_next_epoch)
--  [Function `exists_with_type`](#sui_config_exists_with_type)
--  [Function `exists_with_type_for_next_epoch`](#sui_config_exists_with_type_for_next_epoch)
--  [Function `borrow_for_next_epoch_mut`](#sui_config_borrow_for_next_epoch_mut)
--  [Function `read_setting_for_next_epoch`](#sui_config_read_setting_for_next_epoch)
--  [Function `read_setting`](#sui_config_read_setting)
--  [Function `read_setting_impl`](#sui_config_read_setting_impl)
+-  [Function `new`](#iota_config_new)
+-  [Function `share`](#iota_config_share)
+-  [Function `transfer`](#iota_config_transfer)
+-  [Function `add_for_next_epoch`](#iota_config_add_for_next_epoch)
+-  [Function `remove_for_next_epoch`](#iota_config_remove_for_next_epoch)
+-  [Function `exists_with_type`](#iota_config_exists_with_type)
+-  [Function `exists_with_type_for_next_epoch`](#iota_config_exists_with_type_for_next_epoch)
+-  [Function `borrow_for_next_epoch_mut`](#iota_config_borrow_for_next_epoch_mut)
+-  [Function `read_setting_for_next_epoch`](#iota_config_read_setting_for_next_epoch)
+-  [Function `read_setting`](#iota_config_read_setting)
+-  [Function `read_setting_impl`](#iota_config_read_setting_impl)
 
 
 <pre><code><b>use</b> <a href="../std/ascii.md#std_ascii">std::ascii</a>;
@@ -26,17 +26,17 @@ title: Module `sui::config`
 <b>use</b> <a href="../std/option.md#std_option">std::option</a>;
 <b>use</b> <a href="../std/string.md#std_string">std::string</a>;
 <b>use</b> <a href="../std/vector.md#std_vector">std::vector</a>;
-<b>use</b> <a href="../sui/address.md#sui_address">sui::address</a>;
-<b>use</b> <a href="../sui/dynamic_field.md#sui_dynamic_field">sui::dynamic_field</a>;
-<b>use</b> <a href="../sui/hex.md#sui_hex">sui::hex</a>;
-<b>use</b> <a href="../sui/object.md#sui_object">sui::object</a>;
-<b>use</b> <a href="../sui/transfer.md#sui_transfer">sui::transfer</a>;
-<b>use</b> <a href="../sui/tx_context.md#sui_tx_context">sui::tx_context</a>;
+<b>use</b> <a href="../iota/address.md#iota_address">iota::address</a>;
+<b>use</b> <a href="../iota/dynamic_field.md#iota_dynamic_field">iota::dynamic_field</a>;
+<b>use</b> <a href="../iota/hex.md#iota_hex">iota::hex</a>;
+<b>use</b> <a href="../iota/object.md#iota_object">iota::object</a>;
+<b>use</b> <a href="../iota/transfer.md#iota_transfer">iota::transfer</a>;
+<b>use</b> <a href="../iota/tx_context.md#iota_tx_context">iota::tx_context</a>;
 </code></pre>
 
 
 
-<a name="sui_config_Config"></a>
+<a name="iota_config_Config"></a>
 
 ## Struct `Config`
 
@@ -53,7 +53,7 @@ title: Module `sui::config`
 
 <dl>
 <dt>
-<code>id: <a href="../sui/object.md#sui_object_UID">sui::object::UID</a></code>
+<code>id: <a href="../iota/object.md#iota_object_UID">iota::object::UID</a></code>
 </dt>
 <dd>
 </dd>
@@ -62,7 +62,7 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_Setting"></a>
+<a name="iota_config_Setting"></a>
 
 ## Struct `Setting`
 
@@ -79,7 +79,7 @@ title: Module `sui::config`
 
 <dl>
 <dt>
-<code>data: <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;<a href="../sui/config.md#sui_config_SettingData">sui::config::SettingData</a>&lt;Value&gt;&gt;</code>
+<code>data: <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;<a href="../iota/config.md#iota_config_SettingData">iota::config::SettingData</a>&lt;Value&gt;&gt;</code>
 </dt>
 <dd>
 </dd>
@@ -88,7 +88,7 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_SettingData"></a>
+<a name="iota_config_SettingData"></a>
 
 ## Struct `SettingData`
 
@@ -129,40 +129,40 @@ title: Module `sui::config`
 ## Constants
 
 
-<a name="sui_config_EAlreadySetForEpoch"></a>
+<a name="iota_config_EAlreadySetForEpoch"></a>
 
 
 
-<pre><code><b>const</b> <a href="../sui/config.md#sui_config_EAlreadySetForEpoch">EAlreadySetForEpoch</a>: u64 = 0;
+<pre><code><b>const</b> <a href="../iota/config.md#iota_config_EAlreadySetForEpoch">EAlreadySetForEpoch</a>: u64 = 0;
 </code></pre>
 
 
 
-<a name="sui_config_EBCSSerializationFailure"></a>
+<a name="iota_config_EBCSSerializationFailure"></a>
 
 
 
-<pre><code><b>const</b> <a href="../sui/config.md#sui_config_EBCSSerializationFailure">EBCSSerializationFailure</a>: u64 = 2;
+<pre><code><b>const</b> <a href="../iota/config.md#iota_config_EBCSSerializationFailure">EBCSSerializationFailure</a>: u64 = 2;
 </code></pre>
 
 
 
-<a name="sui_config_ENotSetForEpoch"></a>
+<a name="iota_config_ENotSetForEpoch"></a>
 
 
 
-<pre><code><b>const</b> <a href="../sui/config.md#sui_config_ENotSetForEpoch">ENotSetForEpoch</a>: u64 = 1;
+<pre><code><b>const</b> <a href="../iota/config.md#iota_config_ENotSetForEpoch">ENotSetForEpoch</a>: u64 = 1;
 </code></pre>
 
 
 
-<a name="sui_config_new"></a>
+<a name="iota_config_new"></a>
 
 ## Function `new`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> newWriteCap(_cap: &<b>mut</b> WriteCap, ctx: &<b>mut</b> <a href="../sui/tx_context.md#sui_tx_context_TxContext">sui::tx_context::TxContext</a>): <a href="../sui/config.md#sui_config_Config">sui::config::Config</a>&lt;WriteCap&gt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> newWriteCap(_cap: &<b>mut</b> WriteCap, ctx: &<b>mut</b> <a href="../iota/tx_context.md#iota_tx_context_TxContext">iota::tx_context::TxContext</a>): <a href="../iota/config.md#iota_config_Config">iota::config::Config</a>&lt;WriteCap&gt;
 </code></pre>
 
 
@@ -171,8 +171,8 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/config.md#sui_config_new">new</a>&lt;WriteCap&gt;(_cap: &<b>mut</b> WriteCap, ctx: &<b>mut</b> TxContext): <a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt; {
-    <a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt; { id: <a href="../sui/object.md#sui_object_new">object::new</a>(ctx) }
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/config.md#iota_config_new">new</a>&lt;WriteCap&gt;(_cap: &<b>mut</b> WriteCap, ctx: &<b>mut</b> TxContext): <a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt; {
+    <a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt; { id: <a href="../iota/object.md#iota_object_new">object::new</a>(ctx) }
 }
 </code></pre>
 
@@ -180,13 +180,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_share"></a>
+<a name="iota_config_share"></a>
 
 ## Function `share`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> shareWriteCap(<a href="../sui/config.md#sui_config">config</a>: <a href="../sui/config.md#sui_config_Config">sui::config::Config</a>&lt;WriteCap&gt;)
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> shareWriteCap(<a href="../iota/config.md#iota_config">config</a>: <a href="../iota/config.md#iota_config_Config">iota::config::Config</a>&lt;WriteCap&gt;)
 </code></pre>
 
 
@@ -195,8 +195,8 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/config.md#sui_config_share">share</a>&lt;WriteCap&gt;(<a href="../sui/config.md#sui_config">config</a>: <a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt;) {
-    <a href="../sui/transfer.md#sui_transfer_share_object">transfer::share_object</a>(<a href="../sui/config.md#sui_config">config</a>)
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/config.md#iota_config_share">share</a>&lt;WriteCap&gt;(<a href="../iota/config.md#iota_config">config</a>: <a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt;) {
+    <a href="../iota/transfer.md#iota_transfer_share_object">transfer::share_object</a>(<a href="../iota/config.md#iota_config">config</a>)
 }
 </code></pre>
 
@@ -204,13 +204,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_transfer"></a>
+<a name="iota_config_transfer"></a>
 
 ## Function `transfer`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> transferWriteCap(<a href="../sui/config.md#sui_config">config</a>: <a href="../sui/config.md#sui_config_Config">sui::config::Config</a>&lt;WriteCap&gt;, owner: <b>address</b>)
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> transferWriteCap(<a href="../iota/config.md#iota_config">config</a>: <a href="../iota/config.md#iota_config_Config">iota::config::Config</a>&lt;WriteCap&gt;, owner: <b>address</b>)
 </code></pre>
 
 
@@ -219,8 +219,8 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/transfer.md#sui_transfer">transfer</a>&lt;WriteCap&gt;(<a href="../sui/config.md#sui_config">config</a>: <a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt;, owner: <b>address</b>) {
-    <a href="../sui/transfer.md#sui_transfer_transfer">transfer::transfer</a>(<a href="../sui/config.md#sui_config">config</a>, owner)
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/transfer.md#iota_transfer">transfer</a>&lt;WriteCap&gt;(<a href="../iota/config.md#iota_config">config</a>: <a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt;, owner: <b>address</b>) {
+    <a href="../iota/transfer.md#iota_transfer_transfer">transfer::transfer</a>(<a href="../iota/config.md#iota_config">config</a>, owner)
 }
 </code></pre>
 
@@ -228,13 +228,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_add_for_next_epoch"></a>
+<a name="iota_config_add_for_next_epoch"></a>
 
 ## Function `add_for_next_epoch`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> add_for_next_epochWriteCap, Name, Value(<a href="../sui/config.md#sui_config">config</a>: &<b>mut</b> <a href="../sui/config.md#sui_config_Config">sui::config::Config</a>&lt;WriteCap&gt;, _cap: &<b>mut</b> WriteCap, name: Name, value: Value, ctx: &<b>mut</b> <a href="../sui/tx_context.md#sui_tx_context_TxContext">sui::tx_context::TxContext</a>): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> add_for_next_epochWriteCap, Name, Value(<a href="../iota/config.md#iota_config">config</a>: &<b>mut</b> <a href="../iota/config.md#iota_config_Config">iota::config::Config</a>&lt;WriteCap&gt;, _cap: &<b>mut</b> WriteCap, name: Name, value: Value, ctx: &<b>mut</b> <a href="../iota/tx_context.md#iota_tx_context_TxContext">iota::tx_context::TxContext</a>): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
 </code></pre>
 
 
@@ -243,31 +243,31 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/config.md#sui_config_add_for_next_epoch">add_for_next_epoch</a>&lt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/config.md#iota_config_add_for_next_epoch">add_for_next_epoch</a>&lt;
     WriteCap,
     Name: <b>copy</b> + drop + store,
     Value: <b>copy</b> + drop + store,
 &gt;(
-    <a href="../sui/config.md#sui_config">config</a>: &<b>mut</b> <a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt;,
+    <a href="../iota/config.md#iota_config">config</a>: &<b>mut</b> <a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt;,
     _cap: &<b>mut</b> WriteCap,
     name: Name,
     value: Value,
     ctx: &<b>mut</b> TxContext,
 ): Option&lt;Value&gt; {
     <b>let</b> epoch = ctx.epoch();
-    <b>if</b> (!field::exists_(&<a href="../sui/config.md#sui_config">config</a>.id, name)) {
-        <b>let</b> sobj = <a href="../sui/config.md#sui_config_Setting">Setting</a> {
-            data: option::some(<a href="../sui/config.md#sui_config_SettingData">SettingData</a> {
+    <b>if</b> (!field::exists_(&<a href="../iota/config.md#iota_config">config</a>.id, name)) {
+        <b>let</b> sobj = <a href="../iota/config.md#iota_config_Setting">Setting</a> {
+            data: option::some(<a href="../iota/config.md#iota_config_SettingData">SettingData</a> {
                 newer_value_epoch: epoch,
                 newer_value: option::some(value),
                 older_value_opt: option::none(),
             }),
         };
-        field::add(&<b>mut</b> <a href="../sui/config.md#sui_config">config</a>.id, name, sobj);
+        field::add(&<b>mut</b> <a href="../iota/config.md#iota_config">config</a>.id, name, sobj);
         option::none()
     } <b>else</b> {
-        <b>let</b> sobj: &<b>mut</b> <a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt; = field::borrow_mut(&<b>mut</b> <a href="../sui/config.md#sui_config">config</a>.id, name);
-        <b>let</b> <a href="../sui/config.md#sui_config_SettingData">SettingData</a> {
+        <b>let</b> sobj: &<b>mut</b> <a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt; = field::borrow_mut(&<b>mut</b> <a href="../iota/config.md#iota_config">config</a>.id, name);
+        <b>let</b> <a href="../iota/config.md#iota_config_SettingData">SettingData</a> {
             newer_value_epoch,
             newer_value,
             older_value_opt,
@@ -280,10 +280,10 @@ title: Module `sui::config`
                 // the current epoch cannot be less than the `newer_value_epoch`
                 <b>assert</b>!(epoch == newer_value_epoch);
                 // <b>if</b> the `newer_value` is <b>for</b> the current epoch, then the option must be `none`
-                <b>assert</b>!(newer_value.is_none(), <a href="../sui/config.md#sui_config_EAlreadySetForEpoch">EAlreadySetForEpoch</a>);
+                <b>assert</b>!(newer_value.is_none(), <a href="../iota/config.md#iota_config_EAlreadySetForEpoch">EAlreadySetForEpoch</a>);
                 (<b>move</b> older_value_opt, option::none())
             };
-        sobj.data.fill(<a href="../sui/config.md#sui_config_SettingData">SettingData</a> {
+        sobj.data.fill(<a href="../iota/config.md#iota_config_SettingData">SettingData</a> {
             newer_value_epoch: epoch,
             newer_value: option::some(value),
             older_value_opt,
@@ -297,13 +297,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_remove_for_next_epoch"></a>
+<a name="iota_config_remove_for_next_epoch"></a>
 
 ## Function `remove_for_next_epoch`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> remove_for_next_epochWriteCap, Name, Value(<a href="../sui/config.md#sui_config">config</a>: &<b>mut</b> <a href="../sui/config.md#sui_config_Config">sui::config::Config</a>&lt;WriteCap&gt;, _cap: &<b>mut</b> WriteCap, name: Name, ctx: &<b>mut</b> <a href="../sui/tx_context.md#sui_tx_context_TxContext">sui::tx_context::TxContext</a>): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> remove_for_next_epochWriteCap, Name, Value(<a href="../iota/config.md#iota_config">config</a>: &<b>mut</b> <a href="../iota/config.md#iota_config_Config">iota::config::Config</a>&lt;WriteCap&gt;, _cap: &<b>mut</b> WriteCap, name: Name, ctx: &<b>mut</b> <a href="../iota/tx_context.md#iota_tx_context_TxContext">iota::tx_context::TxContext</a>): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
 </code></pre>
 
 
@@ -312,20 +312,20 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/config.md#sui_config_remove_for_next_epoch">remove_for_next_epoch</a>&lt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/config.md#iota_config_remove_for_next_epoch">remove_for_next_epoch</a>&lt;
     WriteCap,
     Name: <b>copy</b> + drop + store,
     Value: <b>copy</b> + drop + store,
 &gt;(
-    <a href="../sui/config.md#sui_config">config</a>: &<b>mut</b> <a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt;,
+    <a href="../iota/config.md#iota_config">config</a>: &<b>mut</b> <a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt;,
     _cap: &<b>mut</b> WriteCap,
     name: Name,
     ctx: &<b>mut</b> TxContext,
 ): Option&lt;Value&gt; {
     <b>let</b> epoch = ctx.epoch();
-    <b>if</b> (!field::exists_(&<a href="../sui/config.md#sui_config">config</a>.id, name)) <b>return</b> option::none();
-    <b>let</b> sobj: &<b>mut</b> <a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt; = field::borrow_mut(&<b>mut</b> <a href="../sui/config.md#sui_config">config</a>.id, name);
-    <b>let</b> <a href="../sui/config.md#sui_config_SettingData">SettingData</a> {
+    <b>if</b> (!field::exists_(&<a href="../iota/config.md#iota_config">config</a>.id, name)) <b>return</b> option::none();
+    <b>let</b> sobj: &<b>mut</b> <a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt; = field::borrow_mut(&<b>mut</b> <a href="../iota/config.md#iota_config">config</a>.id, name);
+    <b>let</b> <a href="../iota/config.md#iota_config_SettingData">SettingData</a> {
         newer_value_epoch,
         newer_value,
         older_value_opt,
@@ -340,13 +340,13 @@ title: Module `sui::config`
             (<b>move</b> older_value_opt, <b>move</b> newer_value)
         };
     <b>let</b> older_value_opt_is_none = older_value_opt.is_none();
-    sobj.data.fill(<a href="../sui/config.md#sui_config_SettingData">SettingData</a> {
+    sobj.data.fill(<a href="../iota/config.md#iota_config_SettingData">SettingData</a> {
         newer_value_epoch: epoch,
         newer_value: option::none(),
         older_value_opt,
     });
     <b>if</b> (older_value_opt_is_none) {
-        field::remove&lt;_, <a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt;&gt;(&<b>mut</b> <a href="../sui/config.md#sui_config">config</a>.id, name);
+        field::remove&lt;_, <a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt;&gt;(&<b>mut</b> <a href="../iota/config.md#iota_config">config</a>.id, name);
     };
     removed_value
 }
@@ -356,13 +356,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_exists_with_type"></a>
+<a name="iota_config_exists_with_type"></a>
 
 ## Function `exists_with_type`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> exists_with_typeWriteCap, Name, Value(<a href="../sui/config.md#sui_config">config</a>: &<a href="../sui/config.md#sui_config_Config">sui::config::Config</a>&lt;WriteCap&gt;, name: Name): bool
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> exists_with_typeWriteCap, Name, Value(<a href="../iota/config.md#iota_config">config</a>: &<a href="../iota/config.md#iota_config_Config">iota::config::Config</a>&lt;WriteCap&gt;, name: Name): bool
 </code></pre>
 
 
@@ -371,15 +371,15 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/config.md#sui_config_exists_with_type">exists_with_type</a>&lt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/config.md#iota_config_exists_with_type">exists_with_type</a>&lt;
     WriteCap,
     Name: <b>copy</b> + drop + store,
     Value: <b>copy</b> + drop + store,
 &gt;(
-    <a href="../sui/config.md#sui_config">config</a>: &<a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt;,
+    <a href="../iota/config.md#iota_config">config</a>: &<a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt;,
     name: Name,
 ): bool {
-    field::exists_with_type&lt;_, <a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt;&gt;(&<a href="../sui/config.md#sui_config">config</a>.id, name)
+    field::exists_with_type&lt;_, <a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt;&gt;(&<a href="../iota/config.md#iota_config">config</a>.id, name)
 }
 </code></pre>
 
@@ -387,13 +387,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_exists_with_type_for_next_epoch"></a>
+<a name="iota_config_exists_with_type_for_next_epoch"></a>
 
 ## Function `exists_with_type_for_next_epoch`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> exists_with_type_for_next_epochWriteCap, Name, Value(<a href="../sui/config.md#sui_config">config</a>: &<a href="../sui/config.md#sui_config_Config">sui::config::Config</a>&lt;WriteCap&gt;, name: Name, ctx: &<a href="../sui/tx_context.md#sui_tx_context_TxContext">sui::tx_context::TxContext</a>): bool
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> exists_with_type_for_next_epochWriteCap, Name, Value(<a href="../iota/config.md#iota_config">config</a>: &<a href="../iota/config.md#iota_config_Config">iota::config::Config</a>&lt;WriteCap&gt;, name: Name, ctx: &<a href="../iota/tx_context.md#iota_tx_context_TxContext">iota::tx_context::TxContext</a>): bool
 </code></pre>
 
 
@@ -402,20 +402,20 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/config.md#sui_config_exists_with_type_for_next_epoch">exists_with_type_for_next_epoch</a>&lt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/config.md#iota_config_exists_with_type_for_next_epoch">exists_with_type_for_next_epoch</a>&lt;
     WriteCap,
     Name: <b>copy</b> + drop + store,
     Value: <b>copy</b> + drop + store,
 &gt;(
-    <a href="../sui/config.md#sui_config">config</a>: &<a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt;,
+    <a href="../iota/config.md#iota_config">config</a>: &<a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt;,
     name: Name,
     ctx: &TxContext,
 ): bool {
-    field::exists_with_type&lt;_, <a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt;&gt;(&<a href="../sui/config.md#sui_config">config</a>.id, name) && {
+    field::exists_with_type&lt;_, <a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt;&gt;(&<a href="../iota/config.md#iota_config">config</a>.id, name) && {
         <b>let</b> epoch = ctx.epoch();
-        <b>let</b> sobj: &<a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt; = field::borrow(&<a href="../sui/config.md#sui_config">config</a>.id, name);
-        epoch == sobj.data.<a href="../sui/borrow.md#sui_borrow">borrow</a>().newer_value_epoch &&
-        sobj.data.<a href="../sui/borrow.md#sui_borrow">borrow</a>().newer_value.is_some()
+        <b>let</b> sobj: &<a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt; = field::borrow(&<a href="../iota/config.md#iota_config">config</a>.id, name);
+        epoch == sobj.data.<a href="../iota/borrow.md#iota_borrow">borrow</a>().newer_value_epoch &&
+        sobj.data.<a href="../iota/borrow.md#iota_borrow">borrow</a>().newer_value.is_some()
     }
 }
 </code></pre>
@@ -424,13 +424,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_borrow_for_next_epoch_mut"></a>
+<a name="iota_config_borrow_for_next_epoch_mut"></a>
 
 ## Function `borrow_for_next_epoch_mut`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> borrow_for_next_epoch_mutWriteCap, Name, Value(<a href="../sui/config.md#sui_config">config</a>: &<b>mut</b> <a href="../sui/config.md#sui_config_Config">sui::config::Config</a>&lt;WriteCap&gt;, _cap: &<b>mut</b> WriteCap, name: Name, ctx: &<b>mut</b> <a href="../sui/tx_context.md#sui_tx_context_TxContext">sui::tx_context::TxContext</a>): &<b>mut</b> Value
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> borrow_for_next_epoch_mutWriteCap, Name, Value(<a href="../iota/config.md#iota_config">config</a>: &<b>mut</b> <a href="../iota/config.md#iota_config_Config">iota::config::Config</a>&lt;WriteCap&gt;, _cap: &<b>mut</b> WriteCap, name: Name, ctx: &<b>mut</b> <a href="../iota/tx_context.md#iota_tx_context_TxContext">iota::tx_context::TxContext</a>): &<b>mut</b> Value
 </code></pre>
 
 
@@ -439,21 +439,21 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/config.md#sui_config_borrow_for_next_epoch_mut">borrow_for_next_epoch_mut</a>&lt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/config.md#iota_config_borrow_for_next_epoch_mut">borrow_for_next_epoch_mut</a>&lt;
     WriteCap,
     Name: <b>copy</b> + drop + store,
     Value: <b>copy</b> + drop + store,
 &gt;(
-    <a href="../sui/config.md#sui_config">config</a>: &<b>mut</b> <a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt;,
+    <a href="../iota/config.md#iota_config">config</a>: &<b>mut</b> <a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt;,
     _cap: &<b>mut</b> WriteCap,
     name: Name,
     ctx: &<b>mut</b> TxContext,
 ): &<b>mut</b> Value {
     <b>let</b> epoch = ctx.epoch();
-    <b>let</b> sobj: &<b>mut</b> <a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt; = field::borrow_mut(&<b>mut</b> <a href="../sui/config.md#sui_config">config</a>.id, name);
+    <b>let</b> sobj: &<b>mut</b> <a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt; = field::borrow_mut(&<b>mut</b> <a href="../iota/config.md#iota_config">config</a>.id, name);
     <b>let</b> data = sobj.data.borrow_mut();
-    <b>assert</b>!(data.newer_value_epoch == epoch, <a href="../sui/config.md#sui_config_ENotSetForEpoch">ENotSetForEpoch</a>);
-    <b>assert</b>!(data.newer_value.is_some(), <a href="../sui/config.md#sui_config_ENotSetForEpoch">ENotSetForEpoch</a>);
+    <b>assert</b>!(data.newer_value_epoch == epoch, <a href="../iota/config.md#iota_config_ENotSetForEpoch">ENotSetForEpoch</a>);
+    <b>assert</b>!(data.newer_value.is_some(), <a href="../iota/config.md#iota_config_ENotSetForEpoch">ENotSetForEpoch</a>);
     data.newer_value.borrow_mut()
 }
 </code></pre>
@@ -462,13 +462,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_read_setting_for_next_epoch"></a>
+<a name="iota_config_read_setting_for_next_epoch"></a>
 
 ## Function `read_setting_for_next_epoch`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> read_setting_for_next_epochWriteCap, Name, Value(<a href="../sui/config.md#sui_config">config</a>: &<a href="../sui/config.md#sui_config_Config">sui::config::Config</a>&lt;WriteCap&gt;, name: Name): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> read_setting_for_next_epochWriteCap, Name, Value(<a href="../iota/config.md#iota_config">config</a>: &<a href="../iota/config.md#iota_config_Config">iota::config::Config</a>&lt;WriteCap&gt;, name: Name): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
 </code></pre>
 
 
@@ -477,17 +477,17 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/config.md#sui_config_read_setting_for_next_epoch">read_setting_for_next_epoch</a>&lt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/config.md#iota_config_read_setting_for_next_epoch">read_setting_for_next_epoch</a>&lt;
     WriteCap,
     Name: <b>copy</b> + drop + store,
     Value: <b>copy</b> + drop + store,
 &gt;(
-    <a href="../sui/config.md#sui_config">config</a>: &<a href="../sui/config.md#sui_config_Config">Config</a>&lt;WriteCap&gt;,
+    <a href="../iota/config.md#iota_config">config</a>: &<a href="../iota/config.md#iota_config_Config">Config</a>&lt;WriteCap&gt;,
     name: Name,
 ): Option&lt;Value&gt; {
-    <b>if</b> (!field::exists_with_type&lt;_, <a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt;&gt;(&<a href="../sui/config.md#sui_config">config</a>.id, name)) <b>return</b> option::none();
-    <b>let</b> sobj: &<a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt; = field::borrow(&<a href="../sui/config.md#sui_config">config</a>.id, name);
-    <b>let</b> data = sobj.data.<a href="../sui/borrow.md#sui_borrow">borrow</a>();
+    <b>if</b> (!field::exists_with_type&lt;_, <a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt;&gt;(&<a href="../iota/config.md#iota_config">config</a>.id, name)) <b>return</b> option::none();
+    <b>let</b> sobj: &<a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt; = field::borrow(&<a href="../iota/config.md#iota_config">config</a>.id, name);
+    <b>let</b> data = sobj.data.<a href="../iota/borrow.md#iota_borrow">borrow</a>();
     data.newer_value
 }
 </code></pre>
@@ -496,13 +496,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_read_setting"></a>
+<a name="iota_config_read_setting"></a>
 
 ## Function `read_setting`
 
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> read_settingName, Value(<a href="../sui/config.md#sui_config">config</a>: <a href="../sui/object.md#sui_object_ID">sui::object::ID</a>, name: Name, ctx: &<a href="../sui/tx_context.md#sui_tx_context_TxContext">sui::tx_context::TxContext</a>): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> read_settingName, Value(<a href="../iota/config.md#iota_config">config</a>: <a href="../iota/object.md#iota_object_ID">iota::object::ID</a>, name: Name, ctx: &<a href="../iota/tx_context.md#iota_tx_context_TxContext">iota::tx_context::TxContext</a>): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
 </code></pre>
 
 
@@ -511,15 +511,15 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<a href="../sui/package.md#sui_package">package</a>) <b>fun</b> <a href="../sui/config.md#sui_config_read_setting">read_setting</a>&lt;Name: <b>copy</b> + drop + store, Value: <b>copy</b> + drop + store&gt;(
-    <a href="../sui/config.md#sui_config">config</a>: ID,
+<pre><code><b>public</b>(<a href="../iota/package.md#iota_package">package</a>) <b>fun</b> <a href="../iota/config.md#iota_config_read_setting">read_setting</a>&lt;Name: <b>copy</b> + drop + store, Value: <b>copy</b> + drop + store&gt;(
+    <a href="../iota/config.md#iota_config">config</a>: ID,
     name: Name,
     ctx: &TxContext,
 ): Option&lt;Value&gt; {
-    <b>use</b> <a href="../sui/dynamic_field.md#sui_dynamic_field_Field">sui::dynamic_field::Field</a>;
-    <b>let</b> config_id = <a href="../sui/config.md#sui_config">config</a>.to_address();
+    <b>use</b> <a href="../iota/dynamic_field.md#iota_dynamic_field_Field">iota::dynamic_field::Field</a>;
+    <b>let</b> config_id = <a href="../iota/config.md#iota_config">config</a>.to_address();
     <b>let</b> setting_df = field::hash_type_and_key(config_id, name);
-    <a href="../sui/config.md#sui_config_read_setting_impl">read_setting_impl</a>&lt;Field&lt;Name, <a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt;&gt;, <a href="../sui/config.md#sui_config_Setting">Setting</a>&lt;Value&gt;, <a href="../sui/config.md#sui_config_SettingData">SettingData</a>&lt;Value&gt;, Value&gt;(
+    <a href="../iota/config.md#iota_config_read_setting_impl">read_setting_impl</a>&lt;Field&lt;Name, <a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt;&gt;, <a href="../iota/config.md#iota_config_Setting">Setting</a>&lt;Value&gt;, <a href="../iota/config.md#iota_config_SettingData">SettingData</a>&lt;Value&gt;, Value&gt;(
         config_id,
         setting_df,
         ctx.epoch(),
@@ -531,13 +531,13 @@ title: Module `sui::config`
 
 </details>
 
-<a name="sui_config_read_setting_impl"></a>
+<a name="iota_config_read_setting_impl"></a>
 
 ## Function `read_setting_impl`
 
 
 
-<pre><code><b>fun</b> read_setting_implFieldSettingValue, SettingValue, SettingDataValue, Value(<a href="../sui/config.md#sui_config">config</a>: <b>address</b>, name: <b>address</b>, current_epoch: u64): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
+<pre><code><b>fun</b> read_setting_implFieldSettingValue, SettingValue, SettingDataValue, Value(<a href="../iota/config.md#iota_config">config</a>: <b>address</b>, name: <b>address</b>, current_epoch: u64): <a href="../std/option.md#std_option_Option">std::option::Option</a>&lt;Value&gt;
 </code></pre>
 
 
@@ -546,13 +546,13 @@ title: Module `sui::config`
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="../sui/config.md#sui_config_read_setting_impl">read_setting_impl</a>&lt;
+<pre><code><b>native</b> <b>fun</b> <a href="../iota/config.md#iota_config_read_setting_impl">read_setting_impl</a>&lt;
     FieldSettingValue: key,
     SettingValue: store,
     SettingDataValue: store,
     Value: <b>copy</b> + drop + store,
 &gt;(
-    <a href="../sui/config.md#sui_config">config</a>: <b>address</b>,
+    <a href="../iota/config.md#iota_config">config</a>: <b>address</b>,
     name: <b>address</b>,
     current_epoch: u64,
 ): Option&lt;Value&gt;;

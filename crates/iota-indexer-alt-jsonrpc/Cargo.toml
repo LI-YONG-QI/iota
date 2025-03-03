@@ -1,13 +1,13 @@
 [package]
-name = "sui-indexer-alt-jsonrpc"
+name = "iota-indexer-alt-jsonrpc"
 version.workspace = true
-authors = ["Mysten Labs <build@mystenlabs.com>"]
+authors = ["IOTA Foundation <info@iota.org>"]
 license = "Apache-2.0"
 publish = false
 edition = "2021"
 
 [[bin]]
-name = "sui-indexer-alt-jsonrpc"
+name = "iota-indexer-alt-jsonrpc"
 path = "src/main.rs"
 
 [dependencies]
@@ -24,7 +24,7 @@ tokio.workspace = true
 tracing.workspace = true
 url.workspace = true
 
-sui-indexer-alt-schema.workspace = true
-sui-pg-db.workspace = true
-sui-types.workspace = true
+iota-indexer-alt-schema.workspace = true
+iota-pg-db.workspace = true
+iota-types.workspace = true
 

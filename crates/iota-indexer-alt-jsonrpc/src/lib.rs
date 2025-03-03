@@ -1,11 +1,12 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::net::SocketAddr;
 
 use anyhow::Context;
 use jsonrpsee::server::{RpcModule, Server, ServerBuilder};
-use sui_pg_db::Db;
+use iota_pg_db::Db;
 use tokio::task::JoinHandle;
 use tracing::info;
 
@@ -119,7 +120,7 @@ mod tests {
     };
 
     use jsonrpsee::{core::RpcResult, proc_macros::rpc};
-    use sui_pg_db::temp::get_available_port;
+    use iota_pg_db::temp::get_available_port;
 
     use super::*;
 

@@ -4,13 +4,13 @@ use super::TryFromProtoError;
 use tap::Pipe;
 
 #[rustfmt::skip]
-#[path = "generated/sui.node.v2.rs"]
+#[path = "generated/iota.node.v2.rs"]
 mod generated;
 pub use generated::*;
 
 mod file_descriptor_set {
     /// Byte encoded FILE_DESCRIPTOR_SET.
-    pub const FILE_DESCRIPTOR_SET: &[u8] = include_bytes!("generated/sui.node.v2.fds.bin");
+    pub const FILE_DESCRIPTOR_SET: &[u8] = include_bytes!("generated/iota.node.v2.fds.bin");
 
     #[cfg(test)]
     mod tests {
@@ -29,8 +29,8 @@ pub use file_descriptor_set::FILE_DESCRIPTOR_SET;
 // BalanceChange
 //
 
-impl From<sui_sdk_types::BalanceChange> for BalanceChange {
-    fn from(value: sui_sdk_types::BalanceChange) -> Self {
+impl From<iota_sdk_types::BalanceChange> for BalanceChange {
+    fn from(value: iota_sdk_types::BalanceChange) -> Self {
         Self {
             address: Some(value.address.into()),
             coin_type: Some(value.coin_type.into()),
@@ -39,7 +39,7 @@ impl From<sui_sdk_types::BalanceChange> for BalanceChange {
     }
 }
 
-impl TryFrom<&BalanceChange> for sui_sdk_types::BalanceChange {
+impl TryFrom<&BalanceChange> for iota_sdk_types::BalanceChange {
     type Error = TryFromProtoError;
 
     fn try_from(value: &BalanceChange) -> Result<Self, Self::Error> {
@@ -1609,7 +1609,7 @@ pub mod node_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/sui.node.v2.Node/GetNodeInfo" => {
+                "/iota.node.v2.Node/GetNodeInfo" => {
                     #[allow(non_camel_case_types)]
                     struct GetNodeInfoSvc<T: Node>(pub Arc<T>);
                     impl<T: Node> tonic::server::UnaryService<()> for GetNodeInfoSvc<T> {
@@ -1649,7 +1649,7 @@ pub mod node_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.Node/GetCommittee" => {
+                "/iota.node.v2.Node/GetCommittee" => {
                     #[allow(non_camel_case_types)]
                     struct GetCommitteeSvc<T: Node>(pub Arc<T>);
                     impl<T: Node> tonic::server::UnaryService<super::GetCommitteeRequest> for GetCommitteeSvc<T> {
@@ -1687,7 +1687,7 @@ pub mod node_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.Node/GetObject" => {
+                "/iota.node.v2.Node/GetObject" => {
                     #[allow(non_camel_case_types)]
                     struct GetObjectSvc<T: Node>(pub Arc<T>);
                     impl<T: Node> tonic::server::UnaryService<super::GetObjectRequest> for GetObjectSvc<T> {
@@ -1724,7 +1724,7 @@ pub mod node_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.Node/GetTransaction" => {
+                "/iota.node.v2.Node/GetTransaction" => {
                     #[allow(non_camel_case_types)]
                     struct GetTransactionSvc<T: Node>(pub Arc<T>);
                     impl<T: Node> tonic::server::UnaryService<super::GetTransactionRequest> for GetTransactionSvc<T> {
@@ -1762,7 +1762,7 @@ pub mod node_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.Node/GetCheckpoint" => {
+                "/iota.node.v2.Node/GetCheckpoint" => {
                     #[allow(non_camel_case_types)]
                     struct GetCheckpointSvc<T: Node>(pub Arc<T>);
                     impl<T: Node> tonic::server::UnaryService<super::GetCheckpointRequest> for GetCheckpointSvc<T> {
@@ -1800,7 +1800,7 @@ pub mod node_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.Node/GetFullCheckpoint" => {
+                "/iota.node.v2.Node/GetFullCheckpoint" => {
                     #[allow(non_camel_case_types)]
                     struct GetFullCheckpointSvc<T: Node>(pub Arc<T>);
                     impl<T: Node> tonic::server::UnaryService<super::GetFullCheckpointRequest>
@@ -1841,7 +1841,7 @@ pub mod node_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.Node/ExecuteTransaction" => {
+                "/iota.node.v2.Node/ExecuteTransaction" => {
                     #[allow(non_camel_case_types)]
                     struct ExecuteTransactionSvc<T: Node>(pub Arc<T>);
                     impl<T: Node> tonic::server::UnaryService<super::ExecuteTransactionRequest>
@@ -1911,7 +1911,7 @@ pub mod node_server {
         }
     }
     /// Generated gRPC service name
-    pub const SERVICE_NAME: &str = "sui.node.v2.Node";
+    pub const SERVICE_NAME: &str = "iota.node.v2.Node";
     impl<T> tonic::server::NamedService for NodeServer<T> {
         const NAME: &'static str = SERVICE_NAME;
     }

@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::ops::Range;
@@ -7,13 +8,13 @@ use std::sync::Arc;
 use anyhow::Result;
 use diesel::{ExpressionMethods, QueryDsl};
 use diesel_async::RunQueryDsl;
-use sui_indexer_alt_framework::{
+use iota_indexer_alt_framework::{
     models::cp_sequence_numbers::tx_interval,
     pipeline::{concurrent::Handler, Processor},
 };
-use sui_indexer_alt_schema::{schema::tx_affected_objects, transactions::StoredTxAffectedObject};
-use sui_pg_db as db;
-use sui_types::{effects::TransactionEffectsAPI, full_checkpoint_content::CheckpointData};
+use iota_indexer_alt_schema::{schema::tx_affected_objects, transactions::StoredTxAffectedObject};
+use iota_pg_db as db;
+use iota_types::{effects::TransactionEffectsAPI, full_checkpoint_content::CheckpointData};
 
 pub(crate) struct TxAffectedObjects;
 

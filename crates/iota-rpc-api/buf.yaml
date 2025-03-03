@@ -9,19 +9,19 @@ modules:
         - STANDARD
       ignore_only:
         PACKAGE_VERSION_SUFFIX:
-          - proto/sui.types.proto
+          - proto/iota.types.proto
         DIRECTORY_SAME_PACKAGE:
-          - proto/sui.types.proto
-          - proto/sui.node.v2.proto
+          - proto/iota.types.proto
+          - proto/iota.node.v2.proto
         PACKAGE_DIRECTORY_MATCH:
-          - proto/sui.types.proto
-          - proto/sui.node.v2.proto
+          - proto/iota.types.proto
+          - proto/iota.node.v2.proto
         PACKAGE_SAME_DIRECTORY:
-          - proto/sui.types.proto
-          - proto/sui.node.v2.proto
+          - proto/iota.types.proto
+          - proto/iota.node.v2.proto
         FILE_LOWER_SNAKE_CASE:
-          - proto/sui.types.proto
-          - proto/sui.node.v2.proto
+          - proto/iota.types.proto
+          - proto/iota.node.v2.proto
 
       disallow_comment_ignores: false
       enum_zero_value_suffix: _UNKNOWN

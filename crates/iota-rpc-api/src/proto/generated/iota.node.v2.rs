@@ -46,7 +46,7 @@ pub struct GetTransactionRequest {
 }
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct GetTransactionOptions {
-    /// Include the sui.types.Transaction message in the response.
+    /// Include the iota.types.Transaction message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "1")]
@@ -56,7 +56,7 @@ pub struct GetTransactionOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "2")]
     pub transaction_bcs: ::core::option::Option<bool>,
-    /// Include the set of sui.types.UserSignature's in the response.
+    /// Include the set of iota.types.UserSignature's in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "3")]
@@ -66,7 +66,7 @@ pub struct GetTransactionOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "8")]
     pub signatures_bytes: ::core::option::Option<bool>,
-    /// Include the sui.types.TransactionEffects message in the response.
+    /// Include the iota.types.TransactionEffects message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "4")]
@@ -76,7 +76,7 @@ pub struct GetTransactionOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "5")]
     pub effects_bcs: ::core::option::Option<bool>,
-    /// Include the sui.types.TransactionEvents message in the response.
+    /// Include the iota.types.TransactionEvents message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "6")]
@@ -134,7 +134,7 @@ pub struct GetObjectRequest {
 }
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct GetObjectOptions {
-    /// Include the sui.types.Object message in the response.
+    /// Include the iota.types.Object message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "1")]
@@ -170,7 +170,7 @@ pub struct GetCheckpointRequest {
 }
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct GetCheckpointOptions {
-    /// Include the sui.types.CheckpointSummary in the response.
+    /// Include the iota.types.CheckpointSummary in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "3")]
@@ -180,12 +180,12 @@ pub struct GetCheckpointOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "4")]
     pub summary_bcs: ::core::option::Option<bool>,
-    /// Include the sui.types.ValidatorAggregatedSignature in the response.
+    /// Include the iota.types.ValidatorAggregatedSignature in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "5")]
     pub signature: ::core::option::Option<bool>,
-    /// Include the sui.types.CheckpointContents message in the response.
+    /// Include the iota.types.CheckpointContents message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "6")]
@@ -228,7 +228,7 @@ pub struct GetFullCheckpointRequest {
 }
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct GetFullCheckpointOptions {
-    /// Include the sui.types.CheckpointSummary in the response.
+    /// Include the iota.types.CheckpointSummary in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "3")]
@@ -238,12 +238,12 @@ pub struct GetFullCheckpointOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "4")]
     pub summary_bcs: ::core::option::Option<bool>,
-    /// Include the sui.types.ValidatorAggregatedSignature in the response.
+    /// Include the iota.types.ValidatorAggregatedSignature in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "5")]
     pub signature: ::core::option::Option<bool>,
-    /// Include the sui.types.CheckpointContents message in the response.
+    /// Include the iota.types.CheckpointContents message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "6")]
@@ -253,7 +253,7 @@ pub struct GetFullCheckpointOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "7")]
     pub contents_bcs: ::core::option::Option<bool>,
-    /// Include the sui.types.Transaction message in the response.
+    /// Include the iota.types.Transaction message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "8")]
@@ -263,7 +263,7 @@ pub struct GetFullCheckpointOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "9")]
     pub transaction_bcs: ::core::option::Option<bool>,
-    /// Include the sui.types.TransactionEffects message in the response.
+    /// Include the iota.types.TransactionEffects message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "10")]
@@ -273,7 +273,7 @@ pub struct GetFullCheckpointOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "11")]
     pub effects_bcs: ::core::option::Option<bool>,
-    /// Include the sui.types.TransactionEvents message in the response.
+    /// Include the iota.types.TransactionEvents message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "12")]
@@ -293,7 +293,7 @@ pub struct GetFullCheckpointOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "15")]
     pub output_objects: ::core::option::Option<bool>,
-    /// Include the sui.types.Object message in the response.
+    /// Include the iota.types.Object message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "16")]
@@ -429,7 +429,7 @@ pub struct ExecuteTransactionRequest {
 }
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct ExecuteTransactionOptions {
-    /// Include the sui.types.TransactionEffects message in the response.
+    /// Include the iota.types.TransactionEffects message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "4")]
@@ -439,7 +439,7 @@ pub struct ExecuteTransactionOptions {
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "5")]
     pub effects_bcs: ::core::option::Option<bool>,
-    /// Include the sui.types.TransactionEvents message in the response.
+    /// Include the iota.types.TransactionEvents message in the response.
     ///
     /// Defaults to `false` if not included
     #[prost(bool, optional, tag = "6")]
@@ -563,11 +563,11 @@ pub mod node_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/sui.node.v2.NodeService/GetNodeInfo",
+                "/iota.node.v2.NodeService/GetNodeInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("sui.node.v2.NodeService", "GetNodeInfo"));
+                .insert(GrpcMethod::new("iota.node.v2.NodeService", "GetNodeInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_committee(
@@ -587,11 +587,11 @@ pub mod node_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/sui.node.v2.NodeService/GetCommittee",
+                "/iota.node.v2.NodeService/GetCommittee",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("sui.node.v2.NodeService", "GetCommittee"));
+                .insert(GrpcMethod::new("iota.node.v2.NodeService", "GetCommittee"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_object(
@@ -611,11 +611,11 @@ pub mod node_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/sui.node.v2.NodeService/GetObject",
+                "/iota.node.v2.NodeService/GetObject",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("sui.node.v2.NodeService", "GetObject"));
+                .insert(GrpcMethod::new("iota.node.v2.NodeService", "GetObject"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_transaction(
@@ -635,11 +635,11 @@ pub mod node_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/sui.node.v2.NodeService/GetTransaction",
+                "/iota.node.v2.NodeService/GetTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("sui.node.v2.NodeService", "GetTransaction"));
+                .insert(GrpcMethod::new("iota.node.v2.NodeService", "GetTransaction"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_checkpoint(
@@ -659,11 +659,11 @@ pub mod node_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/sui.node.v2.NodeService/GetCheckpoint",
+                "/iota.node.v2.NodeService/GetCheckpoint",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("sui.node.v2.NodeService", "GetCheckpoint"));
+                .insert(GrpcMethod::new("iota.node.v2.NodeService", "GetCheckpoint"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_full_checkpoint(
@@ -683,11 +683,11 @@ pub mod node_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/sui.node.v2.NodeService/GetFullCheckpoint",
+                "/iota.node.v2.NodeService/GetFullCheckpoint",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("sui.node.v2.NodeService", "GetFullCheckpoint"));
+                .insert(GrpcMethod::new("iota.node.v2.NodeService", "GetFullCheckpoint"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn execute_transaction(
@@ -707,12 +707,12 @@ pub mod node_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/sui.node.v2.NodeService/ExecuteTransaction",
+                "/iota.node.v2.NodeService/ExecuteTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new("sui.node.v2.NodeService", "ExecuteTransaction"),
+                    GrpcMethod::new("iota.node.v2.NodeService", "ExecuteTransaction"),
                 );
             self.inner.unary(req, path, codec).await
         }
@@ -857,7 +857,7 @@ pub mod node_service_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/sui.node.v2.NodeService/GetNodeInfo" => {
+                "/iota.node.v2.NodeService/GetNodeInfo" => {
                     #[allow(non_camel_case_types)]
                     struct GetNodeInfoSvc<T: NodeService>(pub Arc<T>);
                     impl<
@@ -902,7 +902,7 @@ pub mod node_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.NodeService/GetCommittee" => {
+                "/iota.node.v2.NodeService/GetCommittee" => {
                     #[allow(non_camel_case_types)]
                     struct GetCommitteeSvc<T: NodeService>(pub Arc<T>);
                     impl<
@@ -947,7 +947,7 @@ pub mod node_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.NodeService/GetObject" => {
+                "/iota.node.v2.NodeService/GetObject" => {
                     #[allow(non_camel_case_types)]
                     struct GetObjectSvc<T: NodeService>(pub Arc<T>);
                     impl<
@@ -992,7 +992,7 @@ pub mod node_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.NodeService/GetTransaction" => {
+                "/iota.node.v2.NodeService/GetTransaction" => {
                     #[allow(non_camel_case_types)]
                     struct GetTransactionSvc<T: NodeService>(pub Arc<T>);
                     impl<
@@ -1037,7 +1037,7 @@ pub mod node_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.NodeService/GetCheckpoint" => {
+                "/iota.node.v2.NodeService/GetCheckpoint" => {
                     #[allow(non_camel_case_types)]
                     struct GetCheckpointSvc<T: NodeService>(pub Arc<T>);
                     impl<
@@ -1082,7 +1082,7 @@ pub mod node_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.NodeService/GetFullCheckpoint" => {
+                "/iota.node.v2.NodeService/GetFullCheckpoint" => {
                     #[allow(non_camel_case_types)]
                     struct GetFullCheckpointSvc<T: NodeService>(pub Arc<T>);
                     impl<
@@ -1128,7 +1128,7 @@ pub mod node_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/sui.node.v2.NodeService/ExecuteTransaction" => {
+                "/iota.node.v2.NodeService/ExecuteTransaction" => {
                     #[allow(non_camel_case_types)]
                     struct ExecuteTransactionSvc<T: NodeService>(pub Arc<T>);
                     impl<
@@ -1207,7 +1207,7 @@ pub mod node_service_server {
         }
     }
     /// Generated gRPC service name
-    pub const SERVICE_NAME: &str = "sui.node.v2.NodeService";
+    pub const SERVICE_NAME: &str = "iota.node.v2.NodeService";
     impl<T> tonic::server::NamedService for NodeServiceServer<T> {
         const NAME: &'static str = SERVICE_NAME;
     }

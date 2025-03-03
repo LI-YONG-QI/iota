@@ -1,8 +1,9 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use clap::Parser;
-use sui_indexer_alt_jsonrpc::{args::Args, start_rpc};
+use iota_indexer_alt_jsonrpc::{args::Args, start_rpc};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

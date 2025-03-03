@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use protox::prost::Message as _;
@@ -35,7 +36,7 @@ fn bootstrap() {
     };
 
     let out_dir = root_dir.join("src").join("proto").join("generated");
-    let file_descriptor_set_path = out_dir.join("sui.node.v2.fds.bin");
+    let file_descriptor_set_path = out_dir.join("iota.node.v2.fds.bin");
 
     let fds = protox::Compiler::new(&[proto_dir.clone()])
         .unwrap()
@@ -52,7 +53,7 @@ fn bootstrap() {
         .out_dir(&out_dir)
         .compile_fds(fds)
     {
-        panic!("failed to compile `sui` protos: {}", error);
+        panic!("failed to compile `iota` protos: {}", error);
     }
 
     // Generate fds to expose via reflection

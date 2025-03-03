@@ -105,13 +105,13 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.0
         version: 3.9.0(react-hook-form@7.52.1(react@18.3.1))
-      '@mysten/dapp-kit':
+      '@iota/dapp-kit':
         specifier: ^0.14.44
         version: 0.14.44(@tanstack/react-query@5.50.1(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)
-      '@mysten/kiosk':
+      '@iota/kiosk':
         specifier: ^0.9.34
         version: 0.9.34(typescript@5.5.3)
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       '@sentry/react':
@@ -229,28 +229,28 @@ importers:
       '@metamask/browser-passworder':
         specifier: ^4.1.0
         version: 4.1.0
-      '@mysten/core':
+      '@iota/core':
         specifier: workspace:*
         version: link:../core
-      '@mysten/dapp-kit':
+      '@iota/dapp-kit':
         specifier: ^0.14.44
         version: 0.14.44(@tanstack/react-query@5.50.1(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)
-      '@mysten/deepbook':
+      '@iota/deepbook':
         specifier: ^0.8.34
         version: 0.8.34(typescript@5.5.3)
-      '@mysten/icons':
+      '@iota/icons':
         specifier: workspace:*
         version: link:../icons
-      '@mysten/kiosk':
+      '@iota/kiosk':
         specifier: ^0.9.34
         version: 0.9.34(typescript@5.5.3)
-      '@mysten/ledgerjs-hw-app-sui':
+      '@iota/ledgerjs-hw-app-iota':
         specifier: ^0.4.1
         version: 0.4.1
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
-      '@mysten/wallet-standard':
+      '@iota/wallet-standard':
         specifier: ^0.13.20
         version: 0.13.20(typescript@5.5.3)
       '@noble/hashes':
@@ -581,13 +581,13 @@ importers:
       '@headlessui/react':
         specifier: ^1.7.15
         version: 1.7.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@mysten/dapp-kit':
+      '@iota/dapp-kit':
         specifier: ^0.14.44
         version: 0.14.44(@tanstack/react-query@5.50.1(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)
-      '@mysten/kiosk':
+      '@iota/kiosk':
         specifier: ^0.9.34
         version: 0.9.34(typescript@5.5.3)
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       '@tanstack/react-query':
@@ -639,10 +639,10 @@ importers:
 
   dapps/kiosk-cli:
     dependencies:
-      '@mysten/kiosk':
+      '@iota/kiosk':
         specifier: ^0.9.34
         version: 0.9.34(typescript@5.5.3)
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       commander:
@@ -663,10 +663,10 @@ importers:
       '@markdoc/markdoc':
         specifier: ^0.4.0
         version: 0.4.0(@types/react@18.3.3)(react@18.3.1)
-      '@mysten/dapp-kit':
+      '@iota/dapp-kit':
         specifier: ^0.14.44
         version: 0.14.44(@tanstack/react-query@5.50.1(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       '@noble/hashes':
@@ -785,10 +785,10 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
-      '@mysten/dapp-kit':
+      '@iota/dapp-kit':
         specifier: ^0.14.44
         version: 0.14.44(@tanstack/react-query@5.50.1(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       '@types/react':
@@ -818,10 +818,10 @@ importers:
 
   examples/mev_bot:
     dependencies:
-      '@mysten/bcs':
+      '@iota/bcs':
         specifier: ^1.2.0
         version: 1.2.0
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       p-limit:
@@ -837,10 +837,10 @@ importers:
 
   examples/tic-tac-toe/ui:
     dependencies:
-      '@mysten/dapp-kit':
+      '@iota/dapp-kit':
         specifier: ^0.14.44
         version: 0.14.44(@tanstack/react-query@5.50.1(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       '@radix-ui/colors':
@@ -907,7 +907,7 @@ importers:
 
   examples/trading/api:
     dependencies:
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       '@prisma/client':
@@ -944,10 +944,10 @@ importers:
 
   examples/trading/frontend:
     dependencies:
-      '@mysten/dapp-kit':
+      '@iota/dapp-kit':
         specifier: ^0.14.44
         version: 0.14.44(@tanstack/react-query@5.50.1(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       '@radix-ui/colors':
@@ -1020,10 +1020,10 @@ importers:
 
   examples/usdc-transfer-app:
     dependencies:
-      '@mysten/dapp-kit':
+      '@iota/dapp-kit':
         specifier: ^0.14.44
         version: 0.14.44(@tanstack/react-query@5.59.0(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)
-      '@mysten/sui':
+      '@iota/iota-sdk':
         specifier: ^1.18.0
         version: 1.18.0(typescript@5.5.3)
       '@tanstack/react-query':
@@ -3042,34 +3042,34 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@mysten/bcs@1.2.0':
+  '@iota/bcs@1.2.0':
     resolution: {integrity: sha512-LuKonrGdGW7dq/EM6U2L9/as7dFwnhZnsnINzB/vu08Xfrj0qzWwpLOiXagAa5yZOPLK7anRZydMonczFkUPzA==}
 
-  '@mysten/dapp-kit@0.14.44':
+  '@iota/dapp-kit@0.14.44':
     resolution: {integrity: sha512-5b9Xr5TKQEX/jyYC+RIknAw8g6gmz1su0u1FIYCjek+5mU5dQvO0PIp88bwfjxgCyswtCgSHP/atxiiK1mextQ==}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
       react: '*'
 
-  '@mysten/deepbook@0.8.34':
+  '@iota/deepbook@0.8.34':
     resolution: {integrity: sha512-AsXmPpN/F2ZMm/TmEnWLeFdd1maxWGmvRwc19XITmFjqmG+Ci8H0KazPelArNiyAdTvVF9LmABsKCfGQnDxwWg==}
     engines: {node: '>=18'}
 
-  '@mysten/kiosk@0.9.34':
+  '@iota/kiosk@0.9.34':
     resolution: {integrity: sha512-0HlXygbGeW5FEXkptB36JQIfpHvuYCyw4B8uhtnTlVL52zMFrMazrgyqisnm+BJFxFfClz2WMuv98hVXcPtstQ==}
     engines: {node: '>=18'}
 
-  '@mysten/ledgerjs-hw-app-sui@0.4.1':
+  '@iota/ledgerjs-hw-app-iota@0.4.1':
     resolution: {integrity: sha512-548l+mXOn0Tv0GH6p142ZQGKFQMiNMH2vylphZpEml4bsLxFLG/aW40QlEwqLpdeeSfJAAwCVYlm2Fp2AFJusA==}
 
-  '@mysten/sui@1.18.0':
+  '@iota/iota-sdk@1.18.0':
     resolution: {integrity: sha512-cFh5LxXZrXb/ZAD1dkKeQxzhgRYFXreyFGmI7w/JQWwdl+/0FrHJBwaWyTmGxJ/6ZC9SlaOPOk63flN7DbUurg==}
     engines: {node: '>=18'}
 
-  '@mysten/wallet-standard@0.13.20':
+  '@iota/wallet-standard@0.13.20':
     resolution: {integrity: sha512-k9nDnZ/ZkCr4wFRxiP984k/T2ZUfwd/+RfYnwbMHv6MW91no2VKb53fVxbkhqc39qGKAvrXeMonNrm37Iz0JFw==}
 
-  '@mysten/zksend@0.12.10':
+  '@iota/zksend@0.12.10':
     resolution: {integrity: sha512-qMbmRKnKV+AnLaKveJN8itAOMHa2pqfw3IkO3sLTlt42T5qQE0BXj9cKHMLv+F7w+k5+CBDL/0R7Xdb17hSRzw==}
 
   '@ndelangen/get-tarball@3.0.9':
@@ -14600,15 +14600,15 @@ snapshots:
   '@msgpackr-extract/msgpackr-extract-win32-x64@3.0.3':
     optional: true
 
-  '@mysten/bcs@1.2.0':
+  '@iota/bcs@1.2.0':
     dependencies:
       bs58: 6.0.0
 
-  '@mysten/dapp-kit@0.14.44(@tanstack/react-query@5.50.1(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)':
+  '@iota/dapp-kit@0.14.44(@tanstack/react-query@5.50.1(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)':
     dependencies:
-      '@mysten/sui': 1.18.0(typescript@5.5.3)
-      '@mysten/wallet-standard': 0.13.20(typescript@5.5.3)
-      '@mysten/zksend': 0.12.10(typescript@5.5.3)
+      '@iota/iota-sdk': 1.18.0(typescript@5.5.3)
+      '@iota/wallet-standard': 0.13.20(typescript@5.5.3)
+      '@iota/zksend': 0.12.10(typescript@5.5.3)
       '@radix-ui/react-dialog': 1.1.1(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-dropdown-menu': 2.1.1(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-slot': 1.1.0(@types/react@18.3.3)(react@18.3.1)
@@ -14628,11 +14628,11 @@ snapshots:
       - svelte
       - typescript
 
-  '@mysten/dapp-kit@0.14.44(@tanstack/react-query@5.59.0(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)':
+  '@iota/dapp-kit@0.14.44(@tanstack/react-query@5.59.0(react@18.3.1))(@types/react-dom@18.3.0)(@types/react@18.3.3)(babel-plugin-macros@3.1.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.5.3)':
     dependencies:
-      '@mysten/sui': 1.18.0(typescript@5.5.3)
-      '@mysten/wallet-standard': 0.13.20(typescript@5.5.3)
-      '@mysten/zksend': 0.12.10(typescript@5.5.3)
+      '@iota/iota-sdk': 1.18.0(typescript@5.5.3)
+      '@iota/wallet-standard': 0.13.20(typescript@5.5.3)
+      '@iota/zksend': 0.12.10(typescript@5.5.3)
       '@radix-ui/react-dialog': 1.1.1(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-dropdown-menu': 2.1.1(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-slot': 1.1.0(@types/react@18.3.3)(react@18.3.1)
@@ -14652,29 +14652,29 @@ snapshots:
       - svelte
       - typescript
 
-  '@mysten/deepbook@0.8.34(typescript@5.5.3)':
+  '@iota/deepbook@0.8.34(typescript@5.5.3)':
     dependencies:
-      '@mysten/sui': 1.18.0(typescript@5.5.3)
+      '@iota/iota-sdk': 1.18.0(typescript@5.5.3)
     transitivePeerDependencies:
       - svelte
       - typescript
 
-  '@mysten/kiosk@0.9.34(typescript@5.5.3)':
+  '@iota/kiosk@0.9.34(typescript@5.5.3)':
     dependencies:
-      '@mysten/sui': 1.18.0(typescript@5.5.3)
+      '@iota/iota-sdk': 1.18.0(typescript@5.5.3)
     transitivePeerDependencies:
       - svelte
       - typescript
 
-  '@mysten/ledgerjs-hw-app-sui@0.4.1':
+  '@iota/ledgerjs-hw-app-iota@0.4.1':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.0
       fast-sha256: 1.3.0
 
-  '@mysten/sui@1.18.0(typescript@5.5.3)':
+  '@iota/iota-sdk@1.18.0(typescript@5.5.3)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.9.0)
-      '@mysten/bcs': 1.2.0
+      '@iota/bcs': 1.2.0
       '@noble/curves': 1.4.2
       '@noble/hashes': 1.4.0
       '@scure/bip32': 1.4.0
@@ -14691,18 +14691,18 @@ snapshots:
       - svelte
       - typescript
 
-  '@mysten/wallet-standard@0.13.20(typescript@5.5.3)':
+  '@iota/wallet-standard@0.13.20(typescript@5.5.3)':
     dependencies:
-      '@mysten/sui': 1.18.0(typescript@5.5.3)
+      '@iota/iota-sdk': 1.18.0(typescript@5.5.3)
       '@wallet-standard/core': 1.0.3
     transitivePeerDependencies:
       - svelte
       - typescript
 
-  '@mysten/zksend@0.12.10(typescript@5.5.3)':
+  '@iota/zksend@0.12.10(typescript@5.5.3)':
     dependencies:
-      '@mysten/sui': 1.18.0(typescript@5.5.3)
-      '@mysten/wallet-standard': 0.13.20(typescript@5.5.3)
+      '@iota/iota-sdk': 1.18.0(typescript@5.5.3)
+      '@iota/wallet-standard': 0.13.20(typescript@5.5.3)
       mitt: 3.0.1
       nanostores: 0.10.3
       valibot: 0.36.0

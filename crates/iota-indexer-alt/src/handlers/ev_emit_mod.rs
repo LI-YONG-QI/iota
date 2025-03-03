@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::ops::Range;
@@ -7,11 +8,11 @@ use std::{collections::BTreeSet, sync::Arc};
 use anyhow::Result;
 use diesel::{ExpressionMethods, QueryDsl};
 use diesel_async::RunQueryDsl;
-use sui_indexer_alt_framework::models::cp_sequence_numbers::tx_interval;
-use sui_indexer_alt_framework::pipeline::{concurrent::Handler, Processor};
-use sui_indexer_alt_schema::{events::StoredEvEmitMod, schema::ev_emit_mod};
-use sui_pg_db as db;
-use sui_types::full_checkpoint_content::CheckpointData;
+use iota_indexer_alt_framework::models::cp_sequence_numbers::tx_interval;
+use iota_indexer_alt_framework::pipeline::{concurrent::Handler, Processor};
+use iota_indexer_alt_schema::{events::StoredEvEmitMod, schema::ev_emit_mod};
+use iota_pg_db as db;
+use iota_types::full_checkpoint_content::CheckpointData;
 
 pub(crate) struct EvEmitMod;
 

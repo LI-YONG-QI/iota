@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::{
@@ -16,7 +17,7 @@ use prometheus::{
     register_int_gauge_vec_with_registry, register_int_gauge_with_registry, Histogram,
     HistogramVec, IntCounter, IntCounterVec, IntGauge, IntGaugeVec, Registry, TextEncoder,
 };
-use sui_pg_db::Db;
+use iota_pg_db::Db;
 use tokio::{net::TcpListener, task::JoinHandle};
 use tokio_util::sync::CancellationToken;
 use tracing::{info, warn};
@@ -169,7 +170,7 @@ pub(crate) struct CheckpointLagMetricReporter {
 }
 
 impl MetricsService {
-    /// Create a new metrics service, exposing Mysten-wide metrics, and Indexer-specific metrics.
+    /// Create a new metrics service, exposing IOTA Foundation-wide metrics, and Indexer-specific metrics.
     /// Returns the Indexer-specific metrics and the service itself (which must be run with
     /// [Self::run]).
     pub(crate) fn new(

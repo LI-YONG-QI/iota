@@ -1,20 +1,21 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 import networkEnv from '_src/background/NetworkEnv';
 import { API_ENV, type NetworkEnvType } from '_src/shared/api-env';
 import { deobfuscate, obfuscate } from '_src/shared/cryptography/keystore';
-import { getSuiClient } from '_src/shared/sui-client';
+import { getIotaClient } from '_src/shared/iota-client';
 import { fromExportedKeypair } from '_src/shared/utils/from-exported-keypair';
-import { toSerializedSignature, type PublicKey } from '@mysten/sui/cryptography';
-import { normalizeSuiAddress } from '@mysten/sui/utils';
+import { toSerializedSignature, type PublicKey } from '@iota/iota-sdk/cryptography';
+import { normalizeIotaAddress } from '@iota/iota-sdk/utils';
 import {
 	computeZkLoginAddress,
 	genAddressSeed,
 	getZkLoginSignature,
 	jwtToAddress,
 	type ComputeZkLoginAddressOptions,
-} from '@mysten/sui/zklogin';
+} from '@iota/iota-sdk/zklogin';
 import { blake2b } from '@noble/hashes/blake2b';
 import { decodeJwt } from 'jose';
 
@@ -101,7 +102,7 @@ export function isZkLoginAccountSerializedUI(
 }
 
 async function hasTransactionHistory(address: string): Promise<boolean> {
-	const rpc = getSuiClient({ env: API_ENV.mainnet, customRpcUrl: null });
+	const rpc = getIotaClient({ env: API_ENV.mainnet, customRpcUrl: null });
 	const [txnIds, fromTxnIds] = await Promise.all([
 		rpc.queryTransactionBlocks({
 			filter: {
@@ -198,7 +199,7 @@ export class ZkLoginAccount
 			...accountData,
 			address: legacyAddress,
 		});
-		if (normalizeSuiAddress(legacyAddress) !== normalizeSuiAddress(nonLegacyAddress)) {
+		if (normalizeIotaAddress(legacyAddress) !== normalizeIotaAddress(nonLegacyAddress)) {
 			if (await hasTransactionHistory(nonLegacyAddress)) {
 				ret.push({
 					...accountData,

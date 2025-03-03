@@ -1,13 +1,14 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use move_core_types::{ident_str, language_storage::TypeTag};
-use sui_protocol_config::ProtocolConfig;
+use iota_protocol_config::ProtocolConfig;
 
 use crate::{
-    base_types::{dbg_addr, ExecutionDigests, ObjectID, ObjectRef, SequenceNumber, SuiAddress},
+    base_types::{dbg_addr, ExecutionDigests, ObjectID, ObjectRef, SequenceNumber, IotaAddress},
     coin::Coin,
     committee::Committee,
     digests::TransactionDigest,
@@ -41,7 +42,7 @@ pub struct TestCheckpointDataBuilder {
     /// A map from sender addresses to gas objects they own.
     /// These are created automatically when a transaction is started.
     /// Users of this builder should not need to worry about them.
-    gas_map: HashMap<SuiAddress, ObjectID>,
+    gas_map: HashMap<IotaAddress, ObjectID>,
 
     /// The current checkpoint builder.
     /// It is initialized when the builder is created, and is reset when `build_checkpoint` is called.
@@ -110,7 +111,7 @@ impl TestCheckpointDataBuilder {
 
     /// Start creating a new transaction.
     /// `sender_idx` is a convenient representation of the sender's address.
-    /// A proper SuiAddress will be derived from it.
+    /// A proper IotaAddress will be derived from it.
     /// It will also create a gas object for the sender if it doesn't already exist in the live object map.
     /// You do not need to create the gas object yourself.
     pub fn start_transaction(mut self, sender_idx: u8) -> Self {
@@ -135,15 +136,15 @@ impl TestCheckpointDataBuilder {
 
     /// Create a new object in the transaction.
     /// `object_idx` is a convenient representation of the object's ID.
-    /// The object will be created as a SUI coin object, with default balance,
+    /// The object will be created as a IOTA coin object, with default balance,
     /// and the transaction sender as its owner.
     pub fn create_owned_object(self, object_idx: u64) -> Self {
-        self.create_sui_object(object_idx, GAS_VALUE_FOR_TESTING)
+        self.create_iota_object(object_idx, GAS_VALUE_FOR_TESTING)
     }
 
     /// Create a new shared object in the transaction.
     /// `object_idx` is a convenient representation of the object's ID.
-    /// The object will be created as a SUI coin object, with default balance,
+    /// The object will be created as a IOTA coin object, with default balance,
     /// and it is a shared object.
     pub fn create_shared_object(self, object_idx: u64) -> Self {
         self.create_coin_object_with_owner(
@@ -156,10 +157,10 @@ impl TestCheckpointDataBuilder {
         )
     }
 
-    /// Create a new SUI coin object in the transaction.
+    /// Create a new IOTA coin object in the transaction.
     /// `object_idx` is a convenient representation of the object's ID.
-    /// `balance` is the amount of SUI to be created.
-    pub fn create_sui_object(self, object_idx: u64, balance: u64) -> Self {
+    /// `balance` is the amount of IOTA to be created.
+    pub fn create_iota_object(self, object_idx: u64, balance: u64) -> Self {
         let sender_idx = self
             .checkpoint_builder
             .next_transaction
@@ -172,7 +173,7 @@ impl TestCheckpointDataBuilder {
     /// Create a new coin object in the transaction.
     /// `object_idx` is a convenient representation of the object's ID.
     /// `owner_idx` is a convenient representation of the object's owner's address.
-    /// `balance` is the amount of SUI to be created.
+    /// `balance` is the amount of IOTA to be created.
     /// `coin_type` is the type of the coin to be created.
     pub fn create_coin_object(
         self,
@@ -498,7 +499,7 @@ impl TestCheckpointDataBuilder {
     }
 
     /// Derive an address from an index.
-    pub fn derive_address(address_idx: u8) -> SuiAddress {
+    pub fn derive_address(address_idx: u8) -> IotaAddress {
         dbg_addr(address_idx)
     }
 }
@@ -746,10 +747,10 @@ mod tests {
     }
 
     #[test]
-    fn test_sui_balance_transfer() {
+    fn test_iota_balance_transfer() {
         let checkpoint = TestCheckpointDataBuilder::new(1)
             .start_transaction(0)
-            .create_sui_object(0, 100)
+            .create_iota_object(0, 100)
             .finish_transaction()
             .start_transaction(1)
             .transfer_coin_balance(0, 1, 1, 10)
@@ -759,7 +760,7 @@ mod tests {
         let tx = &checkpoint.transactions[0];
         let obj_id0 = TestCheckpointDataBuilder::derive_object_id(0);
 
-        // Verify the newly created object appears in output objects and is a gas coin with 100 MIST.
+        // Verify the newly created object appears in output objects and is a gas coin with 100 NANOS.
         assert!(tx.output_objects.iter().any(|obj| obj.id() == obj_id0
             && obj.is_gas_coin()
             && obj.data.try_as_move().unwrap().get_coin_value_unsafe() == 100));
@@ -767,12 +768,12 @@ mod tests {
         let tx = &checkpoint.transactions[1];
         let obj_id1 = TestCheckpointDataBuilder::derive_object_id(1);
 
-        // Verify the original SUI coin now has 90 MIST after the transfer.
+        // Verify the original IOTA coin now has 90 NANOS after the transfer.
         assert!(tx.output_objects.iter().any(|obj| obj.id() == obj_id0
             && obj.is_gas_coin()
             && obj.data.try_as_move().unwrap().get_coin_value_unsafe() == 90));
 
-        // Verify the split out SUI coin has 10 MIST.
+        // Verify the split out IOTA coin has 10 NANOS.
         assert!(tx.output_objects.iter().any(|obj| obj.id() == obj_id1
             && obj.is_gas_coin()
             && obj.data.try_as_move().unwrap().get_coin_value_unsafe() == 10));

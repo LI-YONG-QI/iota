@@ -1,19 +1,20 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use shared_crypto::intent::Intent;
-use sui_keys::keystore::AccountKeystore;
-use sui_macros::sim_test;
-use sui_rpc_api::client::reqwest::StatusCode;
-use sui_rpc_api::client::sdk::Client as RestClient;
-use sui_rpc_api::rest::transactions::ResolveTransactionQueryParameters;
-use sui_rpc_api::Client;
-use sui_sdk_transaction_builder::unresolved;
-use sui_sdk_types::Argument;
-use sui_sdk_types::Command;
-use sui_sdk_types::TransactionExpiration;
-use sui_types::base_types::SuiAddress;
-use sui_types::effects::TransactionEffectsAPI;
+use iota_keys::keystore::AccountKeystore;
+use iota_macros::sim_test;
+use iota_rpc_api::client::reqwest::StatusCode;
+use iota_rpc_api::client::sdk::Client as RestClient;
+use iota_rpc_api::rest::transactions::ResolveTransactionQueryParameters;
+use iota_rpc_api::Client;
+use iota_sdk_transaction_builder::unresolved;
+use iota_sdk_types::Argument;
+use iota_sdk_types::Command;
+use iota_sdk_types::TransactionExpiration;
+use iota_types::base_types::IotaAddress;
+use iota_types::effects::TransactionEffectsAPI;
 use test_cluster::TestClusterBuilder;
 
 #[sim_test]
@@ -22,7 +23,7 @@ async fn resolve_transaction_simple_transfer() {
 
     let client = Client::new(test_cluster.rpc_url()).unwrap();
     let rest_client = RestClient::new(test_cluster.rpc_url()).unwrap();
-    let recipient = SuiAddress::random_for_testing_only();
+    let recipient = IotaAddress::random_for_testing_only();
 
     let (sender, mut gas) = test_cluster.wallet.get_one_account().await.unwrap();
     gas.sort_by_key(|object_ref| object_ref.0);
@@ -40,7 +41,7 @@ async fn resolve_transaction_simple_transfer() {
                     ..Default::default()
                 },
             ],
-            commands: vec![Command::TransferObjects(sui_sdk_types::TransferObjects {
+            commands: vec![Command::TransferObjects(iota_sdk_types::TransferObjects {
                 objects: vec![Argument::Input(0)],
                 address: Argument::Input(1),
             })],
@@ -84,7 +85,7 @@ async fn resolve_transaction_transfer_with_sponsor() {
 
     let client = Client::new(test_cluster.rpc_url()).unwrap();
     let rest_client = RestClient::new(test_cluster.rpc_url()).unwrap();
-    let recipient = SuiAddress::random_for_testing_only();
+    let recipient = IotaAddress::random_for_testing_only();
 
     let (sender, gas) = test_cluster.wallet.get_one_account().await.unwrap();
     let obj_to_send = gas.first().unwrap().0;
@@ -102,7 +103,7 @@ async fn resolve_transaction_transfer_with_sponsor() {
                     ..Default::default()
                 },
             ],
-            commands: vec![Command::TransferObjects(sui_sdk_types::TransferObjects {
+            commands: vec![Command::TransferObjects(iota_sdk_types::TransferObjects {
                 objects: vec![Argument::Input(0)],
                 address: Argument::Input(1),
             })],
@@ -134,16 +135,16 @@ async fn resolve_transaction_transfer_with_sponsor() {
         .wallet
         .config
         .keystore
-        .sign_secure(&sender, &transaction_data, Intent::sui_transaction())
+        .sign_secure(&sender, &transaction_data, Intent::iota_transaction())
         .unwrap();
     let sponsor_sig = test_cluster
         .wallet
         .config
         .keystore
-        .sign_secure(&sponsor, &transaction_data, Intent::sui_transaction())
+        .sign_secure(&sponsor, &transaction_data, Intent::iota_transaction())
         .unwrap();
 
-    let signed_transaction = sui_types::transaction::Transaction::from_data(
+    let signed_transaction = iota_types::transaction::Transaction::from_data(
         transaction_data,
         vec![sender_sig, sponsor_sig],
     );
@@ -175,7 +176,7 @@ async fn resolve_transaction_borrowed_shared_object() {
                 object_id: Some("0x6".parse().unwrap()),
                 ..Default::default()
             }],
-            commands: vec![Command::MoveCall(sui_sdk_types::MoveCall {
+            commands: vec![Command::MoveCall(iota_sdk_types::MoveCall {
                 package: "0x2".parse().unwrap(),
                 module: "clock".parse().unwrap(),
                 function: "timestamp_ms".parse().unwrap(),
@@ -248,9 +249,9 @@ async fn resolve_transaction_mutable_shared_object() {
                     ..Default::default()
                 },
             ],
-            commands: vec![Command::MoveCall(sui_sdk_types::MoveCall {
+            commands: vec![Command::MoveCall(iota_sdk_types::MoveCall {
                 package: "0x3".parse().unwrap(),
-                module: "sui_system".parse().unwrap(),
+                module: "iota_system".parse().unwrap(),
                 function: "request_add_stake".parse().unwrap(),
                 type_arguments: vec![],
                 arguments: vec![Argument::Input(0), Argument::Input(1), Argument::Input(2)],
@@ -301,7 +302,7 @@ async fn resolve_transaction_insufficient_gas() {
                 object_id: Some("0x6".parse().unwrap()),
                 ..Default::default()
             }],
-            commands: vec![Command::MoveCall(sui_sdk_types::MoveCall {
+            commands: vec![Command::MoveCall(iota_sdk_types::MoveCall {
                 package: "0x2".parse().unwrap(),
                 module: "clock".parse().unwrap(),
                 function: "timestamp_ms".parse().unwrap(),
@@ -309,7 +310,7 @@ async fn resolve_transaction_insufficient_gas() {
                 arguments: vec![Argument::Input(0)],
             })],
         },
-        sender: SuiAddress::random_for_testing_only().into(), // random account with no gas
+        sender: IotaAddress::random_for_testing_only().into(), // random account with no gas
         gas_payment: None,
         expiration: TransactionExpiration::None,
     };
@@ -338,7 +339,7 @@ async fn resolve_transaction_with_raw_json() {
 
     let client = Client::new(test_cluster.rpc_url()).unwrap();
     let rest_client = RestClient::new(test_cluster.rpc_url()).unwrap();
-    let recipient = SuiAddress::random_for_testing_only();
+    let recipient = IotaAddress::random_for_testing_only();
 
     let (sender, mut gas) = test_cluster.wallet.get_one_account().await.unwrap();
     gas.sort_by_key(|object_ref| object_ref.0);

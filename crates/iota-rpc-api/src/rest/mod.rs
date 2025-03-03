@@ -1,4 +1,5 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::sync::Arc;
@@ -85,7 +86,7 @@ impl<C: std::fmt::Display> axum::response::IntoResponseParts for PageCursor<C> {
         res: ResponseParts,
     ) -> std::result::Result<ResponseParts, Self::Error> {
         self.0
-            .map(|cursor| [(crate::types::X_SUI_CURSOR, cursor.to_string())])
+            .map(|cursor| [(crate::types::X_IOTA_CURSOR, cursor.to_string())])
             .into_response_parts(res)
             .map_err(|e| (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
     }
@@ -109,7 +110,7 @@ impl axum::extract::FromRef<RpcService> for StateReader {
 
 // Enable TransactionExecutor to be used as axum::extract::State
 impl axum::extract::FromRef<RpcService>
-    for Option<Arc<dyn sui_types::transaction_executor::TransactionExecutor>>
+    for Option<Arc<dyn iota_types::transaction_executor::TransactionExecutor>>
 {
     fn from_ref(input: &RpcService) -> Self {
         input.executor.clone()

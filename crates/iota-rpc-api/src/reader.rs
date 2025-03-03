@@ -1,13 +1,14 @@
 // Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::sync::Arc;
 
-use sui_sdk_types::{CheckpointSequenceNumber, EpochId, SignedTransaction, ValidatorCommittee};
-use sui_sdk_types::{Object, ObjectId, Version};
-use sui_types::storage::error::{Error as StorageError, Result};
-use sui_types::storage::ObjectStore;
-use sui_types::storage::RpcStateReader;
+use iota_sdk_types::{CheckpointSequenceNumber, EpochId, SignedTransaction, ValidatorCommittee};
+use iota_sdk_types::{Object, ObjectId, Version};
+use iota_types::storage::error::{Error as StorageError, Result};
+use iota_types::storage::ObjectStore;
+use iota_types::storage::RpcStateReader;
 use tap::Pipe;
 
 use crate::Direction;
@@ -53,25 +54,25 @@ impl StateReader {
     }
 
     pub fn get_system_state_summary(&self) -> Result<super::rest::system::SystemStateSummary> {
-        use sui_types::sui_system_state::SuiSystemStateTrait;
+        use iota_types::iota_system_state::IotaSystemStateTrait;
 
-        let system_state = sui_types::sui_system_state::get_sui_system_state(self.inner())
+        let system_state = iota_types::iota_system_state::get_iota_system_state(self.inner())
             .map_err(StorageError::custom)?;
-        let summary = system_state.into_sui_system_state_summary().into();
+        let summary = system_state.into_iota_system_state_summary().into();
 
         Ok(summary)
     }
 
     pub fn get_transaction(
         &self,
-        digest: sui_sdk_types::TransactionDigest,
+        digest: iota_sdk_types::TransactionDigest,
     ) -> crate::Result<(
-        sui_sdk_types::SignedTransaction,
-        sui_sdk_types::TransactionEffects,
-        Option<sui_sdk_types::TransactionEvents>,
+        iota_sdk_types::SignedTransaction,
+        iota_sdk_types::TransactionEffects,
+        Option<iota_sdk_types::TransactionEvents>,
     )> {
         use super::rest::transactions::TransactionNotFoundError;
-        use sui_types::effects::TransactionEffectsAPI;
+        use iota_types::effects::TransactionEffectsAPI;
 
         let transaction_digest = digest.into();
 
@@ -103,7 +104,7 @@ impl StateReader {
 
     pub fn get_transaction_checkpoint(
         &self,
-        digest: &sui_types::digests::TransactionDigest,
+        digest: &iota_types::digests::TransactionDigest,
     ) -> Option<CheckpointSequenceNumber> {
         self.inner()
             .indexes()?
@@ -113,7 +114,7 @@ impl StateReader {
 
     pub fn get_transaction_read(
         &self,
-        digest: sui_sdk_types::TransactionDigest,
+        digest: iota_sdk_types::TransactionDigest,
     ) -> crate::Result<TransactionRead> {
         let (
             SignedTransaction {
@@ -163,11 +164,11 @@ impl StateReader {
 
 #[derive(Debug)]
 pub struct TransactionRead {
-    pub digest: sui_sdk_types::TransactionDigest,
-    pub transaction: sui_sdk_types::Transaction,
-    pub signatures: Vec<sui_sdk_types::UserSignature>,
-    pub effects: sui_sdk_types::TransactionEffects,
-    pub events: Option<sui_sdk_types::TransactionEvents>,
+    pub digest: iota_sdk_types::TransactionDigest,
+    pub transaction: iota_sdk_types::Transaction,
+    pub signatures: Vec<iota_sdk_types::UserSignature>,
+    pub effects: iota_sdk_types::TransactionEffects,
+    pub events: Option<iota_sdk_types::TransactionEvents>,
     pub checkpoint: Option<u64>,
     pub timestamp_ms: Option<u64>,
 }
@@ -178,8 +179,8 @@ pub struct CheckpointTransactionsIter {
 
     next_cursor: Option<(CheckpointSequenceNumber, Option<usize>)>,
     checkpoint: Option<(
-        sui_types::messages_checkpoint::CheckpointSummary,
-        sui_types::messages_checkpoint::CheckpointContents,
+        iota_types::messages_checkpoint::CheckpointSummary,
+        iota_types::messages_checkpoint::CheckpointContents,
     )>,
 }
 
@@ -199,7 +200,7 @@ impl CheckpointTransactionsIter {
 }
 
 impl Iterator for CheckpointTransactionsIter {
-    type Item = Result<(CursorInfo, sui_types::digests::TransactionDigest)>;
+    type Item = Result<(CursorInfo, iota_types::digests::TransactionDigest)>;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
@@ -313,8 +314,8 @@ impl CheckpointIter {
 
 impl Iterator for CheckpointIter {
     type Item = Result<(
-        sui_types::messages_checkpoint::CertifiedCheckpointSummary,
-        sui_types::messages_checkpoint::CheckpointContents,
+        iota_types::messages_checkpoint::CertifiedCheckpointSummary,
+        iota_types::messages_checkpoint::CheckpointContents,
     )>;
 
     fn next(&mut self) -> Option<Self::Item> {
