@@ -1,4 +1,5 @@
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 import Parser = require('web-tree-sitter');
@@ -174,6 +175,7 @@ export class Tree {
 			// 'call_expression',
 			// 'macro_call_expression',
 			'dot_expression',
+			'index_expression',
 			'vector_expression',
 			'expression_list',
 			'if_expression',

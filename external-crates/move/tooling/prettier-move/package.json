@@ -1,8 +1,8 @@
 {
-	"name": "@mysten/prettier-plugin-move",
-	"author": "Mysten Labs <build@mystenlabs.com>",
+	"name": "@iota/prettier-plugin-move",
+	"author": "IOTA Foundation <info@iota.org>",
 	"description": "Move Plugin for Prettier",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"license": "Apache-2.0",
 	"keywords": [
 		"prettier",

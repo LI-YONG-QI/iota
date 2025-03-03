@@ -1,4 +1,5 @@
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
@@ -186,7 +187,7 @@ fn deprecations(
     if deprecations.len() != 1 {
         reporter.add_diag(ice!((
             source_location,
-            "ICE: verified that there is at at least one deprecation attribute above, \
+            "ICE: verified that there is at least one deprecation attribute above, \
             and expansion should have failed if there were multiple deprecation attributes."
         )));
         return None;

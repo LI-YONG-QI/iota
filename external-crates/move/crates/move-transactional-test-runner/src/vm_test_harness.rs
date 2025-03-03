@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use std::{collections::BTreeMap, path::Path};
@@ -63,10 +64,6 @@ impl<'a> MoveTestAdapter<'a> for SimpleVMTestAdapter {
 
     fn default_syntax(&self) -> SyntaxChoice {
         self.default_syntax
-    }
-
-    async fn cleanup_resources(&mut self) -> Result<()> {
-        Ok(())
     }
 
     async fn init(

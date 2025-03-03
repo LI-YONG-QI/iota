@@ -1,12 +1,13 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
     debug_display, debug_display_verbose, diag,
     diagnostics::{warning_filters::WarningFilters, Diagnostic, DiagnosticReporter, Diagnostics},
     editions::{FeatureGate, Flavor},
-    expansion::ast::{self as E, Fields, ModuleIdent, Mutability, TargetKind},
+    expansion::ast::{self as E, Fields, ModuleIdent, Mutability},
     hlir::{
         ast::{self as H, Block, BlockLabel, MoveOpAnnotation, UnpackType},
         detect_dead_code::program as detect_dead_code_analysis,
@@ -15,7 +16,8 @@ use crate::{
     ice,
     naming::ast as N,
     parser::ast::{
-        Ability_, BinOp, BinOp_, ConstantName, DatatypeName, Field, FunctionName, VariantName,
+        Ability_, BinOp, BinOp_, ConstantName, DatatypeName, Field, FunctionName, TargetKind,
+        VariantName,
     },
     shared::{
         matching::{new_match_var_name, MatchContext, MATCH_TEMP_PREFIX},
@@ -24,7 +26,7 @@ use crate::{
         unique_map::UniqueMap,
         *,
     },
-    sui_mode::ID_FIELD_NAME,
+    iota_mode::ID_FIELD_NAME,
     typing::ast as T,
     FullyCompiledProgram,
 };
@@ -126,8 +128,6 @@ pub(super) struct HLIRDebugFlags {
     #[allow(dead_code)]
     pub(super) match_specialization: bool,
     #[allow(dead_code)]
-    pub(super) match_work_queue: bool,
-    #[allow(dead_code)]
     pub(super) function_translation: bool,
     #[allow(dead_code)]
     pub(super) eval_order: bool,
@@ -161,7 +161,6 @@ impl<'env> Context<'env> {
             eval_order: false,
             match_translation: false,
             match_specialization: false,
-            match_work_queue: false,
         };
         let reporter = env.diagnostic_reporter_at_top_level();
         Context {
@@ -352,6 +351,7 @@ fn module(
     mdef: T::ModuleDefinition,
 ) -> (ModuleIdent, H::ModuleDefinition) {
     let T::ModuleDefinition {
+        doc: _,
         loc: _,
         warning_filter,
         package_name,
@@ -411,6 +411,7 @@ fn function(context: &mut Context, _name: FunctionName, f: T::Function) -> H::Fu
     assert!(context.has_empty_locals());
     assert!(context.tmp_counter == 0);
     let T::Function {
+        doc: _,
         warning_filter,
         index,
         attributes,
@@ -479,7 +480,7 @@ fn function_body(
             let (locals, body) = function_body_defined(context, sig, loc, seq);
             debug_print!(context.debug.function_translation,
                          (msg "--------"),
-                         (lines "body" => &body));
+                         (lines "body" => &body; verbose));
             HB::Defined { locals, body }
         }
         TB::Macro => unreachable!("ICE macros filtered above"),
@@ -525,6 +526,7 @@ fn visibility(evisibility: E::Visibility) -> H::Visibility {
 
 fn constant(context: &mut Context, _name: ConstantName, cdef: T::Constant) -> H::Constant {
     let T::Constant {
+        doc: _,
         warning_filter,
         index,
         attributes,
@@ -567,6 +569,7 @@ fn struct_def(
     sdef: N::StructDefinition,
 ) -> H::StructDefinition {
     let N::StructDefinition {
+        doc: _,
         warning_filter,
         index,
         loc: _loc,
@@ -595,7 +598,7 @@ fn struct_fields(context: &mut Context, tfields: N::StructFields) -> H::StructFi
     };
     let mut indexed_fields = tfields_map
         .into_iter()
-        .map(|(f, (idx, t))| (idx, (f, base_type(context, t))))
+        .map(|(f, (idx, (_doc, t)))| (idx, (f, base_type(context, t))))
         .collect::<Vec<_>>();
     indexed_fields.sort_by(|(idx1, _), (idx2, _)| idx1.cmp(idx2));
     H::StructFields::Defined(indexed_fields.into_iter().map(|(_, f_ty)| f_ty).collect())
@@ -611,6 +614,7 @@ fn enum_def(
     edef: N::EnumDefinition,
 ) -> H::EnumDefinition {
     let N::EnumDefinition {
+        doc: _,
         warning_filter,
         index,
         loc: _loc,
@@ -643,7 +647,7 @@ fn variant_fields(context: &mut Context, tfields: N::VariantFields) -> Vec<(Fiel
     };
     let mut indexed_fields = tfields_map
         .into_iter()
-        .map(|(f, (idx, t))| (idx, (f, base_type(context, t))))
+        .map(|(f, (idx, (_doc, t)))| (idx, (f, base_type(context, t))))
         .collect::<Vec<_>>();
     indexed_fields.sort_by(|(idx1, _), (idx2, _)| idx1.cmp(idx2));
     indexed_fields.into_iter().map(|(_, f_ty)| f_ty).collect()
@@ -871,10 +875,11 @@ fn tail(
         E::Match(subject, arms) => {
             debug_print!(context.debug.match_translation,
                 ("subject" => subject),
+                ("type" => in_type),
                 (lines "arms" => &arms.value)
             );
             let compiled = match_compilation::compile_match(context, in_type, *subject, arms);
-            debug_print!(context.debug.match_translation, ("compiled" => compiled));
+            debug_print!(context.debug.match_translation, ("compiled" => compiled; verbose));
             let result = tail(context, block, expected_type, compiled);
             debug_print!(context.debug.match_variant_translation,
                          (lines "block" => block; verbose),
@@ -1203,10 +1208,11 @@ fn value(
         E::Match(subject, arms) => {
             debug_print!(context.debug.match_translation,
                 ("subject" => subject),
+                ("type" => in_type),
                 (lines "arms" => &arms.value)
             );
             let compiled = match_compilation::compile_match(context, in_type, *subject, arms);
-            debug_print!(context.debug.match_translation, ("compiled" => compiled));
+            debug_print!(context.debug.match_translation, ("compiled" => compiled; verbose));
             let result = value(context, block, None, compiled);
             debug_print!(context.debug.match_variant_translation, ("result" => &result));
             result
@@ -1848,7 +1854,7 @@ fn statement(context: &mut Context, block: &mut Block, e: T::Exp) {
             );
             let subject_type = subject.ty.clone();
             let compiled = match_compilation::compile_match(context, &subject_type, *subject, arms);
-            debug_print!(context.debug.match_translation, ("compiled" => compiled));
+            debug_print!(context.debug.match_translation, ("compiled" => compiled; verbose));
             statement(context, block, compiled);
             debug_print!(context.debug.match_variant_translation, (lines "block" => block));
         }
@@ -3054,7 +3060,7 @@ fn gen_unused_warnings(
         // cannot be analyzed in this pass
         return;
     }
-    let is_sui_mode = context.env.package_config(context.current_package).flavor == Flavor::Sui;
+    let is_iota_mode = context.env.package_config(context.current_package).flavor == Flavor::Iota;
 
     for (_, sname, sdef) in structs {
         context.push_warning_filter_scope(sdef.warning_filter);
@@ -3063,8 +3069,8 @@ fn gen_unused_warnings(
 
         if let H::StructFields::Defined(fields) = &sdef.fields {
             for (f, _) in fields {
-                // skip for Sui ID fields
-                if is_sui_mode && has_key && f.value() == ID_FIELD_NAME {
+                // skip for IOTA ID fields
+                if is_iota_mode && has_key && f.value() == ID_FIELD_NAME {
                     continue;
                 }
                 if !context

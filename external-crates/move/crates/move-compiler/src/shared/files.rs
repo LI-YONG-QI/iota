@@ -1,4 +1,5 @@
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use codespan_reporting::files::{Files, SimpleFiles};
@@ -167,9 +168,9 @@ impl MappedFiles {
         &self.file_name_mapping
     }
 
-    pub fn filename(&self, fhash: &FileHash) -> &str {
+    pub fn filename(&self, fhash: &FileHash) -> Symbol {
         let file_id = self.file_mapping().get(fhash).unwrap();
-        self.files().get(*file_id).unwrap().name()
+        *self.files().get(*file_id).unwrap().name()
     }
 
     pub fn file_path(&self, fhash: &FileHash) -> &PathBuf {

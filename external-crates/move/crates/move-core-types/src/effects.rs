@@ -1,5 +1,6 @@
 // Copyright (c) The Diem Core Contributors
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{account_address::AccountAddress, identifier::Identifier, language_storage::ModuleId};
@@ -111,6 +112,7 @@ impl AccountChangeSet {
         Self { modules }
     }
 
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             modules: BTreeMap::new(),

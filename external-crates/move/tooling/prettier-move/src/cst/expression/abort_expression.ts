@@ -1,4 +1,5 @@
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 import { Node } from '../..';
@@ -23,6 +24,8 @@ export default function (path: AstPath<Node>): treeFn | null {
 function printAbortExpression(path: AstPath<Node>, options: MoveOptions, print: printFn): Doc {
 	const expression = path.node.nonFormattingChildren[0];
 	const printed = path.call(print, 'nonFormattingChildren', 0);
+
+	if (!expression) return 'abort';
 
 	return group([
 		'abort',

@@ -1,4 +1,5 @@
 // Copyright (c) The Move Contributors
+// Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
@@ -123,7 +124,7 @@ pub trait TypingVisitorContext {
         if Self::VISIT_TYPES {
             match &sdef.fields {
                 N::StructFields::Defined(_, fields) => {
-                    for (_, _, (_, ty)) in fields {
+                    for (_, _, (_, (_, ty))) in fields {
                         self.visit_type(None, ty)
                     }
                 }
@@ -182,7 +183,7 @@ pub trait TypingVisitorContext {
         if Self::VISIT_TYPES {
             match &vdef.fields {
                 N::VariantFields::Defined(_, fields) => {
-                    for (_, _, (_, ty)) in fields {
+                    for (_, _, (_, (_, ty))) in fields {
                         self.visit_type(None, ty)
                     }
                 }
@@ -730,7 +731,7 @@ pub trait TypingMutVisitorContext {
         if Self::VISIT_TYPES {
             match &mut sdef.fields {
                 N::StructFields::Defined(_, fields) => {
-                    for (_, _, (_, ty)) in fields {
+                    for (_, _, (_, (_, ty))) in fields {
                         self.visit_type(None, ty)
                     }
                 }
@@ -789,7 +790,7 @@ pub trait TypingMutVisitorContext {
         if Self::VISIT_TYPES {
             match &mut vdef.fields {
                 N::VariantFields::Defined(_, fields) => {
-                    for (_, _, (_, ty)) in fields {
+                    for (_, _, (_, (_, ty))) in fields {
                         self.visit_type(None, ty)
                     }
                 }
