@@ -30,3 +30,4 @@ msim.workspace = true
 
 [features]
 staging = ["sui-graphql-rpc/staging"]
+

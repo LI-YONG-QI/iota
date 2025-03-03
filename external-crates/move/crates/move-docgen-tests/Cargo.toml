@@ -35,3 +35,4 @@ move-prover-test-utils.workspace = true
 [[test]]
 name = "testsuite"
 harness = false
+

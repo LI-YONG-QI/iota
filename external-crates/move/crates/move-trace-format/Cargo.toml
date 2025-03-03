@@ -32,3 +32,4 @@ move-core-types = { workspace = true, features = ["fuzzing" ] }
 default = []
 fuzzing = ["proptest", "proptest-derive", "arbitrary", "move-core-types/fuzzing"]
 wasm = ["getrandom"]
+

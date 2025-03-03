@@ -27,3 +27,4 @@ url.workspace = true
 sui-indexer-alt-schema.workspace = true
 sui-pg-db.workspace = true
 sui-types.workspace = true
+
