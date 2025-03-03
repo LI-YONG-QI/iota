@@ -1677,7 +1677,7 @@ mod tests {
         // AND stub the requests for authority 1 & 2
         // Make the first authority timeout, so the second will be called. "We" are
         // authority = 0, so we are skipped anyways.
-        for chunk in expected_blocks.chunks(context.parameters.max_blocks_per_fetch) {
+        for chunk in expected_blocks.chunks(MAX_BLOCKS_PER_FETCH) {
             network_client
                 .stub_fetch_blocks(
                     chunk.to_vec(),
