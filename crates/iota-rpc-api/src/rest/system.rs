@@ -2,16 +2,18 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use super::{ApiEndpoint, RouteHandler};
-use crate::{reader::StateReader, rest::accept::AcceptFormat, Result, RpcService, RpcServiceError};
-use axum::{
-    extract::{Path, State},
-    Json,
-};
-use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+
+use axum::{
+    Json,
+    extract::{Path, State},
+};
 use iota_protocol_config::{ProtocolConfig, ProtocolConfigValue, ProtocolVersion};
 use iota_sdk_types::{Address, ObjectId};
+use serde::{Deserialize, Serialize};
+
+use super::{ApiEndpoint, RouteHandler};
+use crate::{Result, RpcService, RpcServiceError, reader::StateReader, rest::accept::AcceptFormat};
 
 pub struct GetSystemStateSummary;
 
@@ -39,7 +41,7 @@ async fn get_system_state_summary(
             return Err(RpcServiceError::new(
                 axum::http::StatusCode::BAD_REQUEST,
                 "invalid accept type",
-            ))
+            ));
         }
     }
 
@@ -483,7 +485,7 @@ async fn get_current_protocol_config(
             return Err(RpcServiceError::new(
                 axum::http::StatusCode::BAD_REQUEST,
                 "invalid accept type",
-            ))
+            ));
         }
     }
 
@@ -525,7 +527,7 @@ async fn get_protocol_config(
             return Err(RpcServiceError::new(
                 axum::http::StatusCode::BAD_REQUEST,
                 "invalid accept type",
-            ))
+            ));
         }
     }
 
@@ -643,7 +645,7 @@ async fn get_gas_info(
             return Err(RpcServiceError::new(
                 axum::http::StatusCode::BAD_REQUEST,
                 "invalid accept type",
-            ))
+            ));
         }
     }
 

@@ -2,117 +2,122 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
-use std::future::Future;
-use std::path::{Path, PathBuf};
-use std::str::FromStr;
-use std::sync::Arc;
+use std::{
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
+    future::Future,
+    path::{Path, PathBuf},
+    str::FromStr,
+    sync::Arc,
+};
 
 use arc_swap::ArcSwapOption;
 use enum_dispatch::enum_dispatch;
 use fastcrypto::groups::bls12381;
-use fastcrypto_tbls::dkg_v1;
-use fastcrypto_tbls::nodes::PartyId;
-use fastcrypto_zkp::bn254::zk_login::{JwkId, OIDCProvider, JWK};
-use fastcrypto_zkp::bn254::zk_login_api::ZkLoginEnv;
-use futures::future::{join_all, select, Either};
-use futures::FutureExt;
-use itertools::{izip, Itertools};
-use move_bytecode_utils::module_cache::SyncModuleCache;
-use iota_common::sync::notify_once::NotifyOnce;
-use iota_common::sync::notify_read::NotifyRead;
-use iota_metrics::monitored_scope;
-use parking_lot::RwLock;
-use parking_lot::{Mutex, RwLockReadGuard, RwLockWriteGuard};
-use prometheus::IntCounter;
-use serde::{Deserialize, Serialize};
+use fastcrypto_tbls::{dkg_v1, nodes::PartyId};
+use fastcrypto_zkp::bn254::{
+    zk_login::{JWK, JwkId, OIDCProvider},
+    zk_login_api::ZkLoginEnv,
+};
+use futures::{
+    FutureExt,
+    future::{Either, join_all, select},
+};
+use iota_common::sync::{notify_once::NotifyOnce, notify_read::NotifyRead};
 use iota_config::node::ExpensiveSafetyCheckConfig;
 use iota_execution::{self, Executor};
-use iota_macros::fail_point;
-use iota_macros::fail_point_arg;
+use iota_macros::{fail_point, fail_point_arg};
+use iota_metrics::monitored_scope;
 use iota_protocol_config::{Chain, ProtocolConfig, ProtocolVersion};
 use iota_storage::mutex_table::{MutexGuard, MutexTable};
-use iota_types::accumulator::Accumulator;
-use iota_types::authenticator_state::{get_authenticator_state, ActiveJwk};
-use iota_types::base_types::{
-    AuthorityName, ConsensusObjectSequenceKey, EpochId, ObjectID, SequenceNumber, TransactionDigest,
+use iota_types::{
+    accumulator::Accumulator,
+    authenticator_state::{ActiveJwk, get_authenticator_state},
+    base_types::{
+        AuthorityName, ConciseableName, ConsensusObjectSequenceKey, EpochId, ObjectID, ObjectRef,
+        SequenceNumber, TransactionDigest,
+    },
+    committee::{Committee, CommitteeTrait},
+    crypto::{
+        AuthorityPublicKeyBytes, AuthoritySignInfo, AuthorityStrongQuorumSignInfo, RandomnessRound,
+    },
+    digests::{ChainIdentifier, TransactionEffectsDigest},
+    effects::TransactionEffects,
+    error::{IotaError, IotaResult},
+    executable_transaction::{TrustedExecutableTransaction, VerifiedExecutableTransaction},
+    iota_system_state::epoch_start_iota_system_state::{
+        EpochStartSystemState, EpochStartSystemStateTrait,
+    },
+    message_envelope::TrustedEnvelope,
+    messages_checkpoint::{
+        CheckpointContents, CheckpointSequenceNumber, CheckpointSignatureMessage, CheckpointSummary,
+    },
+    messages_consensus::{
+        AuthorityCapabilitiesV1, AuthorityCapabilitiesV2, ConsensusTransaction,
+        ConsensusTransactionKey, ConsensusTransactionKind, Round, TimestampMs,
+        VersionedDkgConfirmation, check_total_jwk_size,
+    },
+    signature::GenericSignature,
+    storage::{BackingPackageStore, InputKey, ObjectStore},
+    transaction::{
+        AuthenticatorStateUpdate, CertifiedTransaction, InputObjectKind, SenderSignedData,
+        Transaction, TransactionDataAPI, TransactionKey, TransactionKind, VerifiedCertificate,
+        VerifiedSignedTransaction, VerifiedTransaction,
+    },
 };
-use iota_types::base_types::{ConciseableName, ObjectRef};
-use iota_types::committee::Committee;
-use iota_types::committee::CommitteeTrait;
-use iota_types::crypto::{
-    AuthorityPublicKeyBytes, AuthoritySignInfo, AuthorityStrongQuorumSignInfo, RandomnessRound,
-};
-use iota_types::digests::{ChainIdentifier, TransactionEffectsDigest};
-use iota_types::effects::TransactionEffects;
-use iota_types::error::{IotaError, IotaResult};
-use iota_types::executable_transaction::{
-    TrustedExecutableTransaction, VerifiedExecutableTransaction,
-};
-use iota_types::message_envelope::TrustedEnvelope;
-use iota_types::messages_checkpoint::{
-    CheckpointContents, CheckpointSequenceNumber, CheckpointSignatureMessage, CheckpointSummary,
-};
-use iota_types::messages_consensus::{
-    check_total_jwk_size, AuthorityCapabilitiesV1, AuthorityCapabilitiesV2, ConsensusTransaction,
-    ConsensusTransactionKey, ConsensusTransactionKind, Round, TimestampMs,
-    VersionedDkgConfirmation,
-};
-use iota_types::signature::GenericSignature;
-use iota_types::storage::{BackingPackageStore, InputKey, ObjectStore};
-use iota_types::iota_system_state::epoch_start_iota_system_state::{
-    EpochStartSystemState, EpochStartSystemStateTrait,
-};
-use iota_types::transaction::{
-    AuthenticatorStateUpdate, CertifiedTransaction, InputObjectKind, SenderSignedData, Transaction,
-    TransactionDataAPI, TransactionKey, TransactionKind, VerifiedCertificate,
-    VerifiedSignedTransaction, VerifiedTransaction,
-};
+use itertools::{Itertools, izip};
+use move_bytecode_utils::module_cache::SyncModuleCache;
+use parking_lot::{Mutex, RwLock, RwLockReadGuard, RwLockWriteGuard};
+use prometheus::IntCounter;
+use serde::{Deserialize, Serialize};
 use tap::TapOptional;
-use tokio::sync::OnceCell;
-use tokio::time::Instant;
+use tokio::{sync::OnceCell, time::Instant};
 use tracing::{debug, error, info, instrument, trace, warn};
-use typed_store::rocks::{read_size_from_env, ReadWriteOptions};
-use typed_store::rocksdb::Options;
-use typed_store::DBMapUtils;
-use typed_store::{retry_transaction_forever, Map};
 use typed_store::{
-    rocks::{default_db_options, DBBatch, DBMap, DBOptions, MetricConf},
+    DBMapUtils, Map, TypedStoreError, retry_transaction_forever,
+    rocks::{
+        DBBatch, DBMap, DBOptions, MetricConf, ReadWriteOptions, default_db_options,
+        read_size_from_env,
+    },
+    rocksdb::Options,
     traits::{TableSummary, TypedStoreDebug},
-    TypedStoreError,
 };
 
-use super::authority_store_tables::ENV_VAR_LOCKS_BLOCK_CACHE_SIZE;
-use super::epoch_start_configuration::EpochStartConfigTrait;
-use super::shared_object_congestion_tracker::{
-    CongestionPerObjectDebt, SharedObjectCongestionTracker,
+use super::{
+    authority_store_tables::ENV_VAR_LOCKS_BLOCK_CACHE_SIZE,
+    epoch_start_configuration::EpochStartConfigTrait,
+    shared_object_congestion_tracker::{CongestionPerObjectDebt, SharedObjectCongestionTracker},
+    transaction_deferral::{DeferralKey, DeferralReason, transaction_deferral_within_limit},
 };
-use super::transaction_deferral::{transaction_deferral_within_limit, DeferralKey, DeferralReason};
-use crate::authority::epoch_start_configuration::{EpochFlag, EpochStartConfiguration};
-use crate::authority::shared_object_version_manager::{
-    AssignedTxAndVersions, ConsensusSharedObjVerAssignment, SharedObjVerManager,
+use crate::{
+    authority::{
+        AuthorityMetrics, ResolverWrapper,
+        epoch_start_configuration::{EpochFlag, EpochStartConfiguration},
+        shared_object_version_manager::{
+            AssignedTxAndVersions, ConsensusSharedObjVerAssignment, SharedObjVerManager,
+        },
+    },
+    checkpoints::{
+        BuilderCheckpointSummary, CheckpointHeight, CheckpointServiceNotify, EpochStats,
+        PendingCheckpoint, PendingCheckpointInfo, PendingCheckpointV2, PendingCheckpointV2Contents,
+    },
+    consensus_handler::{
+        ConsensusCommitInfo, SequencedConsensusTransaction, SequencedConsensusTransactionKey,
+        SequencedConsensusTransactionKind, VerifiedSequencedConsensusTransaction,
+    },
+    epoch::{
+        epoch_metrics::EpochMetrics,
+        randomness::{
+            DkgStatus, RandomnessManager, RandomnessReporter, SINGLETON_KEY,
+            VersionedProcessedMessage, VersionedUsedProcessedMessages,
+        },
+        reconfiguration::ReconfigState,
+    },
+    execution_cache::ObjectCacheRead,
+    module_cache_metrics::ResolverMetrics,
+    post_consensus_tx_reorder::PostConsensusTxReorder,
+    signature_verifier::*,
+    stake_aggregator::{GenericMultiStakeAggregator, StakeAggregator},
 };
-use crate::authority::AuthorityMetrics;
-use crate::authority::ResolverWrapper;
-use crate::checkpoints::{
-    BuilderCheckpointSummary, CheckpointHeight, CheckpointServiceNotify, EpochStats,
-    PendingCheckpoint, PendingCheckpointInfo, PendingCheckpointV2, PendingCheckpointV2Contents,
-};
-use crate::consensus_handler::{
-    ConsensusCommitInfo, SequencedConsensusTransaction, SequencedConsensusTransactionKey,
-    SequencedConsensusTransactionKind, VerifiedSequencedConsensusTransaction,
-};
-use crate::epoch::epoch_metrics::EpochMetrics;
-use crate::epoch::randomness::{
-    DkgStatus, RandomnessManager, RandomnessReporter, VersionedProcessedMessage,
-    VersionedUsedProcessedMessages, SINGLETON_KEY,
-};
-use crate::epoch::reconfiguration::ReconfigState;
-use crate::execution_cache::ObjectCacheRead;
-use crate::module_cache_metrics::ResolverMetrics;
-use crate::post_consensus_tx_reorder::PostConsensusTxReorder;
-use crate::signature_verifier::*;
-use crate::stake_aggregator::{GenericMultiStakeAggregator, StakeAggregator};
 
 /// The key where the latest consensus index is stored in the database.
 // TODO: Make a single table (e.g., called `variables`) storing all our lonely variables in one place.
@@ -2559,11 +2564,13 @@ impl AuthorityPerEpochStore {
             for certificate in certificates {
                 // User signatures are written in the same batch as consensus certificate processed flag,
                 // which means we won't attempt to insert this twice for the same tx digest
-                assert!(!self
-                    .tables()?
-                    .user_signatures_for_checkpoints
-                    .contains_key(certificate.digest())
-                    .unwrap());
+                assert!(
+                    !self
+                        .tables()?
+                        .user_signatures_for_checkpoints
+                        .contains_key(certificate.digest())
+                        .unwrap()
+                );
             }
         }
         Ok(())
@@ -3182,13 +3189,17 @@ impl AuthorityPerEpochStore {
             self.protocol_config(),
             version_assignment,
         );
-        let consensus_commit_prologue_root = match self.process_consensus_system_transaction(&transaction) {
+        let consensus_commit_prologue_root = match self
+            .process_consensus_system_transaction(&transaction)
+        {
             ConsensusCertificateResult::IotaTransaction(processed_tx) => {
                 transactions.push_front(processed_tx.clone());
                 Some(processed_tx.key())
             }
             ConsensusCertificateResult::IgnoredSystem => None,
-            _ => unreachable!("process_consensus_system_transaction returned unexpected ConsensusCertificateResult."),
+            _ => unreachable!(
+                "process_consensus_system_transaction returned unexpected ConsensusCertificateResult."
+            ),
         };
 
         output.record_consensus_message_processed(SequencedConsensusTransactionKey::System(
@@ -3546,7 +3557,10 @@ impl AuthorityPerEpochStore {
                     // end_of_publish lock is released here.
                 } else {
                     // If we past the stage where we are accepting consensus certificates we also don't record end of publish messages
-                    debug!("Ignoring end of publish message from validator {:?} as we already collected enough end of publish messages", authority.concise());
+                    debug!(
+                        "Ignoring end of publish message from validator {:?} as we already collected enough end of publish messages",
+                        authority.concise()
+                    );
                     false
                 };
 
@@ -3798,9 +3812,9 @@ impl AuthorityPerEpochStore {
                             }
                             Err(e) => {
                                 warn!(
-                                        "Failed to deserialize RandomnessDkgConfirmation from {:?}: {e:?}",
-                                        authority.concise(),
-                                    );
+                                    "Failed to deserialize RandomnessDkgConfirmation from {:?}: {e:?}",
+                                    authority.concise(),
+                                );
                             }
                         }
                     } else {
@@ -3888,7 +3902,11 @@ impl AuthorityPerEpochStore {
             // With some edge cases consensus might sometimes resend previously seen certificate after EndOfPublish
             // However this certificate will be filtered out before this line by `consensus_message_processed` call in `verify_consensus_transaction`
             // If we see some new certificate here it means authority is byzantine and sent certificate after EndOfPublish (or we have some bug in ConsensusAdapter)
-            warn!("[Byzantine authority] Authority {:?} sent a new, previously unseen transaction {:?} after it sent EndOfPublish message to consensus", block_author.concise(), transaction.digest());
+            warn!(
+                "[Byzantine authority] Authority {:?} sent a new, previously unseen transaction {:?} after it sent EndOfPublish message to consensus",
+                block_author.concise(),
+                transaction.digest()
+            );
             return Ok(ConsensusCertificateResult::Ignored);
         }
 
@@ -4263,7 +4281,9 @@ impl AuthorityPerEpochStore {
 
     pub(crate) fn check_all_executed_transactions_in_checkpoint(&self) {
         if !self.executed_in_epoch_table_enabled() {
-            error!("Cannot check executed transactions in checkpoint because executed_in_epoch table is not enabled");
+            error!(
+                "Cannot check executed transactions in checkpoint because executed_in_epoch table is not enabled"
+            );
             return;
         }
         let tables = self.tables().unwrap();
@@ -4280,7 +4300,10 @@ impl AuthorityPerEpochStore {
             match (executed, checkpointed) {
                 (Some((left, ())), Some((right, _))) => {
                     if left != right {
-                        panic!("Executed transactions and checkpointed transactions do not match: {:?} {:?}", left, right);
+                        panic!(
+                            "Executed transactions and checkpointed transactions do not match: {:?} {:?}",
+                            left, right
+                        );
                     }
                 }
                 (None, None) => break,

@@ -2,13 +2,14 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use super::{ApiEndpoint, RouteHandler};
-use crate::{Result, RpcService};
 use axum::{
-    extract::{Path, State},
     Json,
+    extract::{Path, State},
 };
 use iota_sdk_types::{EpochId, ValidatorCommittee};
+
+use super::{ApiEndpoint, RouteHandler};
+use crate::{Result, RpcService};
 
 pub struct GetLatestCommittee;
 

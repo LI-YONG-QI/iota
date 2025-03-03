@@ -2,21 +2,25 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::authority_state::StateReadError;
-use crate::name_service::NameServiceError;
+use std::collections::BTreeMap;
+
 use fastcrypto::error::FastCryptoError;
 use hyper::header::InvalidHeaderValue;
-use itertools::Itertools;
-use jsonrpsee::core::ClientError as RpcError;
-use jsonrpsee::types::error::INTERNAL_ERROR_CODE;
-use jsonrpsee::types::{ErrorObject, ErrorObjectOwned};
-use std::collections::BTreeMap;
 use iota_json_rpc_api::{TRANSACTION_EXECUTION_CLIENT_ERROR_CODE, TRANSIENT_ERROR_CODE};
-use iota_types::committee::{QUORUM_THRESHOLD, TOTAL_VOTING_POWER};
-use iota_types::error::{IotaError, IotaObjectResponseError, UserInputError};
-use iota_types::quorum_driver_types::QuorumDriverError;
+use iota_types::{
+    committee::{QUORUM_THRESHOLD, TOTAL_VOTING_POWER},
+    error::{IotaError, IotaObjectResponseError, UserInputError},
+    quorum_driver_types::QuorumDriverError,
+};
+use itertools::Itertools;
+use jsonrpsee::{
+    core::ClientError as RpcError,
+    types::{ErrorObject, ErrorObjectOwned, error::INTERNAL_ERROR_CODE},
+};
 use thiserror::Error;
 use tokio::task::JoinError;
+
+use crate::{authority_state::StateReadError, name_service::NameServiceError};
 
 pub type RpcInterimResult<T = ()> = Result<T, Error>;
 
@@ -146,13 +150,11 @@ impl From<Error> for ErrorObjectOwned {
             },
             Error::QuorumDriverError(err) => {
                 match err {
-                    QuorumDriverError::InvalidUserSignature(err) => {
-                        ErrorObject::owned(
-                            TRANSACTION_EXECUTION_CLIENT_ERROR_CODE,
-                            format!("Invalid user signature: {err}"),
-                            None::<()>,
-                        )
-                    }
+                    QuorumDriverError::InvalidUserSignature(err) => ErrorObject::owned(
+                        TRANSACTION_EXECUTION_CLIENT_ERROR_CODE,
+                        format!("Invalid user signature: {err}"),
+                        None::<()>,
+                    ),
                     QuorumDriverError::TxAlreadyFinalizedWithDifferentUserSignatures => {
                         ErrorObject::owned(
                             TRANSACTION_EXECUTION_CLIENT_ERROR_CODE,
@@ -162,7 +164,7 @@ impl From<Error> for ErrorObjectOwned {
                     }
                     QuorumDriverError::TimeoutBeforeFinality
                     | QuorumDriverError::FailedWithTransientErrorAfterMaximumAttempts { .. } => {
-                            ErrorObject::owned(TRANSIENT_ERROR_CODE, err.to_string(), None::<()>)
+                        ErrorObject::owned(TRANSIENT_ERROR_CODE, err.to_string(), None::<()>)
                     }
                     QuorumDriverError::ObjectsDoubleUsed {
                         conflicting_txes,
@@ -183,7 +185,8 @@ impl From<Error> for ErrorObjectOwned {
                             Some((digest, success)) => {
                                 format!(
                                     "Retried transaction {} ({}) because it was able to gather the necessary votes.",
-                                    digest, if success { "succeeded" } else { "failed" }
+                                    digest,
+                                    if success { "succeeded" } else { "failed" }
                                 )
                             }
                             None => "".to_string(),
@@ -261,7 +264,10 @@ impl From<Error> for ErrorObjectOwned {
                             error_list.push(format!("- {}", err));
                         }
 
-                        let error_msg = format!("Transaction validator signing failed due to issues with transaction inputs, please review the errors and try again:\n{}", error_list.join("\n"));
+                        let error_msg = format!(
+                            "Transaction validator signing failed due to issues with transaction inputs, please review the errors and try again:\n{}",
+                            error_list.join("\n")
+                        );
 
                         ErrorObject::owned(
                             TRANSACTION_EXECUTION_CLIENT_ERROR_CODE,
@@ -269,16 +275,14 @@ impl From<Error> for ErrorObjectOwned {
                             None::<()>,
                         )
                     }
-                    QuorumDriverError::QuorumDriverInternalError(_) => {
-                        ErrorObject::owned(
-                            INTERNAL_ERROR_CODE,
-                            "Internal error occurred while executing transaction.",
-                            None::<()>,
-                        )
-                    }
+                    QuorumDriverError::QuorumDriverInternalError(_) => ErrorObject::owned(
+                        INTERNAL_ERROR_CODE,
+                        "Internal error occurred while executing transaction.",
+                        None::<()>,
+                    ),
                     QuorumDriverError::SystemOverload { .. }
                     | QuorumDriverError::SystemOverloadRetryAfter { .. } => {
-                            ErrorObject::owned(TRANSIENT_ERROR_CODE, err.to_string(), None::<()>)
+                        ErrorObject::owned(TRANSIENT_ERROR_CODE, err.to_string(), None::<()>)
                     }
                 }
             }
@@ -301,7 +305,9 @@ pub enum IotaRpcInputError {
     #[error("{0}")]
     GenericInvalid(String),
 
-    #[error("request_type` must set to `None` or `WaitForLocalExecution` if effects is required in the response")]
+    #[error(
+        "request_type` must set to `None` or `WaitForLocalExecution` if effects is required in the response"
+    )]
     InvalidExecuteTransactionRequestType,
 
     #[error("Unsupported protocol version requested. Min supported: {0}, max supported: {1}")]
@@ -340,18 +346,16 @@ impl From<IotaRpcInputError> for ErrorObjectOwned {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use expect_test::expect;
+    use iota_types::{
+        base_types::{AuthorityName, ObjectID, ObjectRef, SequenceNumber},
+        committee::StakeUnit,
+        crypto::{AuthorityPublicKey, AuthorityPublicKeyBytes},
+        digests::{ObjectDigest, TransactionDigest},
+    };
     use jsonrpsee::types::ErrorObjectOwned;
-    use iota_types::base_types::AuthorityName;
-    use iota_types::base_types::ObjectID;
-    use iota_types::base_types::ObjectRef;
-    use iota_types::base_types::SequenceNumber;
-    use iota_types::committee::StakeUnit;
-    use iota_types::crypto::AuthorityPublicKey;
-    use iota_types::crypto::AuthorityPublicKeyBytes;
-    use iota_types::digests::ObjectDigest;
-    use iota_types::digests::TransactionDigest;
+
+    use super::*;
 
     fn test_object_ref() -> ObjectRef {
         (
@@ -440,7 +444,9 @@ mod tests {
                 Error::QuorumDriverError(quorum_driver_error).into();
             let expected_code = expect!["-32002"];
             expected_code.assert_eq(&error_object.code().to_string());
-            let expected_message = expect!["Failed to sign transaction by a quorum of validators because one or more of its objects is reserved for another transaction. Retried transaction 4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi (succeeded) because it was able to gather the necessary votes. Other transactions locking these objects:\n- 4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi (stake 80.0)\n- 8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR (stake 5.0)"];
+            let expected_message = expect![
+                "Failed to sign transaction by a quorum of validators because one or more of its objects is reserved for another transaction. Retried transaction 4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi (succeeded) because it was able to gather the necessary votes. Other transactions locking these objects:\n- 4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi (stake 80.0)\n- 8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR (stake 5.0)"
+            ];
             expected_message.assert_eq(error_object.message());
             let expected_data = expect![[
                 r#"{"4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi":[["0x0000000000000000000000000000000000000000000000000000000000000000",0,"11111111111111111111111111111111"]],"8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR":[["0x0000000000000000000000000000000000000000000000000000000000000000",0,"11111111111111111111111111111111"]]}"#
@@ -480,7 +486,9 @@ mod tests {
                 Error::QuorumDriverError(quorum_driver_error).into();
             let expected_code = expect!["-32002"];
             expected_code.assert_eq(&error_object.code().to_string());
-            let expected_message = expect!["Failed to sign transaction by a quorum of validators because one or more of its objects is equivocated until the next epoch.  Other transactions locking these objects:\n- 8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR (stake 50.0)\n- 4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi (stake 40.0)"];
+            let expected_message = expect![
+                "Failed to sign transaction by a quorum of validators because one or more of its objects is equivocated until the next epoch.  Other transactions locking these objects:\n- 8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR (stake 50.0)\n- 4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi (stake 40.0)"
+            ];
             expected_message.assert_eq(error_object.message());
             let expected_data = expect![[
                 r#"{"4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi":[["0x0000000000000000000000000000000000000000000000000000000000000000",0,"11111111111111111111111111111111"]],"8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR":[["0x0000000000000000000000000000000000000000000000000000000000000000",0,"11111111111111111111111111111111"]]}"#
@@ -520,8 +528,9 @@ mod tests {
                 Error::QuorumDriverError(quorum_driver_error).into();
             let expected_code = expect!["-32002"];
             expected_code.assert_eq(&error_object.code().to_string());
-            let expected_message =
-                expect!["Transaction validator signing failed due to issues with transaction inputs, please review the errors and try again:\n- Balance of gas object 10 is lower than the needed amount: 100\n- Object ID 0x0000000000000000000000000000000000000000000000000000000000000000 Version 0x0 Digest 11111111111111111111111111111111 is not available for consumption, current version: 0xa"];
+            let expected_message = expect![
+                "Transaction validator signing failed due to issues with transaction inputs, please review the errors and try again:\n- Balance of gas object 10 is lower than the needed amount: 100\n- Object ID 0x0000000000000000000000000000000000000000000000000000000000000000 Version 0x0 Digest 11111111111111111111111111111111 is not available for consumption, current version: 0xa"
+            ];
             expected_message.assert_eq(error_object.message());
         }
 
@@ -551,8 +560,9 @@ mod tests {
                 Error::QuorumDriverError(quorum_driver_error).into();
             let expected_code = expect!["-32002"];
             expected_code.assert_eq(&error_object.code().to_string());
-            let expected_message =
-                expect!["Transaction validator signing failed due to issues with transaction inputs, please review the errors and try again:\n- Could not find the referenced object 0x0000000000000000000000000000000000000000000000000000000000000000 at version None"];
+            let expected_message = expect![
+                "Transaction validator signing failed due to issues with transaction inputs, please review the errors and try again:\n- Could not find the referenced object 0x0000000000000000000000000000000000000000000000000000000000000000 at version None"
+            ];
             expected_message.assert_eq(error_object.message());
         }
 
@@ -581,7 +591,9 @@ mod tests {
                 Error::QuorumDriverError(quorum_driver_error).into();
             let expected_code = expect!["-32050"];
             expected_code.assert_eq(&error_object.code().to_string());
-            let expected_message = expect!["Transaction is not processed because 10 of validators by stake are overloaded with certificates pending execution."];
+            let expected_message = expect![
+                "Transaction is not processed because 10 of validators by stake are overloaded with certificates pending execution."
+            ];
             expected_message.assert_eq(error_object.message());
         }
     }

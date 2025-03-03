@@ -2,19 +2,17 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use shared_crypto::intent::Intent;
 use iota_keys::keystore::AccountKeystore;
 use iota_macros::sim_test;
-use iota_rpc_api::client::reqwest::StatusCode;
-use iota_rpc_api::client::sdk::Client as RestClient;
-use iota_rpc_api::rest::transactions::ResolveTransactionQueryParameters;
-use iota_rpc_api::Client;
+use iota_rpc_api::{
+    Client,
+    client::{reqwest::StatusCode, sdk::Client as RestClient},
+    rest::transactions::ResolveTransactionQueryParameters,
+};
 use iota_sdk_transaction_builder::unresolved;
-use iota_sdk_types::Argument;
-use iota_sdk_types::Command;
-use iota_sdk_types::TransactionExpiration;
-use iota_types::base_types::IotaAddress;
-use iota_types::effects::TransactionEffectsAPI;
+use iota_sdk_types::{Argument, Command, TransactionExpiration};
+use iota_types::{base_types::IotaAddress, effects::TransactionEffectsAPI};
+use shared_crypto::intent::Intent;
 use test_cluster::TestClusterBuilder;
 
 #[sim_test]

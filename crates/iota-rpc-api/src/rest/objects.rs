@@ -2,20 +2,25 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use super::{ApiEndpoint, RouteHandler};
-use crate::types::{GetObjectOptions, ObjectResponse};
-use crate::{reader::StateReader, rest::PageCursor, Result, RpcService, RpcServiceError};
-use axum::extract::Query;
-use axum::extract::{Path, State};
-use axum::Json;
-use serde::{Deserialize, Serialize};
-use iota_sdk_types::{ObjectId, TypeTag, Version};
-use iota_types::iota_sdk_types_conversions::type_tag_core_to_sdk;
-use iota_types::{
-    storage::{DynamicFieldIndexInfo, DynamicFieldKey},
-    iota_sdk_types_conversions::SdkTypeConversionError,
+use axum::{
+    Json,
+    extract::{Path, Query, State},
 };
+use iota_sdk_types::{ObjectId, TypeTag, Version};
+use iota_types::{
+    iota_sdk_types_conversions::{SdkTypeConversionError, type_tag_core_to_sdk},
+    storage::{DynamicFieldIndexInfo, DynamicFieldKey},
+};
+use serde::{Deserialize, Serialize};
 use tap::Pipe;
+
+use super::{ApiEndpoint, RouteHandler};
+use crate::{
+    Result, RpcService, RpcServiceError,
+    reader::StateReader,
+    rest::PageCursor,
+    types::{GetObjectOptions, ObjectResponse},
+};
 
 pub struct GetObject;
 
@@ -145,7 +150,7 @@ pub struct DynamicFieldInfo {
     pub field_id: ObjectId,
     pub dynamic_field_type: DynamicFieldType,
     pub name_type: TypeTag,
-    //TODO fix the json format of this type to be base64 encoded
+    // TODO fix the json format of this type to be base64 encoded
     pub name_value: Vec<u8>,
     /// ObjectId of the child object when `dynamic_field_type == DynamicFieldType::Object`
     pub dynamic_object_id: Option<ObjectId>,

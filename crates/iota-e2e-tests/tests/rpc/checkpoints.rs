@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use iota_macros::sim_test;
-use iota_rpc_api::client::sdk::Client;
-use iota_rpc_api::client::Client as CoreClient;
-use iota_rpc_api::proto::node::node_service_client::NodeServiceClient;
-use iota_rpc_api::proto::node::{
-    FullCheckpointObject, FullCheckpointTransaction, GetCheckpointOptions, GetCheckpointRequest,
-    GetCheckpointResponse, GetFullCheckpointOptions, GetFullCheckpointRequest,
-    GetFullCheckpointResponse,
+use iota_rpc_api::{
+    client::{Client as CoreClient, sdk::Client},
+    proto::node::{
+        FullCheckpointObject, FullCheckpointTransaction, GetCheckpointOptions,
+        GetCheckpointRequest, GetCheckpointResponse, GetFullCheckpointOptions,
+        GetFullCheckpointRequest, GetFullCheckpointResponse,
+        node_service_client::NodeServiceClient,
+    },
 };
 use test_cluster::TestClusterBuilder;
 

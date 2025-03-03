@@ -2,11 +2,10 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+use axum::{Json, extract::State};
+
 use super::{ApiEndpoint, RouteHandler};
-use crate::types::NodeInfo;
-use crate::{Result, RpcService};
-use axum::extract::State;
-use axum::Json;
+use crate::{Result, RpcService, types::NodeInfo};
 
 /// Get basic information about the state of a Node
 pub struct GetNodeInfo;

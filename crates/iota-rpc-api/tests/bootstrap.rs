@@ -2,9 +2,9 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+use std::{fs, path::PathBuf};
+
 use protox::prost::Message as _;
-use std::fs;
-use std::path::PathBuf;
 
 #[test]
 fn bootstrap() {

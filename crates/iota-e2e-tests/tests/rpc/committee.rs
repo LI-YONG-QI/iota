@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use iota_macros::sim_test;
-use iota_rpc_api::client::sdk::Client;
-use iota_rpc_api::proto::node::node_service_client::NodeServiceClient;
-use iota_rpc_api::proto::node::GetCommitteeRequest;
+use iota_rpc_api::{
+    client::sdk::Client,
+    proto::node::{GetCommitteeRequest, node_service_client::NodeServiceClient},
+};
 use test_cluster::TestClusterBuilder;
 
 #[sim_test]

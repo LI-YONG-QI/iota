@@ -5,13 +5,15 @@
 use std::net::SocketAddr;
 
 use anyhow::Context;
-use jsonrpsee::server::{RpcModule, Server, ServerBuilder};
 use iota_pg_db::Db;
+use jsonrpsee::server::{RpcModule, Server, ServerBuilder};
 use tokio::task::JoinHandle;
 use tracing::info;
 
-use crate::api::governance::{GovernanceImpl, GovernanceServer};
-use crate::args::Args;
+use crate::{
+    api::governance::{GovernanceImpl, GovernanceServer},
+    args::Args,
+};
 
 mod api;
 pub mod args;
@@ -119,8 +121,8 @@ mod tests {
         net::{IpAddr, Ipv4Addr, SocketAddr},
     };
 
-    use jsonrpsee::{core::RpcResult, proc_macros::rpc};
     use iota_pg_db::temp::get_available_port;
+    use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 
     use super::*;
 

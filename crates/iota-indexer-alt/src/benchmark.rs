@@ -4,9 +4,9 @@
 
 use std::{path::PathBuf, time::Instant};
 
-use iota_indexer_alt_framework::{ingestion::ClientArgs, Indexer, IndexerArgs};
+use iota_indexer_alt_framework::{Indexer, IndexerArgs, ingestion::ClientArgs};
 use iota_indexer_alt_schema::MIGRATIONS;
-use iota_pg_db::{reset_database, DbArgs};
+use iota_pg_db::{DbArgs, reset_database};
 use iota_synthetic_ingestion::synthetic_ingestion::read_ingestion_data;
 
 use crate::{config::IndexerConfig, start_indexer};
@@ -59,7 +59,7 @@ pub async fn run_benchmark(
         indexer_args,
         client_args,
         indexer_config,
-        false, /* with_genesis */
+        false, // with_genesis
     )
     .await?;
 

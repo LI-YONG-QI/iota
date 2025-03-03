@@ -7,18 +7,17 @@ use std::sync::Arc;
 use iota_pg_db::Db;
 use tokio::{
     task::JoinHandle,
-    time::{interval, MissedTickBehavior},
+    time::{MissedTickBehavior, interval},
 };
 use tokio_util::sync::CancellationToken;
 use tracing::{debug, error, info, warn};
 
+use super::{Handler, PrunerConfig};
 use crate::{
     metrics::IndexerMetrics,
     pipeline::logging::{LoggerWatermark, WatermarkLogger},
     watermarks::PrunerWatermark,
 };
-
-use super::{Handler, PrunerConfig};
 
 /// The pruner task is responsible for deleting old data from the database. It will periodically
 /// check the `watermarks` table to see if there is any data that should be pruned between the

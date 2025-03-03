@@ -2,11 +2,9 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use std::time::Duration;
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 
-use crate::Result;
-use crate::RpcService;
+use crate::{Result, RpcService};
 
 impl RpcService {
     /// Perform a simple health check on the service.

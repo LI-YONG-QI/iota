@@ -4,30 +4,28 @@
 
 mod execution;
 use axum::Json;
-pub use execution::ExecuteTransaction;
-pub use execution::SimulateTransaction;
-pub use execution::SimulateTransactionQueryParameters;
-pub use execution::TransactionSimulationResponse;
+pub use execution::{
+    ExecuteTransaction, SimulateTransaction, SimulateTransactionQueryParameters,
+    TransactionSimulationResponse,
+};
 
 mod resolve;
-pub use resolve::ResolveTransaction;
-pub use resolve::ResolveTransactionQueryParameters;
-pub use resolve::ResolveTransactionResponse;
-
-use axum::extract::{Path, Query, State};
-use axum::http::StatusCode;
-use iota_sdk_types::CheckpointSequenceNumber;
-use iota_sdk_types::TransactionDigest;
+use axum::{
+    extract::{Path, Query, State},
+    http::StatusCode,
+};
+use iota_sdk_types::{CheckpointSequenceNumber, TransactionDigest};
+pub use resolve::{
+    ResolveTransaction, ResolveTransactionQueryParameters, ResolveTransactionResponse,
+};
 use tap::Pipe;
 
 use super::{ApiEndpoint, RouteHandler};
-use crate::rest::PageCursor;
-use crate::types::GetTransactionOptions;
-use crate::types::TransactionResponse;
-use crate::Direction;
-use crate::Result;
-use crate::RpcService;
-use crate::RpcServiceError;
+use crate::{
+    Direction, Result, RpcService, RpcServiceError,
+    rest::PageCursor,
+    types::{GetTransactionOptions, TransactionResponse},
+};
 
 pub struct GetTransaction;
 

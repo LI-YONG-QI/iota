@@ -3,11 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use diesel::{ExpressionMethods, QueryDsl};
-
-use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 use iota_indexer_alt_schema::schema::kv_epoch_starts;
 use iota_pg_db::Db;
 use iota_types::iota_serde::BigInt;
+use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 
 use super::Connection;
 

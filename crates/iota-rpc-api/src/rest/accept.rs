@@ -2,7 +2,7 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use axum::http::{self, header, HeaderMap};
+use axum::http::{self, HeaderMap, header};
 use mime::Mime;
 
 // TODO look into utilizing the following way to signal the expected types since bcs doesn't

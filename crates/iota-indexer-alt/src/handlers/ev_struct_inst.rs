@@ -9,7 +9,7 @@ use diesel::{ExpressionMethods, QueryDsl};
 use diesel_async::RunQueryDsl;
 use iota_indexer_alt_framework::{
     models::cp_sequence_numbers::tx_interval,
-    pipeline::{concurrent::Handler, Processor},
+    pipeline::{Processor, concurrent::Handler},
 };
 use iota_indexer_alt_schema::{events::StoredEvStructInst, schema::ev_struct_inst};
 use iota_pg_db as db;

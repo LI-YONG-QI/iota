@@ -2,37 +2,41 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{
-    error::DeepBookError,
-    models::{BalancesSummary, OrderFillSummary, Pools},
-    schema::{self},
-    iota_deepbook_indexer::PgDeepbookPersistent,
+use std::{
+    collections::HashMap,
+    net::SocketAddr,
+    str::FromStr,
+    time::{SystemTime, UNIX_EPOCH},
 };
+
 use axum::{
+    Json, Router,
     extract::{Path, Query, State},
     http::StatusCode,
     routing::get,
-    Json, Router,
 };
-use diesel::dsl::{count_star, sql};
-use diesel::BoolExpressionMethods;
-use diesel::QueryDsl;
-use diesel::{ExpressionMethods, SelectableHelper};
+use diesel::{
+    BoolExpressionMethods, ExpressionMethods, QueryDsl, SelectableHelper,
+    dsl::{count_star, sql},
+};
 use diesel_async::RunQueryDsl;
-use serde_json::Value;
-use std::time::{SystemTime, UNIX_EPOCH};
-use std::{collections::HashMap, net::SocketAddr};
-use tokio::{net::TcpListener, task::JoinHandle};
-
-use std::str::FromStr;
 use iota_json_rpc_types::{IotaObjectData, IotaObjectDataOptions, IotaObjectResponse};
 use iota_sdk::IotaClientBuilder;
 use iota_types::{
-    base_types::{ObjectID, ObjectRef, IotaAddress},
+    TypeTag,
+    base_types::{IotaAddress, ObjectID, ObjectRef},
     programmable_transaction_builder::ProgrammableTransactionBuilder,
     transaction::{Argument, CallArg, Command, ObjectArg, ProgrammableMoveCall, TransactionKind},
     type_input::TypeInput,
-    TypeTag,
+};
+use serde_json::Value;
+use tokio::{net::TcpListener, task::JoinHandle};
+
+use crate::{
+    error::DeepBookError,
+    iota_deepbook_indexer::PgDeepbookPersistent,
+    models::{BalancesSummary, OrderFillSummary, Pools},
+    schema::{self},
 };
 
 pub const IOTA_MAINNET_URL: &str = "https://fullnode.mainnet.iota.io:443";
@@ -805,7 +809,7 @@ async fn trades(
 
     // Prepare the trade data
     let trade = HashMap::from([
-        ("trade_id".to_string(), Value::from(trade_id.to_string())), // Computed from `maker_id` and `taker_id`
+        ("trade_id".to_string(), Value::from(trade_id.to_string())), /* Computed from `maker_id` and `taker_id` */
         (
             "price".to_string(),
             Value::from(price as f64 / price_factor as f64),

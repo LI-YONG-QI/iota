@@ -4,14 +4,15 @@
 
 use std::sync::Arc;
 
-use axum::{handler::Handler, http::Method, routing::MethodRouter};
 use axum::{
-    response::{Redirect, ResponseParts},
-    routing::get,
     Router,
+    handler::Handler,
+    http::Method,
+    response::{Redirect, ResponseParts},
+    routing::{MethodRouter, get},
 };
 
-use crate::{reader::StateReader, RpcService};
+use crate::{RpcService, reader::StateReader};
 
 pub mod accept;
 pub mod accounts;

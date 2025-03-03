@@ -16,19 +16,19 @@ use itertools::Itertools as _;
 use tracing::{debug, error, info};
 
 use crate::{
+    CommittedSubDag,
     block::{
-        genesis_blocks, BlockAPI, BlockDigest, BlockRef, BlockTimestampMs, Round, Slot,
-        VerifiedBlock, GENESIS_ROUND,
+        BlockAPI, BlockDigest, BlockRef, BlockTimestampMs, GENESIS_ROUND, Round, Slot,
+        VerifiedBlock, genesis_blocks,
     },
     commit::{
-        load_committed_subdag_from_store, CommitAPI as _, CommitDigest, CommitIndex, CommitInfo,
-        CommitRef, CommitVote, TrustedCommit, GENESIS_COMMIT_INDEX,
+        CommitAPI as _, CommitDigest, CommitIndex, CommitInfo, CommitRef, CommitVote,
+        GENESIS_COMMIT_INDEX, TrustedCommit, load_committed_subdag_from_store,
     },
     context::Context,
     leader_scoring::{ReputationScores, ScoringSubdag},
     stake_aggregator::{QuorumThreshold, StakeAggregator},
     storage::{Store, WriteBatch},
-    CommittedSubDag,
 };
 
 /// DagState provides the API to write and read accepted blocks from the DAG.
@@ -239,7 +239,10 @@ impl DagState {
             if let Some(last_commit) = last_commit {
                 let mut index = last_commit.index();
                 let gc_round = state.gc_round();
-                info!("Recovering block commit statuses from commit index {} and backwards until leader of round <= gc_round {:?}", index, gc_round);
+                info!(
+                    "Recovering block commit statuses from commit index {} and backwards until leader of round <= gc_round {:?}",
+                    index, gc_round
+                );
 
                 loop {
                     let commits = store
@@ -300,7 +303,9 @@ impl DagState {
         if block.timestamp_ms() > now {
             panic!(
                 "Block {:?} cannot be accepted! Block timestamp {} is greater than local timestamp {}.",
-                block, block.timestamp_ms(), now,
+                block,
+                block.timestamp_ms(),
+                now,
             );
         }
 
@@ -639,7 +644,9 @@ impl DagState {
 
             let last_evicted_round = self.evicted_rounds[authority_index];
             if end_round.saturating_sub(1) <= last_evicted_round {
-                panic!("Attempted to request for blocks of rounds < {end_round}, when the last evicted round is {last_evicted_round} for authority {authority_index}", );
+                panic!(
+                    "Attempted to request for blocks of rounds < {end_round}, when the last evicted round is {last_evicted_round} for authority {authority_index}",
+                );
             }
 
             let block_ref_iter = block_refs
@@ -684,7 +691,13 @@ impl DagState {
 
         let eviction_round = self.evicted_rounds[slot.authority];
         if slot.round <= eviction_round {
-            panic!("{}", format!("Attempted to check for slot {slot} that is <= the last{}evicted round {eviction_round}", if self.gc_enabled() { " gc " } else { " " } ));
+            panic!(
+                "{}",
+                format!(
+                    "Attempted to check for slot {slot} that is <= the last{}evicted round {eviction_round}",
+                    if self.gc_enabled() { " gc " } else { " " }
+                )
+            );
         }
 
         let mut result = self.recent_refs_by_authority[slot.authority].range((
@@ -760,7 +773,10 @@ impl DagState {
             assert_eq!(commit.index(), last_commit.index() + 1);
 
             if commit.timestamp_ms() < last_commit.timestamp_ms() {
-                panic!("Commit timestamps do not monotonically increment, prev commit {:?}, new commit {:?}", last_commit, commit);
+                panic!(
+                    "Commit timestamps do not monotonically increment, prev commit {:?}, new commit {:?}",
+                    last_commit, commit
+                );
             }
         } else {
             assert_eq!(commit.index(), 1);
@@ -1116,7 +1132,7 @@ mod test {
     use super::*;
     use crate::{
         block::{BlockDigest, BlockRef, BlockTimestampMs, TestBlock, VerifiedBlock},
-        storage::{mem_store::MemStore, WriteBatch},
+        storage::{WriteBatch, mem_store::MemStore},
         test_dag_builder::DagBuilder,
         test_dag_parser::parse_dag,
     };
@@ -1163,13 +1179,15 @@ mod test {
 
         // Check uncommitted blocks that do not exist.
         let last_ref = blocks.keys().last().unwrap();
-        assert!(dag_state
-            .get_block(&BlockRef::new(
-                last_ref.round,
-                last_ref.author,
-                BlockDigest::MIN
-            ))
-            .is_none());
+        assert!(
+            dag_state
+                .get_block(&BlockRef::new(
+                    last_ref.round,
+                    last_ref.author,
+                    BlockDigest::MIN
+                ))
+                .is_none()
+        );
 
         // Check slots with uncommitted blocks.
         for round in 1..=num_rounds {
@@ -1222,9 +1240,11 @@ mod test {
         }
 
         // Check rounds without uncommitted blocks.
-        assert!(dag_state
-            .get_uncommitted_blocks_at_round(non_existent_round)
-            .is_empty());
+        assert!(
+            dag_state
+                .get_uncommitted_blocks_at_round(non_existent_round)
+                .is_empty()
+        );
     }
 
     #[tokio::test]
@@ -1613,8 +1633,12 @@ mod test {
         }
 
         for round in 1..=3 {
-            assert!(dag_state
-                .contains_cached_block_at_slot(Slot::new(round, AuthorityIndex::new_for_test(0))));
+            assert!(
+                dag_state.contains_cached_block_at_slot(Slot::new(
+                    round,
+                    AuthorityIndex::new_for_test(0)
+                ))
+            );
         }
 
         // When trying to request for authority 1 at block slot 3 it should panic, as anything
@@ -2027,15 +2051,19 @@ mod test {
             if authority_index == AuthorityIndex::new_for_test(0) {
                 assert_eq!(blocks.len(), 4);
                 assert_eq!(dag_state.evicted_rounds[authority_index.value()], 1);
-                assert!(blocks
-                    .into_iter()
-                    .all(|block| block.round() >= 2 && block.round() <= 5));
+                assert!(
+                    blocks
+                        .into_iter()
+                        .all(|block| block.round() >= 2 && block.round() <= 5)
+                );
             } else {
                 assert_eq!(blocks.len(), 4);
                 assert_eq!(dag_state.evicted_rounds[authority_index.value()], 4);
-                assert!(blocks
-                    .into_iter()
-                    .all(|block| block.round() >= 5 && block.round() <= 8));
+                assert!(
+                    blocks
+                        .into_iter()
+                        .all(|block| block.round() >= 5 && block.round() <= 8)
+                );
             }
         }
 

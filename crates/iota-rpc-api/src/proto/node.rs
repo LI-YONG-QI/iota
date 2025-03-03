@@ -1,7 +1,9 @@
-use super::types::proto_to_timestamp_ms;
-use super::types::timestamp_ms_to_proto;
-use super::TryFromProtoError;
 use tap::Pipe;
+
+use super::{
+    TryFromProtoError,
+    types::{proto_to_timestamp_ms, timestamp_ms_to_proto},
+};
 
 #[rustfmt::skip]
 #[path = "generated/iota.node.v2.rs"]
@@ -14,8 +16,9 @@ mod file_descriptor_set {
 
     #[cfg(test)]
     mod tests {
-        use super::FILE_DESCRIPTOR_SET;
         use prost::Message as _;
+
+        use super::FILE_DESCRIPTOR_SET;
 
         #[test]
         fn file_descriptor_set_is_valid() {
@@ -25,7 +28,6 @@ mod file_descriptor_set {
 }
 pub use file_descriptor_set::FILE_DESCRIPTOR_SET;
 
-//
 // BalanceChange
 //
 
@@ -66,7 +68,6 @@ impl TryFrom<&BalanceChange> for iota_sdk_types::BalanceChange {
     }
 }
 
-//
 // NodeInfo
 //
 
@@ -148,7 +149,6 @@ impl TryFrom<&GetNodeInfoResponse> for crate::types::NodeInfo {
     }
 }
 
-//
 // GetObjectOptions
 //
 
@@ -202,7 +202,6 @@ impl From<GetObjectOptions> for crate::types::GetObjectOptions {
     }
 }
 
-//
 // GetObjectRequest
 //
 
@@ -226,7 +225,6 @@ impl GetObjectRequest {
     }
 }
 
-//
 // ObjectResponse
 //
 
@@ -286,7 +284,6 @@ impl TryFrom<&GetObjectResponse> for crate::types::ObjectResponse {
     }
 }
 
-//
 // GetCheckpointOptions
 //
 
@@ -402,7 +399,6 @@ impl From<GetCheckpointOptions> for crate::types::GetCheckpointOptions {
     }
 }
 
-//
 // GetCheckpointRequest
 //
 
@@ -437,7 +433,6 @@ impl GetCheckpointRequest {
     }
 }
 
-//
 // GetTransactionOptions
 //
 
@@ -601,7 +596,6 @@ impl From<GetTransactionOptions> for crate::types::GetTransactionOptions {
     }
 }
 
-//
 // GetTransactionRequest
 //
 
@@ -619,7 +613,6 @@ impl GetTransactionRequest {
     }
 }
 
-//
 // ExecuteTransactionOptions
 //
 
@@ -663,7 +656,6 @@ impl From<ExecuteTransactionOptions> for crate::types::ExecuteTransactionOptions
     }
 }
 
-//
 // GetFullCheckpointOptions
 //
 
@@ -939,7 +931,6 @@ impl From<GetFullCheckpointOptions> for crate::types::GetFullCheckpointOptions {
     }
 }
 
-//
 // GetFullCheckpointRequest
 //
 
@@ -974,7 +965,6 @@ impl GetFullCheckpointRequest {
     }
 }
 
-//
 // TransactionResponse
 //
 
@@ -1088,7 +1078,6 @@ impl TryFrom<&GetTransactionResponse> for crate::types::TransactionResponse {
     }
 }
 
-//
 // CheckpointResponse
 //
 
@@ -1158,7 +1147,6 @@ impl TryFrom<&GetCheckpointResponse> for crate::types::CheckpointResponse {
     }
 }
 
-//
 // FullCheckpointResponse
 //
 
@@ -1237,7 +1225,6 @@ impl TryFrom<&GetFullCheckpointResponse> for crate::types::FullCheckpointRespons
     }
 }
 
-//
 // FullCheckpointObject
 //
 
@@ -1297,7 +1284,6 @@ impl TryFrom<&FullCheckpointObject> for crate::types::FullCheckpointObject {
     }
 }
 
-//
 // FullCheckpointTransaction
 //
 
@@ -1402,7 +1388,6 @@ impl TryFrom<&FullCheckpointTransaction> for crate::types::FullCheckpointTransac
     }
 }
 
-//
 // ExecuteTransactionResponse
 //
 
@@ -1478,14 +1463,12 @@ impl TryFrom<&ExecuteTransactionResponse> for crate::types::ExecuteTransactionRe
     }
 }
 
-//
 // EffectsFinality
 //
 
 impl From<crate::types::EffectsFinality> for crate::proto::node::EffectsFinality {
     fn from(value: crate::types::EffectsFinality) -> Self {
-        use crate::proto::node::effects_finality::Finality;
-        use crate::types::EffectsFinality::*;
+        use crate::{proto::node::effects_finality::Finality, types::EffectsFinality::*};
 
         let finality = match value {
             Certified { signature } => Finality::Certified(signature.into()),
@@ -1534,8 +1517,9 @@ pub mod node_server {
         clippy::wildcard_imports,
         clippy::let_unit_value
     )]
-    use super::node_service_server::NodeService as Node;
     use tonic::codegen::*;
+
+    use super::node_service_server::NodeService as Node;
     #[derive(Debug)]
     pub struct NodeServer<T> {
         inner: Arc<T>,

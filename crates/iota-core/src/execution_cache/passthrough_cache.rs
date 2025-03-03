@@ -2,42 +2,45 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::authority::authority_per_epoch_store::AuthorityPerEpochStore;
-use crate::authority::authority_store::{ExecutionLockWriteGuard, IotaLockResult};
-use crate::authority::epoch_start_configuration::EpochFlag;
-use crate::authority::epoch_start_configuration::EpochStartConfiguration;
-use crate::authority::AuthorityStore;
-use crate::state_accumulator::AccumulatorStore;
-use crate::transaction_outputs::TransactionOutputs;
+use std::{future::ready, sync::Arc};
 
-use futures::{future::BoxFuture, FutureExt};
+use futures::{FutureExt, future::BoxFuture};
 use iota_common::sync::notify_read::NotifyRead;
-use prometheus::Registry;
-use std::future::ready;
-use std::sync::Arc;
 use iota_protocol_config::ProtocolVersion;
 use iota_storage::package_object_cache::PackageObjectCache;
-use iota_types::accumulator::Accumulator;
-use iota_types::base_types::VerifiedExecutionData;
-use iota_types::base_types::{EpochId, ObjectID, ObjectRef, SequenceNumber};
-use iota_types::bridge::{get_bridge, Bridge};
-use iota_types::digests::{TransactionDigest, TransactionEffectsDigest, TransactionEventsDigest};
-use iota_types::effects::{TransactionEffects, TransactionEvents};
-use iota_types::error::IotaResult;
-use iota_types::message_envelope::Message;
-use iota_types::messages_checkpoint::CheckpointSequenceNumber;
-use iota_types::object::Object;
-use iota_types::storage::{MarkerValue, ObjectKey, ObjectOrTombstone, ObjectStore, PackageObject};
-use iota_types::iota_system_state::{get_iota_system_state, IotaSystemState};
-use iota_types::transaction::{VerifiedSignedTransaction, VerifiedTransaction};
+use iota_types::{
+    accumulator::Accumulator,
+    base_types::{EpochId, ObjectID, ObjectRef, SequenceNumber, VerifiedExecutionData},
+    bridge::{Bridge, get_bridge},
+    digests::{TransactionDigest, TransactionEffectsDigest, TransactionEventsDigest},
+    effects::{TransactionEffects, TransactionEvents},
+    error::IotaResult,
+    iota_system_state::{IotaSystemState, get_iota_system_state},
+    message_envelope::Message,
+    messages_checkpoint::CheckpointSequenceNumber,
+    object::Object,
+    storage::{MarkerValue, ObjectKey, ObjectOrTombstone, ObjectStore, PackageObject},
+    transaction::{VerifiedSignedTransaction, VerifiedTransaction},
+};
+use prometheus::Registry;
 use tap::TapFallible;
 use tracing::instrument;
 use typed_store::Map;
 
 use super::{
-    implement_passthrough_traits, CheckpointCache, ExecutionCacheCommit, ExecutionCacheMetrics,
-    ExecutionCacheReconfigAPI, ExecutionCacheWrite, ObjectCacheRead, StateSyncAPI, TestingAPI,
-    TransactionCacheRead,
+    CheckpointCache, ExecutionCacheCommit, ExecutionCacheMetrics, ExecutionCacheReconfigAPI,
+    ExecutionCacheWrite, ObjectCacheRead, StateSyncAPI, TestingAPI, TransactionCacheRead,
+    implement_passthrough_traits,
+};
+use crate::{
+    authority::{
+        AuthorityStore,
+        authority_per_epoch_store::AuthorityPerEpochStore,
+        authority_store::{ExecutionLockWriteGuard, IotaLockResult},
+        epoch_start_configuration::{EpochFlag, EpochStartConfiguration},
+    },
+    state_accumulator::AccumulatorStore,
+    transaction_outputs::TransactionOutputs,
 };
 
 pub struct PassthroughCache {

@@ -2,8 +2,9 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use async_trait::async_trait;
 use std::time::Duration;
+
+use async_trait::async_trait;
 
 pub struct TestResponse {
     pub response_body: String,

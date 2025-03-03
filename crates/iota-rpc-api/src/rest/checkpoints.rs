@@ -2,19 +2,21 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use axum::extract::Query;
-use axum::extract::{Path, State};
-use axum::Json;
+use axum::{
+    Json,
+    extract::{Path, Query, State},
+};
 use iota_sdk_types::{CheckpointSequenceNumber, SignedCheckpointSummary};
 use iota_types::storage::ReadStore;
 
 use super::{ApiEndpoint, RouteHandler};
-use crate::reader::StateReader;
-use crate::rest::PageCursor;
-use crate::service::checkpoints::CheckpointId;
-use crate::types::{CheckpointResponse, GetCheckpointOptions};
-use crate::Result;
-use crate::{Direction, RpcService};
+use crate::{
+    Direction, Result, RpcService,
+    reader::StateReader,
+    rest::PageCursor,
+    service::checkpoints::CheckpointId,
+    types::{CheckpointResponse, GetCheckpointOptions},
+};
 
 /// Fetch a Checkpoint
 ///

@@ -2,18 +2,9 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{
-    authority::{
-        authority_per_epoch_store::{AuthorityPerEpochStore, CertLockGuard},
-        epoch_start_configuration::EpochStartConfigTrait,
-    },
-    execution_cache::ObjectCacheRead,
-};
-use itertools::izip;
+use std::{collections::HashMap, sync::Arc};
+
 use iota_common::fatal;
-use once_cell::unsync::OnceCell;
-use std::collections::HashMap;
-use std::sync::Arc;
 use iota_types::{
     base_types::{EpochId, ObjectRef, SequenceNumber, TransactionDigest},
     error::{IotaError, IotaResult, UserInputError},
@@ -23,7 +14,17 @@ use iota_types::{
         ReceivingObjectReadResult, ReceivingObjectReadResultKind, ReceivingObjects, TransactionKey,
     },
 };
+use itertools::izip;
+use once_cell::unsync::OnceCell;
 use tracing::instrument;
+
+use crate::{
+    authority::{
+        authority_per_epoch_store::{AuthorityPerEpochStore, CertLockGuard},
+        epoch_start_configuration::EpochStartConfigTrait,
+    },
+    execution_cache::ObjectCacheRead,
+};
 
 pub(crate) struct TransactionInputLoader {
     cache: Arc<dyn ObjectCacheRead>,
@@ -233,16 +234,24 @@ impl TransactionInputLoader {
                     assert!(key.1.is_valid());
                     // Check if the object was deleted by a concurrently certified tx
                     let version = key.1;
-                    if let Some(dependency) = self.cache.get_deleted_shared_object_previous_tx_digest(id, version, epoch_id) {
+                    if let Some(dependency) = self
+                        .cache
+                        .get_deleted_shared_object_previous_tx_digest(id, version, epoch_id)
+                    {
                         ObjectReadResult {
                             input_object_kind: *input,
                             object: ObjectReadResultKind::DeletedSharedObject(version, dependency),
                         }
                     } else {
-                        panic!("All dependencies of tx {tx_key:?} should have been executed now, but Shared Object id: {}, version: {version} is absent in epoch {epoch_id}", *id);
+                        panic!(
+                            "All dependencies of tx {tx_key:?} should have been executed now, but Shared Object id: {}, version: {version} is absent in epoch {epoch_id}",
+                            *id
+                        );
                     }
-                },
-                _ => panic!("All dependencies of tx {tx_key:?} should have been executed now, but obj {key:?} is absent"),
+                }
+                _ => panic!(
+                    "All dependencies of tx {tx_key:?} should have been executed now, but obj {key:?} is absent"
+                ),
             });
         }
 

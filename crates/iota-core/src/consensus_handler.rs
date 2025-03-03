@@ -12,14 +12,12 @@ use std::{
 use arc_swap::ArcSwap;
 use consensus_config::Committee as ConsensusCommittee;
 use consensus_core::{CommitConsumerMonitor, TransactionIndex, VerifiedBlock};
-use lru::LruCache;
+use iota_macros::{fail_point_async, fail_point_if};
 use iota_metrics::{
     monitored_future,
     monitored_mpsc::{self, UnboundedReceiver},
     monitored_scope, spawn_monitored_task,
 };
-use serde::{Deserialize, Serialize};
-use iota_macros::{fail_point_async, fail_point_if};
 use iota_protocol_config::ProtocolConfig;
 use iota_types::{
     authenticator_state::ActiveJwk,
@@ -28,29 +26,31 @@ use iota_types::{
     },
     digests::ConsensusCommitDigest,
     executable_transaction::{TrustedExecutableTransaction, VerifiedExecutableTransaction},
+    iota_system_state::epoch_start_iota_system_state::EpochStartSystemStateTrait,
     messages_consensus::{
         AuthorityIndex, ConsensusDeterminedVersionAssignments, ConsensusTransaction,
         ConsensusTransactionKey, ConsensusTransactionKind,
     },
-    iota_system_state::epoch_start_iota_system_state::EpochStartSystemStateTrait,
     transaction::{SenderSignedData, VerifiedTransaction},
 };
+use lru::LruCache;
+use serde::{Deserialize, Serialize};
 use tokio::task::JoinSet;
 use tracing::{debug, error, info, instrument, trace_span, warn};
 
 use crate::{
     authority::{
+        AuthorityMetrics, AuthorityState,
         authority_per_epoch_store::{
             AuthorityPerEpochStore, ConsensusStats, ConsensusStatsAPI, ExecutionIndices,
             ExecutionIndicesWithStats,
         },
         backpressure::{BackpressureManager, BackpressureSubscriber},
         epoch_start_configuration::EpochStartConfigTrait,
-        AuthorityMetrics, AuthorityState,
     },
     checkpoints::{CheckpointService, CheckpointServiceNotify},
     consensus_throughput_calculator::ConsensusThroughputCalculator,
-    consensus_types::consensus_output_api::{parse_block_transactions, ConsensusCommitAPI},
+    consensus_types::consensus_output_api::{ConsensusCommitAPI, parse_block_transactions},
     execution_cache::ObjectCacheRead,
     scoring_decision::update_low_scoring_authorities,
     transaction_manager::TransactionManager,
@@ -235,7 +235,7 @@ impl<C: CheckpointServiceNotify + Send + Sync> ConsensusHandler<C> {
             return;
         }
 
-        /* (transaction, serialized length) */
+        // (transaction, serialized length)
         let mut transactions = vec![];
         let timestamp = consensus_commit.commit_timestamp_ms();
         let leader_author = consensus_commit.leader_author_index();
@@ -354,7 +354,9 @@ impl<C: CheckpointServiceNotify + Send + Sync> ConsensusHandler<C> {
                         &parsed.transaction.kind
                     {
                         // These are deprecated and we should never see them. Log an error and eat the tx if one appears.
-                        error!("BUG: saw deprecated RandomnessStateUpdate tx for commit round {round:?}, randomness round {randomness_round:?}")
+                        error!(
+                            "BUG: saw deprecated RandomnessStateUpdate tx for commit round {round:?}, randomness round {randomness_round:?}"
+                        )
                     } else {
                         let transaction =
                             SequencedConsensusTransactionKind::External(parsed.transaction);
@@ -1017,10 +1019,9 @@ mod tests {
         BlockAPI, CommitDigest, CommitRef, CommittedSubDag, TestBlock, Transaction, VerifiedBlock,
     };
     use futures::pin_mut;
-    use prometheus::Registry;
     use iota_protocol_config::ConsensusTransactionOrdering;
     use iota_types::{
-        base_types::{random_object_ref, AuthorityName, ObjectID, IotaAddress},
+        base_types::{AuthorityName, IotaAddress, ObjectID, random_object_ref},
         committee::Committee,
         crypto::deterministic_random_account_key,
         messages_consensus::{
@@ -1033,6 +1034,7 @@ mod tests {
             CertifiedTransaction, SenderSignedData, TransactionData, TransactionDataAPI,
         },
     };
+    use prometheus::Registry;
 
     use super::*;
     use crate::{

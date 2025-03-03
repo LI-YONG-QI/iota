@@ -4,9 +4,10 @@
 
 #![allow(unused_imports)]
 #![allow(unused_variables)]
-use async_trait::async_trait;
 use std::{path::Path, sync::Arc, time::Duration};
-use iota_graphql_rpc::test_infra::cluster::{serve_executor, ExecutorCluster};
+
+use async_trait::async_trait;
+use iota_graphql_rpc::test_infra::cluster::{ExecutorCluster, serve_executor};
 use iota_transactional_test_runner::{
     args::IotaInitArgs,
     create_adapter,

@@ -2,15 +2,14 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use std::ops::Range;
-use std::sync::Arc;
+use std::{ops::Range, sync::Arc};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use diesel::{ExpressionMethods, QueryDsl};
 use diesel_async::RunQueryDsl;
 use iota_indexer_alt_framework::{
     models::cp_sequence_numbers::epoch_interval,
-    pipeline::{concurrent::Handler, Processor},
+    pipeline::{Processor, concurrent::Handler},
 };
 use iota_indexer_alt_schema::{epochs::StoredEpochEnd, schema::kv_epoch_ends};
 use iota_pg_db as db;

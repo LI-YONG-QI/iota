@@ -2,15 +2,13 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use diesel::dsl::Limit;
-use diesel::pg::Pg;
-use diesel::query_builder::QueryFragment;
-use diesel::query_dsl::methods::LimitDsl;
-use diesel::result::Error as DieselError;
-use diesel_async::methods::LoadQuery;
-use diesel_async::RunQueryDsl;
-use jsonrpsee::types::{error::INTERNAL_ERROR_CODE, ErrorObject};
+use diesel::{
+    dsl::Limit, pg::Pg, query_builder::QueryFragment, query_dsl::methods::LimitDsl,
+    result::Error as DieselError,
+};
+use diesel_async::{RunQueryDsl, methods::LoadQuery};
 use iota_pg_db as db;
+use jsonrpsee::types::{ErrorObject, error::INTERNAL_ERROR_CODE};
 use tracing::debug;
 
 pub(crate) mod governance;

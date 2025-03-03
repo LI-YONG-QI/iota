@@ -7,17 +7,16 @@ use std::{collections::BTreeMap, sync::Arc};
 use tokio::{
     sync::mpsc,
     task::JoinHandle,
-    time::{interval, MissedTickBehavior},
+    time::{MissedTickBehavior, interval},
 };
 use tokio_util::sync::CancellationToken;
 use tracing::{debug, info};
 
+use super::{BatchedRows, Handler};
 use crate::{
     metrics::{CheckpointLagMetricReporter, IndexerMetrics},
     pipeline::{CommitterConfig, IndexedCheckpoint, WatermarkPart},
 };
-
-use super::{BatchedRows, Handler};
 
 /// Processed values that are waiting to be written to the database. This is an internal type used
 /// by the concurrent collector to hold data it is waiting to send to the committer.
@@ -200,9 +199,8 @@ mod tests {
     use iota_pg_db as db;
     use iota_types::full_checkpoint_content::CheckpointData;
 
-    use crate::pipeline::{concurrent::max_chunk_rows, Processor};
-
     use super::*;
+    use crate::pipeline::{Processor, concurrent::max_chunk_rows};
 
     #[derive(Clone)]
     struct Entry;
@@ -212,8 +210,9 @@ mod tests {
         const FIELD_COUNT: usize = 32;
     }
 
-    use prometheus::Registry;
     use std::time::Duration;
+
+    use prometheus::Registry;
     use tokio::sync::mpsc;
 
     struct TestHandler;

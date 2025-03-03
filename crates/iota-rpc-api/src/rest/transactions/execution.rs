@@ -2,16 +2,21 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use super::{ApiEndpoint, RouteHandler};
-use crate::response::Bcs;
-use crate::types::ExecuteTransactionOptions;
-use crate::types::ExecuteTransactionResponse;
-use crate::{Result, RpcService};
-use axum::extract::{Query, State};
-use axum::Json;
 use std::net::SocketAddr;
+
+use axum::{
+    Json,
+    extract::{Query, State},
+};
 use iota_sdk_types::{
     BalanceChange, Object, SignedTransaction, Transaction, TransactionEffects, TransactionEvents,
+};
+
+use super::{ApiEndpoint, RouteHandler};
+use crate::{
+    Result, RpcService,
+    response::Bcs,
+    types::{ExecuteTransactionOptions, ExecuteTransactionResponse},
 };
 
 pub struct ExecuteTransaction;
@@ -66,7 +71,7 @@ impl ApiEndpoint<RpcService> for SimulateTransaction {
 async fn simulate_transaction(
     State(state): State<RpcService>,
     Query(parameters): Query<SimulateTransactionQueryParameters>,
-    //TODO allow accepting JSON as well as BCS
+    // TODO allow accepting JSON as well as BCS
     Bcs(transaction): Bcs<Transaction>,
 ) -> Result<Json<TransactionSimulationResponse>> {
     state
