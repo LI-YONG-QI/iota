@@ -207,6 +207,10 @@ struct FeatureFlags {
     // Use distributed vote leader scoring strategy in consensus.
     #[serde(skip_serializing_if = "is_false")]
     consensus_distributed_vote_scoring_strategy: bool,
+
+    // Use the minimum free execution slot in the sequencer.
+    #[serde(skip_serializing_if = "is_false")]
+    congestion_control_min_free_execution_slot: bool,
 }
 
 fn is_true(b: &bool) -> bool {
@@ -1110,6 +1114,11 @@ impl ProtocolConfig {
         self.feature_flags
             .consensus_distributed_vote_scoring_strategy
     }
+
+    pub fn congestion_control_min_free_execution_slot(&self) -> bool {
+        self.feature_flags
+            .congestion_control_min_free_execution_slot
+    }
 }
 
 #[cfg(not(msim))]
@@ -1679,6 +1688,7 @@ impl ProtocolConfig {
         cfg.feature_flags.consensus_round_prober = false;
         cfg.feature_flags
             .consensus_distributed_vote_scoring_strategy = false;
+        cfg.feature_flags.congestion_control_min_free_execution_slot = false;
 
         // Devnet
         if chain != Chain::Mainnet && chain != Chain::Testnet {
@@ -1719,6 +1729,7 @@ impl ProtocolConfig {
                     cfg.feature_flags.consensus_round_prober = true;
                     cfg.feature_flags
                         .consensus_distributed_vote_scoring_strategy = true;
+                    cfg.feature_flags.congestion_control_min_free_execution_slot = true;
                 }
                 // Use this template when making changes:
                 //

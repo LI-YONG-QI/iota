@@ -1,6 +1,7 @@
 ---
 source: crates/iota-protocol-config/src/lib.rs
 expression: "ProtocolConfig::get_for_version(cur, *chain_id)"
+snapshot_kind: text
 ---
 version: 6
 feature_flags:
@@ -10,6 +11,7 @@ feature_flags:
   relocate_event_module: true
   consensus_round_prober: true
   consensus_distributed_vote_scoring_strategy: true
+  congestion_control_min_free_execution_slot: true
 max_tx_size_bytes: 131072
 max_input_objects: 2048
 max_size_written_objects: 5000000
