@@ -208,7 +208,8 @@ struct FeatureFlags {
     #[serde(skip_serializing_if = "is_false")]
     consensus_distributed_vote_scoring_strategy: bool,
 
-    // Use the minimum free execution slot in the sequencer.
+    // Use the minimum free execution slot to assign the start cost of a transaction in the shared
+    // object congestion tracker.
     #[serde(skip_serializing_if = "is_false")]
     congestion_control_min_free_execution_slot: bool,
 }
