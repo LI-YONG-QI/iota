@@ -171,8 +171,13 @@ pub async fn build_json_rpc_server(
     let mut builder =
         JsonRpcServerBuilder::new(env!("CARGO_PKG_VERSION"), prometheus_registry, None, None);
     let http_client = crate::get_http_client(config.rpc_client_url.as_str())?;
+    let rest_api_client = iota_rest_api::Client::new(config.rpc_client_url.as_str());
 
-    builder.register_module(WriteApi::new(http_client.clone()))?;
+    builder.register_module(WriteApi::new(
+        http_client.clone(),
+        rest_api_client,
+        reader.clone(),
+    ))?;
     builder.register_module(IndexerApi::new(reader.clone()))?;
     builder.register_module(TransactionBuilderApi::new(reader.clone()))?;
     builder.register_module(MoveUtilsApi::new(reader.clone()))?;

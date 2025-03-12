@@ -5,28 +5,90 @@
 use async_trait::async_trait;
 use fastcrypto::encoding::Base64;
 use iota_json_rpc::IotaRpcModule;
-use iota_json_rpc_api::{WriteApiClient, WriteApiServer, error_object_from_rpc};
+use iota_json_rpc_api::{error_object_from_rpc, WriteApiClient, WriteApiServer};
 use iota_json_rpc_types::{
     DevInspectArgs, DevInspectResults, DryRunTransactionBlockResponse,
     IotaTransactionBlockResponse, IotaTransactionBlockResponseOptions,
 };
 use iota_open_rpc::Module;
 use iota_types::{
-    base_types::IotaAddress, iota_serde::BigInt, quorum_driver_types::ExecuteTransactionRequestType,
+    base_types::IotaAddress,
+    crypto::ToFromBytes,
+    effects::TransactionEffectsAPI,
+    iota_serde::BigInt,
+    quorum_driver_types::ExecuteTransactionRequestType,
+    signature::GenericSignature,
+    transaction::{Transaction, TransactionData},
 };
-use jsonrpsee::{RpcModule, core::RpcResult, http_client::HttpClient};
+use jsonrpsee::{core::RpcResult, http_client::HttpClient, RpcModule};
 
-use crate::types::IotaTransactionBlockResponseWithOptions;
+use crate::{
+    errors::IndexerError, indexer_reader::IndexerReader,
+    types::IotaTransactionBlockResponseWithOptions,
+};
 
 pub(crate) struct WriteApi {
     fullnode: HttpClient,
+    fullnode_rest_client: iota_rest_api::Client,
+    inner: IndexerReader,
 }
 
 impl WriteApi {
-    pub fn new(fullnode_client: HttpClient) -> Self {
+    pub fn new(
+        fullnode_client: HttpClient,
+        fullnode_rest_client: iota_rest_api::Client,
+        inner: IndexerReader,
+    ) -> Self {
         Self {
             fullnode: fullnode_client,
+            fullnode_rest_client,
+            inner,
         }
+    }
+
+    async fn execute_and_optimistically_index_tx_effects(
+        &self,
+        tx_bytes: Base64,
+        signatures: Vec<Base64>,
+        options: Option<IotaTransactionBlockResponseOptions>,
+    ) -> RpcResult<IotaTransactionBlockResponse> {
+        let tx_data: TransactionData =
+            bcs::from_bytes(&tx_bytes.to_vec().map_err(IndexerError::FastCrypto)?)
+                .map_err(IndexerError::Bcs)?;
+        let mut sigs = Vec::new();
+        for sig in signatures {
+            sigs.push(
+                GenericSignature::from_bytes(&sig.to_vec().map_err(IndexerError::FastCrypto)?)
+                    .map_err(IndexerError::FastCrypto)?,
+            );
+        }
+        let transaction = Transaction::from_generic_sig_data(tx_data, sigs);
+
+        let result = self
+            .fullnode_rest_client
+            .execute_transaction_for_optimistic_indexing(&transaction)
+            .await
+            .map_err(|e| IndexerError::Generic(e.to_string()))?;
+
+        println!("cptx: {:#?}", result);
+
+        // TODO: optimistically index the TX, so we can read it in the lines below
+
+        let mut tx_block_responses = self
+            .inner
+            .multi_get_transaction_block_response_in_blocking_task(
+                vec![*result.effects.transaction_digest()],
+                options.clone().unwrap_or_default(),
+            )
+            .await?;
+
+        Ok(IotaTransactionBlockResponseWithOptions {
+            response: tx_block_responses
+                .pop()
+                .expect("The digest should be there, since we just saved it"),
+            options: options.unwrap_or_default(),
+        }
+        .into())
     }
 }
 
@@ -39,11 +101,22 @@ impl WriteApiServer for WriteApi {
         options: Option<IotaTransactionBlockResponseOptions>,
         request_type: Option<ExecuteTransactionRequestType>,
     ) -> RpcResult<IotaTransactionBlockResponse> {
-        let iota_transaction_response = self
-            .fullnode
-            .execute_transaction_block(tx_bytes, signatures, options.clone(), request_type)
-            .await
-            .map_err(error_object_from_rpc)?;
+        let iota_transaction_response = match request_type {
+            None | Some(ExecuteTransactionRequestType::WaitForEffectsCert) => self
+                .fullnode
+                .execute_transaction_block(tx_bytes, signatures, options.clone(), request_type)
+                .await
+                .map_err(error_object_from_rpc)?,
+            Some(ExecuteTransactionRequestType::WaitForLocalExecution) => {
+                self.execute_and_optimistically_index_tx_effects(
+                    tx_bytes,
+                    signatures,
+                    options.clone(),
+                )
+                .await?
+            }
+        };
+
         Ok(IotaTransactionBlockResponseWithOptions {
             response: iota_transaction_response,
             options: options.unwrap_or_default(),
