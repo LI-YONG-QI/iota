@@ -1,5 +1,15 @@
 # @iota/dapp-kit
 
+## 0.4.1
+
+### Patch Changes
+
+-   b06e657: Improve styling for small screens
+-   Updated dependencies [e629a39]
+-   Updated dependencies [e213517]
+    -   @iota/iota-sdk@0.6.0
+    -   @iota/wallet-standard@0.2.5
+
 ## 0.4.0
 
 ### Minor Changes

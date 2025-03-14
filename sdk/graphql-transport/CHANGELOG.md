@@ -1,5 +1,20 @@
 # @iota/graphql-transport
 
+## 0.3.0
+
+### Minor Changes
+
+-   e629a39: Aligns the Typescript SDK for the "fixed gas price" protocol changes:
+
+    -   Add typing support for IotaChangeEpochV2 (computationCharge, computationChargeBurned).
+    -   Add Typescript SDK client support for versioned IotaSystemStateSummary.
+
+### Patch Changes
+
+-   Updated dependencies [e629a39]
+-   Updated dependencies [e213517]
+    -   @iota/iota-sdk@0.6.0
+
 ## 0.2.4
 
 ### Patch Changes
