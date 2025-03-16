@@ -382,6 +382,8 @@ module iota_system::stake_tests {
         scenario_val.end();
     }
 
+    // TODO: add some tests with staking to committee validator vs non-committee validator
+
     #[test]
     #[expected_failure(abort_code = validator_set::ENotAValidator)]
     fun test_add_preactive_remove_pending_failure() {
